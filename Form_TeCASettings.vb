@@ -6,6 +6,7 @@ Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
 
 Public Class Form_TeCASettings
+    Inherits System.Windows.Forms.Form
 
     Dim IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
     Dim ClientID = IDSearch(IDpath, "clientId", QUOTA.Apostrofy)

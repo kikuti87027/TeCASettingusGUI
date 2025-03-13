@@ -6,6 +6,29 @@ kikuchi
 </name>
 </assembly>
 <members>
+<member name="T:kikuchi.KeyValueParser">
+ <summary>
+ Key=Value形式のファイルを読み書きするクラス。
+ 識別子は　＝、;、:　の3種が使用可能。
+ </summary>
+</member>
+<member name="M:kikuchi.KeyValueParser.ReplaceValue(System.String,System.String,System.String)">
+ <summary>
+ Key=Value形式のファイルから、keyに対応するvalueを置換する。
+ </summary>
+ <param name="filePath">ファイルパス</param>
+ <param name="targetKey">キー</param>
+ <param name="NewValue">更新後の値</param>‘
+ <returns>置換した個数</returns>
+</member>
+<member name="M:kikuchi.KeyValueParser.FindValue(System.String,System.String)">
+ <summary>
+ Key=Value形式のファイルから、keyに対応するvalueを取得する。
+ </summary>
+ <param name="filePath">ファイルパス</param>
+ <param name="targetKey">キー</param>
+ <returns>値</returns>
+</member>
 <member name="M:kikuchi.Misc.FindFormula(System.String,System.String,System.String)">
  <summary>
  ファイル内に期待する「式＝値」の￥文字列があるかを確認

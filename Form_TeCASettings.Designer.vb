@@ -647,7 +647,7 @@ Partial Class Form_TeCASettings
         ' CheckBox_Pipeman
         ' 
         CheckBox_Pipeman.AutoSize = True
-        CheckBox_Pipeman.Location = New Point(490, 541)
+        CheckBox_Pipeman.Location = New Point(608, 541)
         CheckBox_Pipeman.Name = "CheckBox_Pipeman"
         CheckBox_Pipeman.Size = New Size(101, 19)
         CheckBox_Pipeman.TabIndex = 32
