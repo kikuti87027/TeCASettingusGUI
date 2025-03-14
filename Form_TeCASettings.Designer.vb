@@ -93,12 +93,12 @@ Partial Class Form_TeCASettings
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
         GroupBox_FileSelector = New GroupBox()
+        Label17 = New Label()
+        ComboBox1 = New ComboBox()
+        CheckBox_Wide = New CheckBox()
         CheckBox_DestroyPrint = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
-        CheckBox_Wide = New CheckBox()
-        ComboBox1 = New ComboBox()
-        Label17 = New Label()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -790,6 +790,33 @@ Partial Class Form_TeCASettings
         GroupBox_FileSelector.TabStop = False
         GroupBox_FileSelector.Text = "ファイル選択ポップアップ"
         ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Location = New Point(7, 25)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(56, 15)
+        Label17.TabIndex = 14
+        Label17.Text = "リスト行数"
+        ' 
+        ' ComboBox1
+        ' 
+        ComboBox1.FormattingEnabled = True
+        ComboBox1.Location = New Point(69, 22)
+        ComboBox1.Name = "ComboBox1"
+        ComboBox1.Size = New Size(58, 23)
+        ComboBox1.TabIndex = 1
+        ' 
+        ' CheckBox_Wide
+        ' 
+        CheckBox_Wide.AutoSize = True
+        CheckBox_Wide.Location = New Point(10, 51)
+        CheckBox_Wide.Name = "CheckBox_Wide"
+        CheckBox_Wide.Size = New Size(327, 19)
+        CheckBox_Wide.TabIndex = 0
+        CheckBox_Wide.Text = "ファイル名欄を広くする（すべてのポップアップが横長になります）"
+        CheckBox_Wide.UseVisualStyleBackColor = True
+        ' 
         ' CheckBox_DestroyPrint
         ' 
         CheckBox_DestroyPrint.AutoSize = True
@@ -825,33 +852,6 @@ Partial Class Form_TeCASettings
         TabPage2.TabIndex = 1
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
-        ' 
-        ' CheckBox_Wide
-        ' 
-        CheckBox_Wide.AutoSize = True
-        CheckBox_Wide.Location = New Point(10, 51)
-        CheckBox_Wide.Name = "CheckBox_Wide"
-        CheckBox_Wide.Size = New Size(327, 19)
-        CheckBox_Wide.TabIndex = 0
-        CheckBox_Wide.Text = "ファイル名欄を広くする（すべてのポップアップが横長になります）"
-        CheckBox_Wide.UseVisualStyleBackColor = True
-        ' 
-        ' ComboBox1
-        ' 
-        ComboBox1.FormattingEnabled = True
-        ComboBox1.Location = New Point(69, 22)
-        ComboBox1.Name = "ComboBox1"
-        ComboBox1.Size = New Size(58, 23)
-        ComboBox1.TabIndex = 1
-        ' 
-        ' Label17
-        ' 
-        Label17.AutoSize = True
-        Label17.Location = New Point(7, 25)
-        Label17.Name = "Label17"
-        Label17.Size = New Size(56, 15)
-        Label17.TabIndex = 14
-        Label17.Text = "リスト行数"
         ' 
         ' Form_TeCASettings
         ' 

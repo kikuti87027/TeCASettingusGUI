@@ -97,7 +97,7 @@
 
   <ItemGroup>
     <Reference Include="kikuchi">
-      <HintPath>C:\Users\kikuti.PHOTRON\Desktop\ABC\DLL\kikuchi.dll</HintPath>
+      <HintPath>..\kikuchi\bin\Release\net9.0-windows10.0.17763.0\publish\kikuchi.dll</HintPath>
     </Reference>
   </ItemGroup>
 
