@@ -734,7 +734,7 @@ Public Class Form_TeCASettings
 
                 '【DB関連パラメータ】DLG入力値で更新する
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", "db1")
-                    Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", "db1")
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", "db1")
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_SIZE_MAX.Text.ToString + "' WHERE info_key='UPLOAD_SIZE_MAX' ", "db1")
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_FILE_NUMBER_MAX.Text.ToString + "' WHERE info_key='UPLOAD_FILE_NUMBER_MAX' ", "db1")
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_IMMEDIATE' ", "db1")
@@ -1388,5 +1388,7 @@ Public Class Form_TeCASettings
 
     End Sub
 
+    Private Sub GroupBox_FileSelector_Enter(sender As Object, e As EventArgs) Handles GroupBox_FileSelector.Enter
 
+    End Sub
 End Class

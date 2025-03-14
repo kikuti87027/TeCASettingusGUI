@@ -52,11 +52,11 @@ Partial Class Form_TeCASettings
         ProgressBar = New ProgressBar()
         GroupBox_Progress = New GroupBox()
         GroupBox_General = New GroupBox()
-        CheckBox_GrabTool = New CheckBox()
         ComboBox_LoginTimeout = New ComboBox()
         Label16 = New Label()
         ComboBox_vScroll = New ComboBox()
         Label_vScroll = New Label()
+        CheckBox_GrabTool = New CheckBox()
         GroupBox_MailServer = New GroupBox()
         Label15 = New Label()
         TextBox_mail_smtp_connectiontimeout = New TextBox()
@@ -91,8 +91,14 @@ Partial Class Form_TeCASettings
         TabControl1 = New TabControl()
         TabPage1 = New TabPage()
         TabPage3 = New TabPage()
+        TabPage4 = New TabPage()
+        GroupBox_FileSelector = New GroupBox()
+        CheckBox_DestroyPrint = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
+        CheckBox_Wide = New CheckBox()
+        ComboBox1 = New ComboBox()
+        Label17 = New Label()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -105,6 +111,8 @@ Partial Class Form_TeCASettings
         TabControl1.SuspendLayout()
         TabPage1.SuspendLayout()
         TabPage3.SuspendLayout()
+        TabPage4.SuspendLayout()
+        GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
         TabPage2.SuspendLayout()
         SuspendLayout()
@@ -368,7 +376,6 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_General
         ' 
-        GroupBox_General.Controls.Add(CheckBox_GrabTool)
         GroupBox_General.Controls.Add(ComboBox_LoginTimeout)
         GroupBox_General.Controls.Add(Label16)
         GroupBox_General.Controls.Add(ComboBox_vScroll)
@@ -381,16 +388,6 @@ Partial Class Form_TeCASettings
         GroupBox_General.TabIndex = 9
         GroupBox_General.TabStop = False
         GroupBox_General.Text = "全般"
-        ' 
-        ' CheckBox_GrabTool
-        ' 
-        CheckBox_GrabTool.AutoSize = True
-        CheckBox_GrabTool.Location = New Point(145, 105)
-        CheckBox_GrabTool.Name = "CheckBox_GrabTool"
-        CheckBox_GrabTool.Size = New Size(201, 19)
-        CheckBox_GrabTool.TabIndex = 12
-        CheckBox_GrabTool.Text = "「手のひらツール」を最初から使用する"
-        CheckBox_GrabTool.UseVisualStyleBackColor = True
         ' 
         ' ComboBox_LoginTimeout
         ' 
@@ -427,6 +424,16 @@ Partial Class Form_TeCASettings
         Label_vScroll.Size = New Size(97, 15)
         Label_vScroll.TabIndex = 5
         Label_vScroll.Text = "縦スクロールバッファ"
+        ' 
+        ' CheckBox_GrabTool
+        ' 
+        CheckBox_GrabTool.AutoSize = True
+        CheckBox_GrabTool.Location = New Point(7, 6)
+        CheckBox_GrabTool.Name = "CheckBox_GrabTool"
+        CheckBox_GrabTool.Size = New Size(201, 19)
+        CheckBox_GrabTool.TabIndex = 12
+        CheckBox_GrabTool.Text = "「手のひらツール」を最初から使用する"
+        CheckBox_GrabTool.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_MailServer
         ' 
@@ -718,10 +725,11 @@ Partial Class Form_TeCASettings
         ' 
         TabControl1.Controls.Add(TabPage1)
         TabControl1.Controls.Add(TabPage3)
+        TabControl1.Controls.Add(TabPage4)
         TabControl1.Controls.Add(Tab_mail)
         TabControl1.Controls.Add(TabPage2)
         TabControl1.Location = New Point(8, 82)
-        TabControl1.Margin = New Padding(2, 2, 2, 2)
+        TabControl1.Margin = New Padding(2)
         TabControl1.Name = "TabControl1"
         TabControl1.SelectedIndex = 0
         TabControl1.Size = New Size(382, 328)
@@ -735,9 +743,9 @@ Partial Class Form_TeCASettings
         TabPage1.Controls.Add(Label_MaxUser)
         TabPage1.Controls.Add(TextBox_MaxUsers)
         TabPage1.Location = New Point(4, 24)
-        TabPage1.Margin = New Padding(2, 2, 2, 2)
+        TabPage1.Margin = New Padding(2)
         TabPage1.Name = "TabPage1"
-        TabPage1.Padding = New Padding(2, 2, 2, 2)
+        TabPage1.Padding = New Padding(2)
         TabPage1.Size = New Size(374, 300)
         TabPage1.TabIndex = 2
         TabPage1.Text = "システム情報・API"
@@ -749,22 +757,57 @@ Partial Class Form_TeCASettings
         TabPage3.Controls.Add(GroupBox_General)
         TabPage3.Controls.Add(GroupBox_DWG)
         TabPage3.Location = New Point(4, 24)
-        TabPage3.Margin = New Padding(2, 2, 2, 2)
+        TabPage3.Margin = New Padding(2)
         TabPage3.Name = "TabPage3"
-        TabPage3.Padding = New Padding(2, 2, 2, 2)
+        TabPage3.Padding = New Padding(2)
         TabPage3.Size = New Size(374, 300)
         TabPage3.TabIndex = 3
         TabPage3.Text = "操作"
         TabPage3.UseVisualStyleBackColor = True
+        ' 
+        ' TabPage4
+        ' 
+        TabPage4.Controls.Add(GroupBox_FileSelector)
+        TabPage4.Controls.Add(CheckBox_DestroyPrint)
+        TabPage4.Controls.Add(CheckBox_GrabTool)
+        TabPage4.Location = New Point(4, 24)
+        TabPage4.Name = "TabPage4"
+        TabPage4.Padding = New Padding(3)
+        TabPage4.Size = New Size(374, 300)
+        TabPage4.TabIndex = 4
+        TabPage4.Text = "画面デザイン"
+        TabPage4.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox_FileSelector
+        ' 
+        GroupBox_FileSelector.Controls.Add(Label17)
+        GroupBox_FileSelector.Controls.Add(ComboBox1)
+        GroupBox_FileSelector.Controls.Add(CheckBox_Wide)
+        GroupBox_FileSelector.Location = New Point(7, 134)
+        GroupBox_FileSelector.Name = "GroupBox_FileSelector"
+        GroupBox_FileSelector.Size = New Size(358, 135)
+        GroupBox_FileSelector.TabIndex = 14
+        GroupBox_FileSelector.TabStop = False
+        GroupBox_FileSelector.Text = "ファイル選択ポップアップ"
+        ' 
+        ' CheckBox_DestroyPrint
+        ' 
+        CheckBox_DestroyPrint.AutoSize = True
+        CheckBox_DestroyPrint.Location = New Point(6, 99)
+        CheckBox_DestroyPrint.Name = "CheckBox_DestroyPrint"
+        CheckBox_DestroyPrint.Size = New Size(204, 19)
+        CheckBox_DestroyPrint.TabIndex = 13
+        CheckBox_DestroyPrint.Text = "プレビュー画面の右クリック印刷を抑止"
+        CheckBox_DestroyPrint.UseVisualStyleBackColor = True
         ' 
         ' Tab_mail
         ' 
         Tab_mail.Controls.Add(CheckBox_メール通知)
         Tab_mail.Controls.Add(GroupBox_MailServer)
         Tab_mail.Location = New Point(4, 24)
-        Tab_mail.Margin = New Padding(2, 2, 2, 2)
+        Tab_mail.Margin = New Padding(2)
         Tab_mail.Name = "Tab_mail"
-        Tab_mail.Padding = New Padding(2, 2, 2, 2)
+        Tab_mail.Padding = New Padding(2)
         Tab_mail.Size = New Size(374, 300)
         Tab_mail.TabIndex = 0
         Tab_mail.Text = "メール通知"
@@ -775,20 +818,47 @@ Partial Class Form_TeCASettings
         TabPage2.Controls.Add(GroupBox_KOKAI)
         TabPage2.Controls.Add(GroupBox_Upload)
         TabPage2.Location = New Point(4, 24)
-        TabPage2.Margin = New Padding(2, 2, 2, 2)
+        TabPage2.Margin = New Padding(2)
         TabPage2.Name = "TabPage2"
-        TabPage2.Padding = New Padding(2, 2, 2, 2)
+        TabPage2.Padding = New Padding(2)
         TabPage2.Size = New Size(374, 300)
         TabPage2.TabIndex = 1
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBox_Wide
+        ' 
+        CheckBox_Wide.AutoSize = True
+        CheckBox_Wide.Location = New Point(10, 51)
+        CheckBox_Wide.Name = "CheckBox_Wide"
+        CheckBox_Wide.Size = New Size(327, 19)
+        CheckBox_Wide.TabIndex = 0
+        CheckBox_Wide.Text = "ファイル名欄を広くする（すべてのポップアップが横長になります）"
+        CheckBox_Wide.UseVisualStyleBackColor = True
+        ' 
+        ' ComboBox1
+        ' 
+        ComboBox1.FormattingEnabled = True
+        ComboBox1.Location = New Point(69, 22)
+        ComboBox1.Name = "ComboBox1"
+        ComboBox1.Size = New Size(58, 23)
+        ComboBox1.TabIndex = 1
+        ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Location = New Point(7, 25)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(56, 15)
+        Label17.TabIndex = 14
+        Label17.Text = "リスト行数"
         ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(397, 542)
+        ClientSize = New Size(407, 542)
         Controls.Add(TabControl1)
         Controls.Add(Label_notice)
         Controls.Add(CheckBox_Pipeman)
@@ -826,6 +896,10 @@ Partial Class Form_TeCASettings
         TabPage1.ResumeLayout(False)
         TabPage1.PerformLayout()
         TabPage3.ResumeLayout(False)
+        TabPage4.ResumeLayout(False)
+        TabPage4.PerformLayout()
+        GroupBox_FileSelector.ResumeLayout(False)
+        GroupBox_FileSelector.PerformLayout()
         Tab_mail.ResumeLayout(False)
         Tab_mail.PerformLayout()
         TabPage2.ResumeLayout(False)
@@ -905,4 +979,10 @@ Partial Class Form_TeCASettings
     Friend WithEvents TabPage2 As TabPage
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents TabPage3 As TabPage
+    Friend WithEvents TabPage4 As TabPage
+    Friend WithEvents CheckBox_DestroyPrint As CheckBox
+    Friend WithEvents GroupBox_FileSelector As GroupBox
+    Friend WithEvents ComboBox1 As ComboBox
+    Friend WithEvents CheckBox_Wide As CheckBox
+    Friend WithEvents Label17 As Label
 End Class
