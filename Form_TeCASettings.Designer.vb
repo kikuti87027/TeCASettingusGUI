@@ -88,6 +88,11 @@ Partial Class Form_TeCASettings
         CheckBox_UnpublicCheckin = New CheckBox()
         CheckBox_UploadDefault = New CheckBox()
         Label_notice = New Label()
+        TabControl1 = New TabControl()
+        Tab_mail = New TabPage()
+        TabPage2 = New TabPage()
+        TabPage1 = New TabPage()
+        TabPage3 = New TabPage()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -97,21 +102,28 @@ Partial Class Form_TeCASettings
         GroupBox_APIparams.SuspendLayout()
         GroupBox_DWG.SuspendLayout()
         GroupBox_KOKAI.SuspendLayout()
+        TabControl1.SuspendLayout()
+        Tab_mail.SuspendLayout()
+        TabPage2.SuspendLayout()
+        TabPage1.SuspendLayout()
+        TabPage3.SuspendLayout()
         SuspendLayout()
         ' 
         ' TextBox_ClientID
         ' 
-        TextBox_ClientID.Location = New Point(93, 22)
+        TextBox_ClientID.Location = New Point(133, 26)
+        TextBox_ClientID.Margin = New Padding(4, 5, 4, 5)
         TextBox_ClientID.Name = "TextBox_ClientID"
-        TextBox_ClientID.Size = New Size(174, 23)
+        TextBox_ClientID.Size = New Size(247, 31)
         TextBox_ClientID.TabIndex = 0
         TextBox_ClientID.Text = "ClientID"
         ' 
         ' TextBox_SecretID
         ' 
-        TextBox_SecretID.Location = New Point(93, 49)
+        TextBox_SecretID.Location = New Point(133, 71)
+        TextBox_SecretID.Margin = New Padding(4, 5, 4, 5)
         TextBox_SecretID.Name = "TextBox_SecretID"
-        TextBox_SecretID.Size = New Size(174, 23)
+        TextBox_SecretID.Size = New Size(247, 31)
         TextBox_SecretID.TabIndex = 1
         TextBox_SecretID.Text = "SecretID"
         TextBox_SecretID.UseSystemPasswordChar = True
@@ -120,9 +132,10 @@ Partial Class Form_TeCASettings
         ' Button_Nunsyo
         ' 
         Button_Nunsyo.AllowDrop = True
-        Button_Nunsyo.Location = New Point(271, 22)
+        Button_Nunsyo.Location = New Point(387, 26)
+        Button_Nunsyo.Margin = New Padding(4, 5, 4, 5)
         Button_Nunsyo.Name = "Button_Nunsyo"
-        Button_Nunsyo.Size = New Size(75, 50)
+        Button_Nunsyo.Size = New Size(107, 83)
         Button_Nunsyo.TabIndex = 2
         Button_Nunsyo.Text = "認証"
         Button_Nunsyo.UseVisualStyleBackColor = True
@@ -134,9 +147,11 @@ Partial Class Form_TeCASettings
         GroupBox_ninsyo.Controls.Add(TextBox_SecretID)
         GroupBox_ninsyo.Controls.Add(Button_Nunsyo)
         GroupBox_ninsyo.Controls.Add(TextBox_ClientID)
-        GroupBox_ninsyo.Location = New Point(6, 12)
+        GroupBox_ninsyo.Location = New Point(16, 10)
+        GroupBox_ninsyo.Margin = New Padding(4, 5, 4, 5)
         GroupBox_ninsyo.Name = "GroupBox_ninsyo"
-        GroupBox_ninsyo.Size = New Size(358, 89)
+        GroupBox_ninsyo.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_ninsyo.Size = New Size(537, 117)
         GroupBox_ninsyo.TabIndex = 3
         GroupBox_ninsyo.TabStop = False
         GroupBox_ninsyo.Text = "入力してください"
@@ -144,54 +159,60 @@ Partial Class Form_TeCASettings
         ' Label8
         ' 
         Label8.AutoSize = True
-        Label8.Location = New Point(42, 26)
+        Label8.Location = New Point(60, 32)
+        Label8.Margin = New Padding(4, 0, 4, 0)
         Label8.Name = "Label8"
-        Label8.Size = New Size(48, 15)
+        Label8.Size = New Size(74, 25)
         Label8.TabIndex = 14
         Label8.Text = "ClientID"
         ' 
         ' Label7
         ' 
         Label7.AutoSize = True
-        Label7.Location = New Point(42, 55)
+        Label7.Location = New Point(60, 81)
+        Label7.Margin = New Padding(4, 0, 4, 0)
         Label7.Name = "Label7"
-        Label7.Size = New Size(50, 15)
+        Label7.Size = New Size(78, 25)
         Label7.TabIndex = 13
         Label7.Text = "SecretID"
         ' 
         ' Label_Domain
         ' 
         Label_Domain.AutoSize = True
-        Label_Domain.Location = New Point(6, 112)
+        Label_Domain.Location = New Point(21, 22)
+        Label_Domain.Margin = New Padding(4, 0, 4, 0)
         Label_Domain.Name = "Label_Domain"
-        Label_Domain.Size = New Size(69, 15)
+        Label_Domain.Size = New Size(107, 25)
         Label_Domain.TabIndex = 4
         Label_Domain.Text = "API Domain"
         ' 
         ' Label_MaxUser
         ' 
         Label_MaxUser.AutoSize = True
-        Label_MaxUser.Location = New Point(216, 112)
+        Label_MaxUser.Location = New Point(327, 20)
+        Label_MaxUser.Margin = New Padding(4, 0, 4, 0)
         Label_MaxUser.Name = "Label_MaxUser"
-        Label_MaxUser.Size = New Size(79, 15)
+        Label_MaxUser.Size = New Size(120, 25)
         Label_MaxUser.TabIndex = 4
         Label_MaxUser.Text = "最大ユーザー数"
         ' 
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Location = New Point(42, 21)
+        Label2.Location = New Point(60, 35)
+        Label2.Margin = New Padding(4, 0, 4, 0)
         Label2.Name = "Label2"
-        Label2.Size = New Size(194, 15)
+        Label2.Size = New Size(294, 25)
         Label2.TabIndex = 5
         Label2.Text = "1回あたりの最大変換数（即時変換）"
         ' 
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Location = New Point(103, 47)
+        Label3.Location = New Point(147, 78)
+        Label3.Margin = New Padding(4, 0, 4, 0)
         Label3.Name = "Label3"
-        Label3.Size = New Size(134, 15)
+        Label3.Size = New Size(202, 25)
         Label3.TabIndex = 5
         Label3.Text = "変換最大数(夜間バッチ）"
         ' 
@@ -201,32 +222,37 @@ Partial Class Form_TeCASettings
         GroupBox_PDF.Controls.Add(TextBox_PDF_CONVERSION_MAX_IMMEDIATE)
         GroupBox_PDF.Controls.Add(Label3)
         GroupBox_PDF.Controls.Add(Label2)
-        GroupBox_PDF.Location = New Point(6, 229)
+        GroupBox_PDF.Location = New Point(7, 20)
+        GroupBox_PDF.Margin = New Padding(4, 5, 4, 5)
         GroupBox_PDF.Name = "GroupBox_PDF"
-        GroupBox_PDF.Size = New Size(358, 78)
+        GroupBox_PDF.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_PDF.Size = New Size(511, 130)
         GroupBox_PDF.TabIndex = 3
         GroupBox_PDF.TabStop = False
         GroupBox_PDF.Text = "PDF変換"
         ' 
         ' TextBox_PDF_CONVERSION_MAX_BATCH
         ' 
-        TextBox_PDF_CONVERSION_MAX_BATCH.Location = New Point(247, 44)
+        TextBox_PDF_CONVERSION_MAX_BATCH.Location = New Point(353, 73)
+        TextBox_PDF_CONVERSION_MAX_BATCH.Margin = New Padding(4, 5, 4, 5)
         TextBox_PDF_CONVERSION_MAX_BATCH.Name = "TextBox_PDF_CONVERSION_MAX_BATCH"
-        TextBox_PDF_CONVERSION_MAX_BATCH.Size = New Size(99, 23)
+        TextBox_PDF_CONVERSION_MAX_BATCH.Size = New Size(140, 31)
         TextBox_PDF_CONVERSION_MAX_BATCH.TabIndex = 8
         ' 
         ' TextBox_PDF_CONVERSION_MAX_IMMEDIATE
         ' 
-        TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Location = New Point(247, 18)
+        TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Location = New Point(353, 30)
+        TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Margin = New Padding(4, 5, 4, 5)
         TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Name = "TextBox_PDF_CONVERSION_MAX_IMMEDIATE"
-        TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Size = New Size(99, 23)
+        TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Size = New Size(140, 31)
         TextBox_PDF_CONVERSION_MAX_IMMEDIATE.TabIndex = 7
         ' 
         ' Button_Exec
         ' 
-        Button_Exec.Location = New Point(610, 512)
+        Button_Exec.Location = New Point(409, 820)
+        Button_Exec.Margin = New Padding(4, 5, 4, 5)
         Button_Exec.Name = "Button_Exec"
-        Button_Exec.Size = New Size(99, 23)
+        Button_Exec.Size = New Size(141, 72)
         Button_Exec.TabIndex = 31
         Button_Exec.Text = "実行"
         Button_Exec.UseVisualStyleBackColor = True
@@ -237,9 +263,11 @@ Partial Class Form_TeCASettings
         GroupBox_Upload.Controls.Add(TextBox_UPLOAD_SIZE_MAX)
         GroupBox_Upload.Controls.Add(Label5)
         GroupBox_Upload.Controls.Add(Label6)
-        GroupBox_Upload.Location = New Point(6, 145)
+        GroupBox_Upload.Location = New Point(7, 19)
+        GroupBox_Upload.Margin = New Padding(4, 5, 4, 5)
         GroupBox_Upload.Name = "GroupBox_Upload"
-        GroupBox_Upload.Size = New Size(358, 78)
+        GroupBox_Upload.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_Upload.Size = New Size(511, 130)
         GroupBox_Upload.TabIndex = 3
         GroupBox_Upload.TabStop = False
         GroupBox_Upload.Text = "アップロード制限値"
@@ -247,33 +275,37 @@ Partial Class Form_TeCASettings
         ' TextBox_UPLOAD_FILE_NUMBER_MAX
         ' 
         TextBox_UPLOAD_FILE_NUMBER_MAX.Cursor = Cursors.Cross
-        TextBox_UPLOAD_FILE_NUMBER_MAX.Location = New Point(247, 48)
+        TextBox_UPLOAD_FILE_NUMBER_MAX.Location = New Point(353, 80)
+        TextBox_UPLOAD_FILE_NUMBER_MAX.Margin = New Padding(4, 5, 4, 5)
         TextBox_UPLOAD_FILE_NUMBER_MAX.Name = "TextBox_UPLOAD_FILE_NUMBER_MAX"
-        TextBox_UPLOAD_FILE_NUMBER_MAX.Size = New Size(99, 23)
+        TextBox_UPLOAD_FILE_NUMBER_MAX.Size = New Size(140, 31)
         TextBox_UPLOAD_FILE_NUMBER_MAX.TabIndex = 6
         ' 
         ' TextBox_UPLOAD_SIZE_MAX
         ' 
-        TextBox_UPLOAD_SIZE_MAX.Location = New Point(247, 21)
+        TextBox_UPLOAD_SIZE_MAX.Location = New Point(353, 35)
+        TextBox_UPLOAD_SIZE_MAX.Margin = New Padding(4, 5, 4, 5)
         TextBox_UPLOAD_SIZE_MAX.Name = "TextBox_UPLOAD_SIZE_MAX"
-        TextBox_UPLOAD_SIZE_MAX.Size = New Size(99, 23)
+        TextBox_UPLOAD_SIZE_MAX.Size = New Size(140, 31)
         TextBox_UPLOAD_SIZE_MAX.TabIndex = 5
         ' 
         ' Label5
         ' 
         Label5.AutoSize = True
-        Label5.Location = New Point(55, 51)
+        Label5.Location = New Point(79, 85)
+        Label5.Margin = New Padding(4, 0, 4, 0)
         Label5.Name = "Label5"
-        Label5.Size = New Size(171, 15)
+        Label5.Size = New Size(259, 25)
         Label5.TabIndex = 5
         Label5.Text = "1操作でアップできる最大ファイル数"
         ' 
         ' Label6
         ' 
         Label6.AutoSize = True
-        Label6.Location = New Point(8, 24)
+        Label6.Location = New Point(11, 40)
+        Label6.Margin = New Padding(4, 0, 4, 0)
         Label6.Name = "Label6"
-        Label6.Size = New Size(230, 15)
+        Label6.Size = New Size(347, 25)
         Label6.TabIndex = 5
         Label6.Text = "アップ時のファイルサイズ（1ファイルのバイト数）"
         ' 
@@ -281,26 +313,29 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_LOG_LEVEL.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_LOG_LEVEL.FormattingEnabled = True
-        ComboBox_LOG_LEVEL.Location = New Point(246, 45)
+        ComboBox_LOG_LEVEL.Location = New Point(351, 75)
+        ComboBox_LOG_LEVEL.Margin = New Padding(4, 5, 4, 5)
         ComboBox_LOG_LEVEL.Name = "ComboBox_LOG_LEVEL"
-        ComboBox_LOG_LEVEL.Size = New Size(99, 23)
+        ComboBox_LOG_LEVEL.Size = New Size(140, 33)
         ComboBox_LOG_LEVEL.TabIndex = 10
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(175, 50)
+        Label1.Location = New Point(250, 83)
+        Label1.Margin = New Padding(4, 0, 4, 0)
         Label1.Name = "Label1"
-        Label1.Size = New Size(49, 15)
+        Label1.Size = New Size(76, 25)
         Label1.TabIndex = 4
         Label1.Text = "ログモード"
         ' 
         ' CheckBox_メール通知
         ' 
         CheckBox_メール通知.AutoSize = True
-        CheckBox_メール通知.Location = New Point(384, 26)
+        CheckBox_メール通知.Location = New Point(7, 8)
+        CheckBox_メール通知.Margin = New Padding(4, 5, 4, 5)
         CheckBox_メール通知.Name = "CheckBox_メール通知"
-        CheckBox_メール通知.Size = New Size(100, 19)
+        CheckBox_メール通知.Size = New Size(150, 29)
         CheckBox_メール通知.TabIndex = 13
         CheckBox_メール通知.Text = "メール通知機能"
         CheckBox_メール通知.UseVisualStyleBackColor = True
@@ -309,49 +344,56 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_ExecMode.FormattingEnabled = True
-        ComboBox_ExecMode.Location = New Point(490, 512)
+        ComboBox_ExecMode.Location = New Point(238, 820)
+        ComboBox_ExecMode.Margin = New Padding(4, 5, 4, 5)
         ComboBox_ExecMode.Name = "ComboBox_ExecMode"
-        ComboBox_ExecMode.Size = New Size(114, 23)
+        ComboBox_ExecMode.Size = New Size(161, 33)
         ComboBox_ExecMode.TabIndex = 30
         ' 
         ' Label4
         ' 
         Label4.AutoSize = True
-        Label4.Location = New Point(428, 516)
+        Label4.Location = New Point(149, 827)
+        Label4.Margin = New Padding(4, 0, 4, 0)
         Label4.Name = "Label4"
-        Label4.Size = New Size(56, 15)
+        Label4.Size = New Size(86, 25)
         Label4.TabIndex = 4
         Label4.Text = "実行モード"
         ' 
         ' TextBox_Domain
         ' 
-        TextBox_Domain.Location = New Point(76, 109)
+        TextBox_Domain.Location = New Point(121, 17)
+        TextBox_Domain.Margin = New Padding(4, 5, 4, 5)
         TextBox_Domain.Name = "TextBox_Domain"
-        TextBox_Domain.Size = New Size(138, 23)
+        TextBox_Domain.Size = New Size(195, 31)
         TextBox_Domain.TabIndex = 3
         ' 
         ' TextBox_MaxUsers
         ' 
         TextBox_MaxUsers.AllowDrop = True
         TextBox_MaxUsers.Cursor = Cursors.UpArrow
-        TextBox_MaxUsers.Location = New Point(301, 109)
+        TextBox_MaxUsers.Location = New Point(448, 15)
+        TextBox_MaxUsers.Margin = New Padding(4, 5, 4, 5)
         TextBox_MaxUsers.Name = "TextBox_MaxUsers"
-        TextBox_MaxUsers.Size = New Size(51, 23)
+        TextBox_MaxUsers.Size = New Size(71, 31)
         TextBox_MaxUsers.TabIndex = 4
         ' 
         ' ProgressBar
         ' 
-        ProgressBar.Location = New Point(12, 20)
+        ProgressBar.Location = New Point(12, 33)
+        ProgressBar.Margin = New Padding(4, 5, 4, 5)
         ProgressBar.Name = "ProgressBar"
-        ProgressBar.Size = New Size(334, 18)
+        ProgressBar.Size = New Size(512, 30)
         ProgressBar.TabIndex = 14
         ' 
         ' GroupBox_Progress
         ' 
         GroupBox_Progress.Controls.Add(ProgressBar)
-        GroupBox_Progress.Location = New Point(6, 443)
+        GroupBox_Progress.Location = New Point(16, 729)
+        GroupBox_Progress.Margin = New Padding(4, 5, 4, 5)
         GroupBox_Progress.Name = "GroupBox_Progress"
-        GroupBox_Progress.Size = New Size(358, 45)
+        GroupBox_Progress.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_Progress.Size = New Size(537, 75)
         GroupBox_Progress.TabIndex = 16
         GroupBox_Progress.TabStop = False
         GroupBox_Progress.Text = "ぷろぐれすばぁ"
@@ -365,9 +407,11 @@ Partial Class Form_TeCASettings
         GroupBox_General.Controls.Add(Label_vScroll)
         GroupBox_General.Controls.Add(ComboBox_LOG_LEVEL)
         GroupBox_General.Controls.Add(Label1)
-        GroupBox_General.Location = New Point(6, 310)
+        GroupBox_General.Location = New Point(7, 173)
+        GroupBox_General.Margin = New Padding(4, 5, 4, 5)
         GroupBox_General.Name = "GroupBox_General"
-        GroupBox_General.Size = New Size(358, 130)
+        GroupBox_General.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_General.Size = New Size(511, 217)
         GroupBox_General.TabIndex = 9
         GroupBox_General.TabStop = False
         GroupBox_General.Text = "全般"
@@ -375,9 +419,10 @@ Partial Class Form_TeCASettings
         ' CheckBox_GrabTool
         ' 
         CheckBox_GrabTool.AutoSize = True
-        CheckBox_GrabTool.Location = New Point(145, 105)
+        CheckBox_GrabTool.Location = New Point(207, 175)
+        CheckBox_GrabTool.Margin = New Padding(4, 5, 4, 5)
         CheckBox_GrabTool.Name = "CheckBox_GrabTool"
-        CheckBox_GrabTool.Size = New Size(201, 19)
+        CheckBox_GrabTool.Size = New Size(300, 29)
         CheckBox_GrabTool.TabIndex = 12
         CheckBox_GrabTool.Text = "「手のひらツール」を最初から使用する"
         CheckBox_GrabTool.UseVisualStyleBackColor = True
@@ -386,17 +431,19 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_LoginTimeout.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_LoginTimeout.FormattingEnabled = True
-        ComboBox_LoginTimeout.Location = New Point(246, 74)
+        ComboBox_LoginTimeout.Location = New Point(351, 123)
+        ComboBox_LoginTimeout.Margin = New Padding(4, 5, 4, 5)
         ComboBox_LoginTimeout.Name = "ComboBox_LoginTimeout"
-        ComboBox_LoginTimeout.Size = New Size(99, 23)
+        ComboBox_LoginTimeout.Size = New Size(140, 33)
         ComboBox_LoginTimeout.TabIndex = 11
         ' 
         ' Label16
         ' 
         Label16.AutoSize = True
-        Label16.Location = New Point(112, 79)
+        Label16.Location = New Point(160, 132)
+        Label16.Margin = New Padding(4, 0, 4, 0)
         Label16.Name = "Label16"
-        Label16.Size = New Size(123, 15)
+        Label16.Size = New Size(184, 25)
         Label16.TabIndex = 11
         Label16.Text = "ログインタイムアウト(分）"
         ' 
@@ -404,17 +451,19 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_vScroll.FormattingEnabled = True
-        ComboBox_vScroll.Location = New Point(246, 18)
+        ComboBox_vScroll.Location = New Point(351, 30)
+        ComboBox_vScroll.Margin = New Padding(4, 5, 4, 5)
         ComboBox_vScroll.Name = "ComboBox_vScroll"
-        ComboBox_vScroll.Size = New Size(99, 23)
+        ComboBox_vScroll.Size = New Size(140, 33)
         ComboBox_vScroll.TabIndex = 9
         ' 
         ' Label_vScroll
         ' 
         Label_vScroll.AutoSize = True
-        Label_vScroll.Location = New Point(127, 21)
+        Label_vScroll.Location = New Point(181, 35)
+        Label_vScroll.Margin = New Padding(4, 0, 4, 0)
         Label_vScroll.Name = "Label_vScroll"
-        Label_vScroll.Size = New Size(97, 15)
+        Label_vScroll.Size = New Size(148, 25)
         Label_vScroll.TabIndex = 5
         Label_vScroll.Text = "縦スクロールバッファ"
         ' 
@@ -437,9 +486,11 @@ Partial Class Form_TeCASettings
         GroupBox_MailServer.Controls.Add(TextBox_from_name)
         GroupBox_MailServer.Controls.Add(Label9)
         GroupBox_MailServer.Controls.Add(ComboBox_mail_transport_protocol)
-        GroupBox_MailServer.Location = New Point(378, 50)
+        GroupBox_MailServer.Location = New Point(7, 47)
+        GroupBox_MailServer.Margin = New Padding(4, 5, 4, 5)
         GroupBox_MailServer.Name = "GroupBox_MailServer"
-        GroupBox_MailServer.Size = New Size(329, 257)
+        GroupBox_MailServer.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_MailServer.Size = New Size(517, 428)
         GroupBox_MailServer.TabIndex = 17
         GroupBox_MailServer.TabStop = False
         GroupBox_MailServer.Text = "送信サーバー"
@@ -447,24 +498,27 @@ Partial Class Form_TeCASettings
         ' Label15
         ' 
         Label15.AutoSize = True
-        Label15.Location = New Point(22, 226)
+        Label15.Location = New Point(51, 377)
+        Label15.Margin = New Padding(4, 0, 4, 0)
         Label15.Name = "Label15"
-        Label15.Size = New Size(84, 15)
+        Label15.Size = New Size(128, 25)
         Label15.TabIndex = 22
         Label15.Text = "送信タイムアウト"
         ' 
         ' TextBox_mail_smtp_connectiontimeout
         ' 
-        TextBox_mail_smtp_connectiontimeout.Location = New Point(118, 223)
+        TextBox_mail_smtp_connectiontimeout.Location = New Point(189, 372)
+        TextBox_mail_smtp_connectiontimeout.Margin = New Padding(4, 5, 4, 5)
         TextBox_mail_smtp_connectiontimeout.Name = "TextBox_mail_smtp_connectiontimeout"
-        TextBox_mail_smtp_connectiontimeout.Size = New Size(88, 23)
+        TextBox_mail_smtp_connectiontimeout.Size = New Size(124, 31)
         TextBox_mail_smtp_connectiontimeout.TabIndex = 23
         ' 
         ' Button_TeCA_SMTP
         ' 
-        Button_TeCA_SMTP.Location = New Point(162, 17)
+        Button_TeCA_SMTP.Location = New Point(251, 28)
+        Button_TeCA_SMTP.Margin = New Padding(4, 5, 4, 5)
         Button_TeCA_SMTP.Name = "Button_TeCA_SMTP"
-        Button_TeCA_SMTP.Size = New Size(161, 28)
+        Button_TeCA_SMTP.Size = New Size(230, 47)
         Button_TeCA_SMTP.TabIndex = 14
         Button_TeCA_SMTP.Text = "「TeCA内SMTP」で設定する"
         Button_TeCA_SMTP.UseVisualStyleBackColor = True
@@ -472,9 +526,10 @@ Partial Class Form_TeCASettings
         ' CheckBox_mail_smtp_auth
         ' 
         CheckBox_mail_smtp_auth.AutoSize = True
-        CheckBox_mail_smtp_auth.Location = New Point(12, 141)
+        CheckBox_mail_smtp_auth.Location = New Point(37, 235)
+        CheckBox_mail_smtp_auth.Margin = New Padding(4, 5, 4, 5)
         CheckBox_mail_smtp_auth.Name = "CheckBox_mail_smtp_auth"
-        CheckBox_mail_smtp_auth.Size = New Size(80, 19)
+        CheckBox_mail_smtp_auth.Size = New Size(119, 29)
         CheckBox_mail_smtp_auth.TabIndex = 20
         CheckBox_mail_smtp_auth.Text = "SMTP認証"
         CheckBox_mail_smtp_auth.UseVisualStyleBackColor = True
@@ -482,137 +537,154 @@ Partial Class Form_TeCASettings
         ' Label13
         ' 
         Label13.AutoSize = True
-        Label13.Location = New Point(231, 56)
+        Label13.Location = New Point(350, 93)
+        Label13.Margin = New Padding(4, 0, 4, 0)
         Label13.Name = "Label13"
-        Label13.Size = New Size(33, 15)
+        Label13.Size = New Size(51, 25)
         Label13.TabIndex = 13
         Label13.Text = "ポート"
         ' 
         ' TextBox_mail_smtp_port
         ' 
-        TextBox_mail_smtp_port.Location = New Point(270, 52)
+        TextBox_mail_smtp_port.Location = New Point(406, 87)
+        TextBox_mail_smtp_port.Margin = New Padding(4, 5, 4, 5)
         TextBox_mail_smtp_port.Name = "TextBox_mail_smtp_port"
-        TextBox_mail_smtp_port.Size = New Size(53, 23)
+        TextBox_mail_smtp_port.Size = New Size(74, 31)
         TextBox_mail_smtp_port.TabIndex = 17
         ' 
         ' Label12
         ' 
         Label12.AutoSize = True
-        Label12.Location = New Point(12, 83)
+        Label12.Location = New Point(37, 138)
+        Label12.Margin = New Padding(4, 0, 4, 0)
         Label12.Name = "Label12"
-        Label12.Size = New Size(43, 15)
+        Label12.Size = New Size(66, 25)
         Label12.TabIndex = 11
         Label12.Text = "サーバー"
         ' 
         ' TextBox_mail_smtp_host
         ' 
-        TextBox_mail_smtp_host.Location = New Point(69, 80)
+        TextBox_mail_smtp_host.Location = New Point(119, 133)
+        TextBox_mail_smtp_host.Margin = New Padding(4, 5, 4, 5)
         TextBox_mail_smtp_host.Name = "TextBox_mail_smtp_host"
-        TextBox_mail_smtp_host.Size = New Size(254, 23)
+        TextBox_mail_smtp_host.Size = New Size(361, 31)
         TextBox_mail_smtp_host.TabIndex = 18
         ' 
         ' CheckBox_mail_smtp_starttls_enable
         ' 
         CheckBox_mail_smtp_starttls_enable.AutoSize = True
-        CheckBox_mail_smtp_starttls_enable.Location = New Point(145, 56)
+        CheckBox_mail_smtp_starttls_enable.Location = New Point(227, 93)
+        CheckBox_mail_smtp_starttls_enable.Margin = New Padding(4, 5, 4, 5)
         CheckBox_mail_smtp_starttls_enable.Name = "CheckBox_mail_smtp_starttls_enable"
-        CheckBox_mail_smtp_starttls_enable.Size = New Size(77, 19)
+        CheckBox_mail_smtp_starttls_enable.Size = New Size(115, 29)
         CheckBox_mail_smtp_starttls_enable.TabIndex = 16
         CheckBox_mail_smtp_starttls_enable.Text = "STARTTLS"
         CheckBox_mail_smtp_starttls_enable.UseVisualStyleBackColor = True
         ' 
         ' TextBox_password
         ' 
-        TextBox_password.Location = New Point(118, 192)
+        TextBox_password.Location = New Point(189, 320)
+        TextBox_password.Margin = New Padding(4, 5, 4, 5)
         TextBox_password.Name = "TextBox_password"
-        TextBox_password.Size = New Size(205, 23)
+        TextBox_password.Size = New Size(291, 31)
         TextBox_password.TabIndex = 22
         TextBox_password.UseSystemPasswordChar = True
         ' 
         ' Label11
         ' 
         Label11.AutoSize = True
-        Label11.Location = New Point(60, 197)
+        Label11.Location = New Point(106, 328)
+        Label11.Margin = New Padding(4, 0, 4, 0)
         Label11.Name = "Label11"
-        Label11.Size = New Size(51, 15)
+        Label11.Size = New Size(79, 25)
         Label11.TabIndex = 7
         Label11.Text = "パスワード"
         ' 
         ' Label_SenderID
         ' 
         Label_SenderID.AutoSize = True
-        Label_SenderID.Location = New Point(37, 168)
+        Label_SenderID.Location = New Point(73, 280)
+        Label_SenderID.Margin = New Padding(4, 0, 4, 0)
         Label_SenderID.Name = "Label_SenderID"
-        Label_SenderID.Size = New Size(75, 15)
+        Label_SenderID.Size = New Size(116, 25)
         Label_SenderID.TabIndex = 6
         Label_SenderID.Text = "送信メアド(ID)"
         ' 
         ' TextBox_user
         ' 
-        TextBox_user.Location = New Point(118, 163)
+        TextBox_user.Location = New Point(189, 272)
+        TextBox_user.Margin = New Padding(4, 5, 4, 5)
         TextBox_user.Name = "TextBox_user"
-        TextBox_user.Size = New Size(205, 23)
+        TextBox_user.Size = New Size(291, 31)
         TextBox_user.TabIndex = 21
         TextBox_user.Text = "message@teca.photron.com"
         ' 
         ' Label10
         ' 
         Label10.AutoSize = True
-        Label10.Location = New Point(10, 112)
+        Label10.Location = New Point(34, 187)
+        Label10.Margin = New Padding(4, 0, 4, 0)
         Label10.Name = "Label10"
-        Label10.Size = New Size(55, 15)
+        Label10.Size = New Size(84, 25)
         Label10.TabIndex = 4
         Label10.Text = "送信者名"
         ' 
         ' TextBox_from_name
         ' 
-        TextBox_from_name.Location = New Point(69, 109)
+        TextBox_from_name.Location = New Point(119, 182)
+        TextBox_from_name.Margin = New Padding(4, 5, 4, 5)
         TextBox_from_name.Name = "TextBox_from_name"
-        TextBox_from_name.Size = New Size(254, 23)
+        TextBox_from_name.Size = New Size(361, 31)
         TextBox_from_name.TabIndex = 19
         TextBox_from_name.Text = "TeCA通知メール"
         ' 
         ' Label9
         ' 
         Label9.AutoSize = True
-        Label9.Location = New Point(12, 60)
+        Label9.Location = New Point(37, 100)
+        Label9.Margin = New Padding(4, 0, 4, 0)
         Label9.Name = "Label9"
-        Label9.Size = New Size(51, 15)
+        Label9.Size = New Size(78, 25)
         Label9.TabIndex = 1
         Label9.Text = "プロトコル"
         ' 
         ' ComboBox_mail_transport_protocol
         ' 
         ComboBox_mail_transport_protocol.FormattingEnabled = True
-        ComboBox_mail_transport_protocol.Location = New Point(69, 54)
+        ComboBox_mail_transport_protocol.Location = New Point(119, 90)
+        ComboBox_mail_transport_protocol.Margin = New Padding(4, 5, 4, 5)
         ComboBox_mail_transport_protocol.Name = "ComboBox_mail_transport_protocol"
-        ComboBox_mail_transport_protocol.Size = New Size(62, 23)
+        ComboBox_mail_transport_protocol.Size = New Size(87, 33)
         ComboBox_mail_transport_protocol.TabIndex = 15
         ' 
         ' GroupBox_APIparams
         ' 
         GroupBox_APIparams.Controls.Add(TextBox_UPLOAD_CHUNK_SIZE)
         GroupBox_APIparams.Controls.Add(Label14)
-        GroupBox_APIparams.Location = New Point(378, 313)
+        GroupBox_APIparams.Location = New Point(7, 73)
+        GroupBox_APIparams.Margin = New Padding(4, 5, 4, 5)
         GroupBox_APIparams.Name = "GroupBox_APIparams"
-        GroupBox_APIparams.Size = New Size(329, 39)
+        GroupBox_APIparams.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_APIparams.Size = New Size(512, 65)
         GroupBox_APIparams.TabIndex = 18
         GroupBox_APIparams.TabStop = False
         GroupBox_APIparams.Text = "APIパラメータ"
         ' 
         ' TextBox_UPLOAD_CHUNK_SIZE
         ' 
-        TextBox_UPLOAD_CHUNK_SIZE.Location = New Point(224, 12)
+        TextBox_UPLOAD_CHUNK_SIZE.Location = New Point(320, 20)
+        TextBox_UPLOAD_CHUNK_SIZE.Margin = New Padding(4, 5, 4, 5)
         TextBox_UPLOAD_CHUNK_SIZE.Name = "TextBox_UPLOAD_CHUNK_SIZE"
-        TextBox_UPLOAD_CHUNK_SIZE.Size = New Size(99, 23)
+        TextBox_UPLOAD_CHUNK_SIZE.Size = New Size(184, 31)
         TextBox_UPLOAD_CHUNK_SIZE.TabIndex = 24
         ' 
         ' Label14
         ' 
         Label14.AutoSize = True
-        Label14.Location = New Point(71, 15)
+        Label14.Location = New Point(101, 25)
+        Label14.Margin = New Padding(4, 0, 4, 0)
         Label14.Name = "Label14"
-        Label14.Size = New Size(125, 15)
+        Label14.Size = New Size(188, 25)
         Label14.TabIndex = 7
         Label14.Text = "UPLOAD_CHUNK_SIZE"
         ' 
@@ -620,18 +692,21 @@ Partial Class Form_TeCASettings
         ' 
         GroupBox_DWG.Controls.Add(Button_DWG)
         GroupBox_DWG.Controls.Add(TextBox_DWG)
-        GroupBox_DWG.Location = New Point(378, 363)
+        GroupBox_DWG.Location = New Point(7, 400)
+        GroupBox_DWG.Margin = New Padding(4, 5, 4, 5)
         GroupBox_DWG.Name = "GroupBox_DWG"
-        GroupBox_DWG.Size = New Size(328, 49)
+        GroupBox_DWG.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_DWG.Size = New Size(511, 82)
         GroupBox_DWG.TabIndex = 25
         GroupBox_DWG.TabStop = False
         GroupBox_DWG.Text = "DWG変換設定ファイル"
         ' 
         ' Button_DWG
         ' 
-        Button_DWG.Location = New Point(275, 21)
+        Button_DWG.Location = New Point(434, 33)
+        Button_DWG.Margin = New Padding(4, 5, 4, 5)
         Button_DWG.Name = "Button_DWG"
-        Button_DWG.Size = New Size(48, 23)
+        Button_DWG.Size = New Size(69, 38)
         Button_DWG.TabIndex = 26
         Button_DWG.Text = "実行"
         Button_DWG.UseVisualStyleBackColor = True
@@ -639,17 +714,19 @@ Partial Class Form_TeCASettings
         ' TextBox_DWG
         ' 
         TextBox_DWG.AllowDrop = True
-        TextBox_DWG.Location = New Point(10, 20)
+        TextBox_DWG.Location = New Point(14, 33)
+        TextBox_DWG.Margin = New Padding(4, 5, 4, 5)
         TextBox_DWG.Name = "TextBox_DWG"
-        TextBox_DWG.Size = New Size(259, 23)
+        TextBox_DWG.Size = New Size(412, 31)
         TextBox_DWG.TabIndex = 25
         ' 
         ' CheckBox_Pipeman
         ' 
         CheckBox_Pipeman.AutoSize = True
-        CheckBox_Pipeman.Location = New Point(608, 541)
+        CheckBox_Pipeman.Location = New Point(238, 863)
+        CheckBox_Pipeman.Margin = New Padding(4, 5, 4, 5)
         CheckBox_Pipeman.Name = "CheckBox_Pipeman"
-        CheckBox_Pipeman.Size = New Size(101, 19)
+        CheckBox_Pipeman.Size = New Size(151, 29)
         CheckBox_Pipeman.TabIndex = 32
         CheckBox_Pipeman.Text = "ゴミジョブを掃除"
         CheckBox_Pipeman.UseVisualStyleBackColor = True
@@ -659,79 +736,139 @@ Partial Class Form_TeCASettings
         GroupBox_KOKAI.Controls.Add(CheckBox_PublicateWorkflowOK)
         GroupBox_KOKAI.Controls.Add(CheckBox_UnpublicCheckin)
         GroupBox_KOKAI.Controls.Add(CheckBox_UploadDefault)
-        GroupBox_KOKAI.Location = New Point(378, 418)
+        GroupBox_KOKAI.Location = New Point(7, 169)
+        GroupBox_KOKAI.Margin = New Padding(4, 5, 4, 5)
         GroupBox_KOKAI.Name = "GroupBox_KOKAI"
-        GroupBox_KOKAI.Size = New Size(331, 88)
+        GroupBox_KOKAI.Padding = New Padding(4, 5, 4, 5)
+        GroupBox_KOKAI.Size = New Size(511, 147)
         GroupBox_KOKAI.TabIndex = 9
         GroupBox_KOKAI.TabStop = False
-        GroupBox_KOKAI.Text = "公開のデフォルト設定"
+        GroupBox_KOKAI.Text = "公開の既定値"
         ' 
         ' CheckBox_PublicateWorkflowOK
         ' 
         CheckBox_PublicateWorkflowOK.AutoSize = True
-        CheckBox_PublicateWorkflowOK.Location = New Point(12, 66)
+        CheckBox_PublicateWorkflowOK.Location = New Point(17, 110)
+        CheckBox_PublicateWorkflowOK.Margin = New Padding(4, 5, 4, 5)
         CheckBox_PublicateWorkflowOK.Name = "CheckBox_PublicateWorkflowOK"
-        CheckBox_PublicateWorkflowOK.Size = New Size(191, 19)
+        CheckBox_PublicateWorkflowOK.Size = New Size(265, 29)
         CheckBox_PublicateWorkflowOK.TabIndex = 29
-        CheckBox_PublicateWorkflowOK.Text = "ワークフローが承認されたら公開する"
+        CheckBox_PublicateWorkflowOK.Text = "ワークフロー完了で自動公開する"
         CheckBox_PublicateWorkflowOK.UseVisualStyleBackColor = True
         ' 
         ' CheckBox_UnpublicCheckin
         ' 
         CheckBox_UnpublicCheckin.AutoSize = True
-        CheckBox_UnpublicCheckin.Location = New Point(12, 42)
+        CheckBox_UnpublicCheckin.Location = New Point(17, 70)
+        CheckBox_UnpublicCheckin.Margin = New Padding(4, 5, 4, 5)
         CheckBox_UnpublicCheckin.Name = "CheckBox_UnpublicCheckin"
-        CheckBox_UnpublicCheckin.Size = New Size(212, 19)
+        CheckBox_UnpublicCheckin.Size = New Size(369, 29)
         CheckBox_UnpublicCheckin.TabIndex = 28
-        CheckBox_UnpublicCheckin.Text = "差し替え、チェックイン後は非公開にする"
+        CheckBox_UnpublicCheckin.Text = "差し替え、チェックイン時は非公開を規定にする"
         CheckBox_UnpublicCheckin.UseVisualStyleBackColor = True
         ' 
         ' CheckBox_UploadDefault
         ' 
         CheckBox_UploadDefault.AutoSize = True
-        CheckBox_UploadDefault.Location = New Point(12, 18)
+        CheckBox_UploadDefault.Location = New Point(17, 30)
+        CheckBox_UploadDefault.Margin = New Padding(4, 5, 4, 5)
         CheckBox_UploadDefault.Name = "CheckBox_UploadDefault"
-        CheckBox_UploadDefault.Size = New Size(151, 19)
+        CheckBox_UploadDefault.Size = New Size(295, 29)
         CheckBox_UploadDefault.TabIndex = 27
-        CheckBox_UploadDefault.Text = "アップロードは非公開にする"
+        CheckBox_UploadDefault.Text = "アップロード時は非公開を既定にする"
         CheckBox_UploadDefault.UseVisualStyleBackColor = True
         ' 
         ' Label_notice
         ' 
-        Label_notice.Location = New Point(14, 531)
+        Label_notice.Location = New Point(16, 686)
+        Label_notice.Margin = New Padding(4, 0, 4, 0)
         Label_notice.Name = "Label_notice"
-        Label_notice.Size = New Size(289, 23)
+        Label_notice.Size = New Size(537, 38)
         Label_notice.TabIndex = 13
         Label_notice.Text = "none"
+        ' 
+        ' TabControl1
+        ' 
+        TabControl1.Controls.Add(TabPage1)
+        TabControl1.Controls.Add(TabPage3)
+        TabControl1.Controls.Add(Tab_mail)
+        TabControl1.Controls.Add(TabPage2)
+        TabControl1.Location = New Point(12, 136)
+        TabControl1.Name = "TabControl1"
+        TabControl1.SelectedIndex = 0
+        TabControl1.Size = New Size(545, 547)
+        TabControl1.TabIndex = 33
+        ' 
+        ' Tab_mail
+        ' 
+        Tab_mail.Controls.Add(CheckBox_メール通知)
+        Tab_mail.Controls.Add(GroupBox_MailServer)
+        Tab_mail.Location = New Point(4, 34)
+        Tab_mail.Name = "Tab_mail"
+        Tab_mail.Padding = New Padding(3)
+        Tab_mail.Size = New Size(537, 509)
+        Tab_mail.TabIndex = 0
+        Tab_mail.Text = "メール通知"
+        Tab_mail.UseVisualStyleBackColor = True
+        ' 
+        ' TabPage2
+        ' 
+        TabPage2.Controls.Add(GroupBox_KOKAI)
+        TabPage2.Controls.Add(GroupBox_Upload)
+        TabPage2.Location = New Point(4, 34)
+        TabPage2.Name = "TabPage2"
+        TabPage2.Padding = New Padding(3)
+        TabPage2.Size = New Size(537, 509)
+        TabPage2.TabIndex = 1
+        TabPage2.Text = "アップロード・公開"
+        TabPage2.UseVisualStyleBackColor = True
+        ' 
+        ' TabPage1
+        ' 
+        TabPage1.Controls.Add(Label_Domain)
+        TabPage1.Controls.Add(TextBox_Domain)
+        TabPage1.Controls.Add(GroupBox_APIparams)
+        TabPage1.Controls.Add(Label_MaxUser)
+        TabPage1.Controls.Add(TextBox_MaxUsers)
+        TabPage1.Location = New Point(4, 34)
+        TabPage1.Name = "TabPage1"
+        TabPage1.Padding = New Padding(3)
+        TabPage1.Size = New Size(537, 509)
+        TabPage1.TabIndex = 2
+        TabPage1.Text = "システム情報・API"
+        TabPage1.UseVisualStyleBackColor = True
+        ' 
+        ' TabPage3
+        ' 
+        TabPage3.Controls.Add(GroupBox_PDF)
+        TabPage3.Controls.Add(GroupBox_General)
+        TabPage3.Controls.Add(GroupBox_DWG)
+        TabPage3.Location = New Point(4, 34)
+        TabPage3.Name = "TabPage3"
+        TabPage3.Padding = New Padding(3)
+        TabPage3.Size = New Size(537, 509)
+        TabPage3.TabIndex = 3
+        TabPage3.Text = "操作"
+        TabPage3.UseVisualStyleBackColor = True
         ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(10F, 25F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(719, 563)
+        ClientSize = New Size(567, 903)
+        Controls.Add(TabControl1)
         Controls.Add(Label_notice)
-        Controls.Add(GroupBox_KOKAI)
         Controls.Add(CheckBox_Pipeman)
-        Controls.Add(GroupBox_DWG)
-        Controls.Add(GroupBox_APIparams)
-        Controls.Add(GroupBox_MailServer)
-        Controls.Add(GroupBox_General)
         Controls.Add(GroupBox_Progress)
-        Controls.Add(CheckBox_メール通知)
-        Controls.Add(TextBox_MaxUsers)
-        Controls.Add(TextBox_Domain)
         Controls.Add(ComboBox_ExecMode)
-        Controls.Add(Label_MaxUser)
         Controls.Add(Button_Exec)
         Controls.Add(Label4)
-        Controls.Add(Label_Domain)
-        Controls.Add(GroupBox_Upload)
-        Controls.Add(GroupBox_PDF)
         Controls.Add(GroupBox_ninsyo)
         FormBorderStyle = FormBorderStyle.Fixed3D
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         ImeMode = ImeMode.Off
+        Margin = New Padding(4, 5, 4, 5)
         MaximizeBox = False
         MdiChildrenMinimizedAnchorBottom = False
         MinimizeBox = False
@@ -754,6 +891,13 @@ Partial Class Form_TeCASettings
         GroupBox_DWG.PerformLayout()
         GroupBox_KOKAI.ResumeLayout(False)
         GroupBox_KOKAI.PerformLayout()
+        TabControl1.ResumeLayout(False)
+        Tab_mail.ResumeLayout(False)
+        Tab_mail.PerformLayout()
+        TabPage2.ResumeLayout(False)
+        TabPage1.ResumeLayout(False)
+        TabPage1.PerformLayout()
+        TabPage3.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -825,4 +969,9 @@ Partial Class Form_TeCASettings
     Friend WithEvents CheckBox_UploadDefault As CheckBox
     Friend WithEvents CheckBox_PublicateWorkflowOK As CheckBox
     Friend WithEvents Label_notice As Label
+    Friend WithEvents TabControl1 As TabControl
+    Friend WithEvents Tab_mail As TabPage
+    Friend WithEvents TabPage2 As TabPage
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents TabPage3 As TabPage
 End Class
