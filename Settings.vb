@@ -3,7 +3,7 @@
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
-
+    Public Const IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
 
     Public Class QUOTA
         Public Const ColonToCamma As Integer = 0  '      キーワード: 置換対象値,   【コロン～カンマ間が置換対象】
@@ -13,9 +13,7 @@
         Public Const beansXML As Integer = 4    ' [: 60 *]のよーにコロンで始まり、アスタで終わる文字
         Public Const WebXLM As Integer = 5    ' [>30<]   のよーに不等号で囲まれた文字
         Public Const WholeLine As Integer = 6    '       "キーワード": 置換対象値
-
     End Class
-
 
     Public Class GrabModeLineData
         Public Const isOFF As String = "   ""enableHandToolOnLoad"": false,"
@@ -27,9 +25,10 @@
     Public Const DefaultKokai_key As String = "zokusei[IDX_ZOKUSEI.KOKAI]"
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
 
-
 End Class
-
+''' <summary>
+''' トリガーのSQL文を保持するクラス
+''' </summary>
 Public Class TRIGGERS
     Public TRIGGERS_SQL As New Dictionary(Of String, String) From {
         {"WKFL_Trigger", "CREATE TRIGGER trg_FUNC_SET_KOKAI AFTER UPDATE ON t_workflow FOR EACH ROW WHEN (NEW. kanryo_flg = TRUE) EXECUTE FUNCTION FUNC_SET_KOKAI();"},

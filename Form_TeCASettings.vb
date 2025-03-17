@@ -8,7 +8,6 @@ Imports TeCASettings.TRIGGERS
 Public Class Form_TeCASettings
     Inherits System.Windows.Forms.Form
 
-    Dim IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
     Dim ClientID = IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
     Dim SecretID = IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
 
@@ -1049,7 +1048,13 @@ Public Class Form_TeCASettings
 
     End Sub
 
-
+    ''' <summary>
+    ''' TeCAのサービスを起動/停止する
+    ''' </summary>
+    ''' <param name="exec_mode">START/STOP</param>
+    ''' <param name="beginProgress">プログレスバー開始％位置</param>
+    ''' <param name="endProgress">プログレスバー終了％位置</param>
+    ''' <returns></returns>
     Private Function TeCA_Exec(exec_mode As String, beginProgress As Integer, endProgress As Integer) As String
 
         Dim ProgressCurrent As Integer = beginProgress
@@ -1067,7 +1072,6 @@ Public Class Form_TeCASettings
 
         For Each ServiceName As String In ServiceArray
             Dim sc As New ServiceController(ServiceName)
-
 
             ProgressCurrent += ProgressStep
             ProgressBar.Value = ProgressCurrent
@@ -1123,8 +1127,6 @@ Public Class Form_TeCASettings
         ProgressBar.Value = endProgress
 
     End Function
-
-
 
     Private Sub ComboBox_mail_transport_protocol_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox_mail_transport_protocol.SelectedIndexChanged
 
@@ -1385,10 +1387,6 @@ Public Class Form_TeCASettings
         End If
         File.Copy(tmpFOLDER.ToString + "\TeCAInfo.tmp", desktopPath + "\TeCAInfo.txt")
         MessageBox.Show("デスクトップにTeCAinfo.txtを作成しました。")
-
-    End Sub
-
-    Private Sub GroupBox_FileSelector_Enter(sender As Object, e As EventArgs) Handles GroupBox_FileSelector.Enter
 
     End Sub
 End Class

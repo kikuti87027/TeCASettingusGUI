@@ -18,7 +18,7 @@ kikuchi
  </summary>
  <param name="filePath">ファイルパス</param>
  <param name="targetKey">キー</param>
- <param name="NewValue">更新後の値</param>
+ <param name="NewValue">更新後の値</param>‘
  <returns>置換した個数</returns>
 </member>
 <member name="M:kikuchi.KeyValueParser.FindValue(System.String,System.String)">

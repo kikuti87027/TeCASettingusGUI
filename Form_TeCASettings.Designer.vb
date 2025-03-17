@@ -92,11 +92,12 @@ Partial Class Form_TeCASettings
         TabPage1 = New TabPage()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
+        GroupBox1 = New GroupBox()
+        CheckBox_DestroyPrint = New CheckBox()
         GroupBox_FileSelector = New GroupBox()
         Label17 = New Label()
         ComboBox1 = New ComboBox()
         CheckBox_Wide = New CheckBox()
-        CheckBox_DestroyPrint = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
         GroupBox_ninsyo.SuspendLayout()
@@ -112,6 +113,7 @@ Partial Class Form_TeCASettings
         TabPage1.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
+        GroupBox1.SuspendLayout()
         GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
         TabPage2.SuspendLayout()
@@ -428,11 +430,11 @@ Partial Class Form_TeCASettings
         ' CheckBox_GrabTool
         ' 
         CheckBox_GrabTool.AutoSize = True
-        CheckBox_GrabTool.Location = New Point(7, 6)
+        CheckBox_GrabTool.Location = New Point(6, 22)
         CheckBox_GrabTool.Name = "CheckBox_GrabTool"
-        CheckBox_GrabTool.Size = New Size(201, 19)
+        CheckBox_GrabTool.Size = New Size(191, 19)
         CheckBox_GrabTool.TabIndex = 12
-        CheckBox_GrabTool.Text = "「手のひらツール」を最初から使用する"
+        CheckBox_GrabTool.Text = "「手のひらツール」を使用可能にする"
         CheckBox_GrabTool.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_MailServer
@@ -767,9 +769,8 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage4
         ' 
+        TabPage4.Controls.Add(GroupBox1)
         TabPage4.Controls.Add(GroupBox_FileSelector)
-        TabPage4.Controls.Add(CheckBox_DestroyPrint)
-        TabPage4.Controls.Add(CheckBox_GrabTool)
         TabPage4.Location = New Point(4, 24)
         TabPage4.Name = "TabPage4"
         TabPage4.Padding = New Padding(3)
@@ -777,6 +778,27 @@ Partial Class Form_TeCASettings
         TabPage4.TabIndex = 4
         TabPage4.Text = "画面デザイン"
         TabPage4.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox1
+        ' 
+        GroupBox1.Controls.Add(CheckBox_GrabTool)
+        GroupBox1.Controls.Add(CheckBox_DestroyPrint)
+        GroupBox1.Location = New Point(11, 15)
+        GroupBox1.Name = "GroupBox1"
+        GroupBox1.Size = New Size(354, 78)
+        GroupBox1.TabIndex = 15
+        GroupBox1.TabStop = False
+        GroupBox1.Text = "プレビュー画面"
+        ' 
+        ' CheckBox_DestroyPrint
+        ' 
+        CheckBox_DestroyPrint.AutoSize = True
+        CheckBox_DestroyPrint.Location = New Point(6, 45)
+        CheckBox_DestroyPrint.Name = "CheckBox_DestroyPrint"
+        CheckBox_DestroyPrint.Size = New Size(170, 19)
+        CheckBox_DestroyPrint.TabIndex = 13
+        CheckBox_DestroyPrint.Text = "「右クリックで印刷」を抑止する"
+        CheckBox_DestroyPrint.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_FileSelector
         ' 
@@ -816,16 +838,6 @@ Partial Class Form_TeCASettings
         CheckBox_Wide.TabIndex = 0
         CheckBox_Wide.Text = "ファイル名欄を広くする（すべてのポップアップが横長になります）"
         CheckBox_Wide.UseVisualStyleBackColor = True
-        ' 
-        ' CheckBox_DestroyPrint
-        ' 
-        CheckBox_DestroyPrint.AutoSize = True
-        CheckBox_DestroyPrint.Location = New Point(6, 99)
-        CheckBox_DestroyPrint.Name = "CheckBox_DestroyPrint"
-        CheckBox_DestroyPrint.Size = New Size(204, 19)
-        CheckBox_DestroyPrint.TabIndex = 13
-        CheckBox_DestroyPrint.Text = "プレビュー画面の右クリック印刷を抑止"
-        CheckBox_DestroyPrint.UseVisualStyleBackColor = True
         ' 
         ' Tab_mail
         ' 
@@ -897,7 +909,8 @@ Partial Class Form_TeCASettings
         TabPage1.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
-        TabPage4.PerformLayout()
+        GroupBox1.ResumeLayout(False)
+        GroupBox1.PerformLayout()
         GroupBox_FileSelector.ResumeLayout(False)
         GroupBox_FileSelector.PerformLayout()
         Tab_mail.ResumeLayout(False)
@@ -985,4 +998,5 @@ Partial Class Form_TeCASettings
     Friend WithEvents ComboBox1 As ComboBox
     Friend WithEvents CheckBox_Wide As CheckBox
     Friend WithEvents Label17 As Label
+    Friend WithEvents GroupBox1 As GroupBox
 End Class
