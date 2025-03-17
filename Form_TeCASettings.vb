@@ -49,6 +49,8 @@ Public Class Form_TeCASettings
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
     Dim ProgressValue As Integer = 0
 
+    Dim CSS As New CSS_CMDS
+
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists As Boolean
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -82,10 +84,32 @@ Public Class Form_TeCASettings
             .Items.Add("smtps")
         End With
 
+        With Me.ComboBox_FileSelectLineNum
+            .Items.Add("20")
+            .Items.Add("40")
+            .Items.Add("60")
+        End With
 
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
         Me.Button_DWG.Text = "取出"
+
+        '▼▼▼ファイル選択モーダル  現在の状態をコントロールに格納する
+        '　モーダル行数
+        Dim SelectFileLinesNow As String = KeyValueParser.FindValue(SelectFileJS, "var DEFAULT_DISP_CNT")
+        If {"20", "40", "60"}.Contains(SelectFileLinesNow) Then
+            Me.ComboBox_FileSelectLineNum.SelectedItem = SelectFileLinesNow
+        Else
+            Me.ComboBox_FileSelectLineNum.SelectedIndex = 0
+        End If
+
+        'モーダル幅
+        If SelectFileCSS.Contains(CSS.SelextFileDIC("CSS_Normal")) Then
+            CheckBox_Wide.Checked = False
+        Else
+            CheckBox_Wide.Checked = True
+        End If
+
 
         'プログレスバー初期化
         Me.GroupBox_Progress.Visible = False
@@ -510,27 +534,48 @@ Public Class Form_TeCASettings
 
                 Next
 
+                '【select-file.service.js】ファイル選択モーダルの行数更新
+                Label_notice.Text = KeyValueParser.ReplaceValue(SelectFileJS, "var DEFAULT_DISP_CNT", ComboBox_FileSelectLineNum.SelectedItem)
+
+                '【bootstrap.min.css】ファイル選択モーダルの横幅拡縮
+                If CheckBox_Wide.Checked Then
+                    ReplaceTextInFile(CSS.SelextFileDIC("CSS_Normal"), CSS.SelextFileDIC("CSS_Wide"), SelectFileCSS)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML1_Normal"), CSS.SelextFileDIC("HTML1_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML2_Normal"), CSS.SelextFileDIC("HTML2_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML3_Normal"), CSS.SelextFileDIC("HTML3_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("JS1_Normal"), CSS.SelextFileDIC("JS1_Wide"), SelectFileJS)
+                    ReplaceTextInFile(CSS.SelextFileDIC("JS2_Normal"), CSS.SelextFileDIC("JS2_Wide"), SelectFileJS)
+                Else
+                    ReplaceTextInFile(CSS.SelextFileDIC("CSS_Wide"), CSS.SelextFileDIC("CSS_Normal"), SelectFileCSS)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML1_Wide"), CSS.SelextFileDIC("HTML1_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML2_Wide"), CSS.SelextFileDIC("HTML2_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("HTML3_Wide"), CSS.SelextFileDIC("HTML3_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(CSS.SelextFileDIC("JS1_Wide"), CSS.SelextFileDIC("JS1_Normal"), SelectFileJS)
+                    ReplaceTextInFile(CSS.SelextFileDIC("JS2_Wide"), CSS.SelextFileDIC("JS2_Normal"), SelectFileJS)
+                End If
+
                 '【pdf.js】手のひらツールの更新
                 '　　　pdf.js行抽出データのtrue/Falseが正しい書式かどうか
                 Dim GrabModeBool As Boolean
                 Dim boolCheck As Boolean = Boolean.TryParse(GrabModeLine, GrabModeBool)
                 If boolCheck = False Then
-                    Label_notice.Text = "System File of Grab Mode may Corrupted."
+                    Label_notice.Text = "System File Of Grab Mode may Corrupted."
                     Exit Sub
                 End If
+
 
                 'CheckBoxと行抽出true/falseが異なってるなら書き換える
                 '　　　　　(一致するなら書き換える必要はなし）
                 If GrabModeBool <> CheckBox_GrabTool.Checked Then
                     Select Case CheckBox_GrabTool.Checked
                         Case True
-                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " false,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
+                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
                             End If
                         Case False
-                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " true,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
+                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
@@ -556,8 +601,8 @@ Public Class Form_TeCASettings
                                     "password",
                                     "from.name",
                                     "charset"}
-                    Dim mailSMTPS_add() As String = {"mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory",
-                                                     "mail.smtp.socketFactory.fallback=false"}
+                    Dim mailSMTPS_add() As String = {"mail.smtp.socketFactory.Class=javax.net.ssl.SSLSocketFactory",
+                                                     "mail.smtp.socketFactory.fallback=False"}
                     Dim mailTIMEOUT() As String = {"mail.smtp.timeout",
                                                    "mail.smtp.writetimeout"}
 
@@ -1002,6 +1047,8 @@ Public Class Form_TeCASettings
         GroupBox_DWG.Enabled = ONorOFF
         ComboBox_ExecMode.Enabled = ONorOFF
         GroupBox_KOKAI.Enabled = ONorOFF
+        GroupBox_FileSelector.Enabled = ONorOFF
+        GroupBox_PreViewWindow.Enabled = ONorOFF
 
         If (SupervisorMode = True) Then
             TextBox_Domain.Enabled = ONorOFF
@@ -1389,4 +1436,5 @@ Public Class Form_TeCASettings
         MessageBox.Show("デスクトップにTeCAinfo.txtを作成しました。")
 
     End Sub
+
 End Class

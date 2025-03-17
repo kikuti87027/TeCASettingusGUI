@@ -92,11 +92,11 @@ Partial Class Form_TeCASettings
         TabPage1 = New TabPage()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
-        GroupBox1 = New GroupBox()
+        GroupBox_PreViewWindow = New GroupBox()
         CheckBox_DestroyPrint = New CheckBox()
         GroupBox_FileSelector = New GroupBox()
         Label17 = New Label()
-        ComboBox1 = New ComboBox()
+        ComboBox_FileSelectLineNum = New ComboBox()
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
@@ -113,7 +113,7 @@ Partial Class Form_TeCASettings
         TabPage1.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
-        GroupBox1.SuspendLayout()
+        GroupBox_PreViewWindow.SuspendLayout()
         GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
         TabPage2.SuspendLayout()
@@ -769,7 +769,7 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage4
         ' 
-        TabPage4.Controls.Add(GroupBox1)
+        TabPage4.Controls.Add(GroupBox_PreViewWindow)
         TabPage4.Controls.Add(GroupBox_FileSelector)
         TabPage4.Location = New Point(4, 24)
         TabPage4.Name = "TabPage4"
@@ -779,16 +779,16 @@ Partial Class Form_TeCASettings
         TabPage4.Text = "画面デザイン"
         TabPage4.UseVisualStyleBackColor = True
         ' 
-        ' GroupBox1
+        ' GroupBox_PreViewWindow
         ' 
-        GroupBox1.Controls.Add(CheckBox_GrabTool)
-        GroupBox1.Controls.Add(CheckBox_DestroyPrint)
-        GroupBox1.Location = New Point(11, 15)
-        GroupBox1.Name = "GroupBox1"
-        GroupBox1.Size = New Size(354, 78)
-        GroupBox1.TabIndex = 15
-        GroupBox1.TabStop = False
-        GroupBox1.Text = "プレビュー画面"
+        GroupBox_PreViewWindow.Controls.Add(CheckBox_GrabTool)
+        GroupBox_PreViewWindow.Controls.Add(CheckBox_DestroyPrint)
+        GroupBox_PreViewWindow.Location = New Point(11, 15)
+        GroupBox_PreViewWindow.Name = "GroupBox_PreViewWindow"
+        GroupBox_PreViewWindow.Size = New Size(354, 78)
+        GroupBox_PreViewWindow.TabIndex = 15
+        GroupBox_PreViewWindow.TabStop = False
+        GroupBox_PreViewWindow.Text = "プレビュー画面"
         ' 
         ' CheckBox_DestroyPrint
         ' 
@@ -803,7 +803,7 @@ Partial Class Form_TeCASettings
         ' GroupBox_FileSelector
         ' 
         GroupBox_FileSelector.Controls.Add(Label17)
-        GroupBox_FileSelector.Controls.Add(ComboBox1)
+        GroupBox_FileSelector.Controls.Add(ComboBox_FileSelectLineNum)
         GroupBox_FileSelector.Controls.Add(CheckBox_Wide)
         GroupBox_FileSelector.Location = New Point(7, 134)
         GroupBox_FileSelector.Name = "GroupBox_FileSelector"
@@ -821,13 +821,13 @@ Partial Class Form_TeCASettings
         Label17.TabIndex = 14
         Label17.Text = "リスト行数"
         ' 
-        ' ComboBox1
+        ' ComboBox_FileSelectLineNum
         ' 
-        ComboBox1.FormattingEnabled = True
-        ComboBox1.Location = New Point(69, 22)
-        ComboBox1.Name = "ComboBox1"
-        ComboBox1.Size = New Size(58, 23)
-        ComboBox1.TabIndex = 1
+        ComboBox_FileSelectLineNum.FormattingEnabled = True
+        ComboBox_FileSelectLineNum.Location = New Point(69, 22)
+        ComboBox_FileSelectLineNum.Name = "ComboBox_FileSelectLineNum"
+        ComboBox_FileSelectLineNum.Size = New Size(58, 23)
+        ComboBox_FileSelectLineNum.TabIndex = 1
         ' 
         ' CheckBox_Wide
         ' 
@@ -909,8 +909,8 @@ Partial Class Form_TeCASettings
         TabPage1.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
-        GroupBox1.ResumeLayout(False)
-        GroupBox1.PerformLayout()
+        GroupBox_PreViewWindow.ResumeLayout(False)
+        GroupBox_PreViewWindow.PerformLayout()
         GroupBox_FileSelector.ResumeLayout(False)
         GroupBox_FileSelector.PerformLayout()
         Tab_mail.ResumeLayout(False)
@@ -995,8 +995,8 @@ Partial Class Form_TeCASettings
     Friend WithEvents TabPage4 As TabPage
     Friend WithEvents CheckBox_DestroyPrint As CheckBox
     Friend WithEvents GroupBox_FileSelector As GroupBox
-    Friend WithEvents ComboBox1 As ComboBox
+    Friend WithEvents ComboBox_FileSelectLineNum As ComboBox
     Friend WithEvents CheckBox_Wide As CheckBox
     Friend WithEvents Label17 As Label
-    Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents GroupBox_PreViewWindow As GroupBox
 End Class

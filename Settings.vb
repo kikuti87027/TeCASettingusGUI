@@ -4,6 +4,10 @@
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
     Public Const IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
+    Public Const SelectFileJS As String = WEB_PATH + "\web\client\app\select-file\select-file.service.js"
+    Public Const SelectFileHTML As String = WEB_PATH + "\web\client\app\select-file\select-file.html"
+    Public Const SelectFileCSS As String = WEB_PATH + "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
+
 
     Public Class QUOTA
         Public Const ColonToCamma As Integer = 0  '      キーワード: 置換対象値,   【コロン～カンマ間が置換対象】
@@ -55,7 +59,17 @@ Public Class TRIGGERS
         {"KOKAI_OFF_TriggerDROP", "DROP FUNCTION update_t_file_info_kokai_flg() CASCADE;"}
          }
 
-    Public Shared Function ReplaceTextInFile(OLDString As String, NEWString As String, filePath As String) As Integer
+    Public Class CSS_CMDS
+        Public SelextFileDIC As New Dictionary(Of String, String) From {
+        {"HTML1_Normal", "<div class=""modal-header"">"}, {"HTML1_Wide", "<div class=""modal-header modal-lg"">"},
+        {"HTML2_Normal", "<div class=""modal-body select-file-modal"">"}, {"HTML2_Wide", "<div class=""modal-lg select-file-modal"">"},
+        {"HTML3_Normal", "<div class=""modal-footer"">"}, {"HTML3_Wide", "<div class=""modal-footer modal-lg"" >"},
+        {"JS1_Normal", "{ name: ""id"", displayName: $scope.gridTitle.id, width: '110', cellClass: 'text-right' }"}, {"JS1_Wide", "{ name: ""id"", displayName: $scope.gridTitle.id, width: '70', cellClass: 'text-right' }"},
+        {"JS2_Normal", "{ name: String(Const.KIHON_ZOKUSEI_SBT_FILENAME), displayName: $scope.gridTitle.fileName, width: '240'}"}, {"JS2_Wide", "{ name: String(Const.KIHON_ZOKUSEI_SBT_FILENAME), displayName: $scope.gridTitle.fileName, width: '550'}"},
+        {"CSS_Normal", "{.modal-dialog{width:600px;margin:30px auto}"}, {"CSS_Wide", "{.modal-dialog{width:900px;margin:30px auto}"}
+    }
+    End Class
+    Public Shared Function ReplaceTextInFile(OLDString As String, NEWString As String, filePath As String, Optional FindOnly As Boolean = False) As Integer
         Try
             ' ファイルの内容を読み込む
             Dim content As String = System.IO.File.ReadAllText(filePath)
@@ -63,12 +77,12 @@ Public Class TRIGGERS
             ' OLDString の出現回数をカウント
             Dim matchCount As Integer = (content.Length - content.Replace(OLDString, "").Length) \ OLDString.Length
 
-            ' 置換処理
-            Dim newContent As String = content.Replace(OLDString, NEWString)
-
-            ' 変更がある場合のみファイルを書き換え
-            If matchCount > 0 Then
-                System.IO.File.WriteAllText(filePath, newContent)
+            ' FilnOnlyでないときは置換処理
+            If Not FindOnly Then
+                Dim newContent As String = content.Replace(OLDString, NEWString)
+                If matchCount > 0 Then
+                    System.IO.File.WriteAllText(filePath, newContent)
+                End If
             End If
 
             ' 置換した回数を返す
