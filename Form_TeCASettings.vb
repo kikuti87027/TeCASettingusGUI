@@ -49,7 +49,8 @@ Public Class Form_TeCASettings
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
     Dim ProgressValue As Integer = 0
 
-    Dim CSS As New CSS_CMDS
+    Dim CSS As New SwitchWords
+    Dim pdfJS_CurrentViewScale As String
 
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists As Boolean
 
@@ -60,6 +61,8 @@ Public Class Form_TeCASettings
         Me.ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_mail_transport_protocol.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_PreViewScale.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
 
         With Me.ComboBox_LOG_LEVEL           '項目を追加する
             .Items.Add("INFO")
@@ -90,6 +93,14 @@ Public Class Form_TeCASettings
             .Items.Add("60")
         End With
 
+        With ComboBox_PreViewScale
+            .Items.Add("自動ズーム")
+            .Items.Add("実際のサイズ")
+            .Items.Add("高さに合わせる")
+            .Items.Add("幅に合わせる")
+            .Items.Add("ページのサイズに合わせる")
+        End With
+
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
         Me.Button_DWG.Text = "取出"
@@ -110,6 +121,16 @@ Public Class Form_TeCASettings
             CheckBox_Wide.Checked = True
         End If
 
+        '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
+
+        For Each DetectLine As KeyValuePair(Of String, String) In CSS.pdfJS
+            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
+                Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
+                pdfJS_CurrentViewScale = DetectLine.Value.ToString
+            Else
+                Me.ComboBox_PreViewScale.SelectedIndex = 0
+            End If
+        Next
 
         'プログレスバー初期化
         Me.GroupBox_Progress.Visible = False
@@ -153,7 +174,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
 
-        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, DT_option)
+            db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, DT_option)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -553,6 +574,17 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(CSS.SelextFileDIC("JS1_Wide"), CSS.SelextFileDIC("JS1_Normal"), SelectFileJS)
                     ReplaceTextInFile(CSS.SelextFileDIC("JS2_Wide"), CSS.SelextFileDIC("JS2_Normal"), SelectFileJS)
                 End If
+
+                '【pdf.js】プレビュー表示拡大率コンボからの更新
+                If Not String.IsNullOrEmpty(pdfJS_CurrentViewScale) Then
+                    Label_notice.Text = Misc.ExchangeString(SelectFileJS, pdfJS_CurrentViewScale, CSS.pdfJS(ComboBox_PreViewScale.SelectedItem))
+                Else
+                    Label_notice.Text = "プレビュー表示拡大率を更新できません"
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
+
+
 
                 '【pdf.js】手のひらツールの更新
                 '　　　pdf.js行抽出データのtrue/Falseが正しい書式かどうか

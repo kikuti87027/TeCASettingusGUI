@@ -7,6 +7,7 @@
     Public Const SelectFileJS As String = WEB_PATH + "\web\client\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = WEB_PATH + "\web\client\app\select-file\select-file.html"
     Public Const SelectFileCSS As String = WEB_PATH + "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
+    Public Const preViewJS As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
 
 
     Public Class QUOTA
@@ -59,7 +60,7 @@ Public Class TRIGGERS
         {"KOKAI_OFF_TriggerDROP", "DROP FUNCTION update_t_file_info_kokai_flg() CASCADE;"}
          }
 
-    Public Class CSS_CMDS
+    Public Class SwitchWords
         Public SelextFileDIC As New Dictionary(Of String, String) From {
         {"HTML1_Normal", "<div class=""modal-header"">"}, {"HTML1_Wide", "<div class=""modal-header modal-lg"">"},
         {"HTML2_Normal", "<div class=""modal-body select-file-modal"">"}, {"HTML2_Wide", "<div class=""modal-lg select-file-modal"">"},
@@ -67,6 +68,13 @@ Public Class TRIGGERS
         {"JS1_Normal", "{ name: ""id"", displayName: $scope.gridTitle.id, width: '110', cellClass: 'text-right' }"}, {"JS1_Wide", "{ name: ""id"", displayName: $scope.gridTitle.id, width: '70', cellClass: 'text-right' }"},
         {"JS2_Normal", "{ name: String(Const.KIHON_ZOKUSEI_SBT_FILENAME), displayName: $scope.gridTitle.fileName, width: '240'}"}, {"JS2_Wide", "{ name: String(Const.KIHON_ZOKUSEI_SBT_FILENAME), displayName: $scope.gridTitle.fileName, width: '550'}"},
         {"CSS_Normal", "{.modal-dialog{width:600px;margin:30px auto}"}, {"CSS_Wide", "{.modal-dialog{width:900px;margin:30px auto}"}
+    }
+        Public pdfJS As New Dictionary(Of String, String) From {
+        {"自動ズーム", "var DEFAULT_SCALE_VALUE = 'auto';"},
+        {"実際のサイズ", "var DEFAULT_SCALE_VALUE = 'page-actual';"},
+        {"高さに合わせる", "var DEFAULT_SCALE_VALUE = 'page-height';"},
+        {"幅に合わせる", "var DEFAULT_SCALE_VALUE = 'page-width';"},
+        {"ページのサイズに合わせる", "var DEFAULT_SCALE_VALUE = 'page-fit';"}
     }
     End Class
     Public Shared Function ReplaceTextInFile(OLDString As String, NEWString As String, filePath As String, Optional FindOnly As Boolean = False) As Integer

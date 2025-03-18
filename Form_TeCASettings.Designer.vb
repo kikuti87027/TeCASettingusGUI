@@ -93,6 +93,8 @@ Partial Class Form_TeCASettings
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
         GroupBox_PreViewWindow = New GroupBox()
+        Label18 = New Label()
+        ComboBox_PreViewScale = New ComboBox()
         CheckBox_DestroyPrint = New CheckBox()
         GroupBox_FileSelector = New GroupBox()
         Label17 = New Label()
@@ -781,14 +783,33 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_PreViewWindow
         ' 
+        GroupBox_PreViewWindow.Controls.Add(Label18)
+        GroupBox_PreViewWindow.Controls.Add(ComboBox_PreViewScale)
         GroupBox_PreViewWindow.Controls.Add(CheckBox_GrabTool)
         GroupBox_PreViewWindow.Controls.Add(CheckBox_DestroyPrint)
         GroupBox_PreViewWindow.Location = New Point(11, 15)
         GroupBox_PreViewWindow.Name = "GroupBox_PreViewWindow"
-        GroupBox_PreViewWindow.Size = New Size(354, 78)
+        GroupBox_PreViewWindow.Size = New Size(354, 98)
         GroupBox_PreViewWindow.TabIndex = 15
         GroupBox_PreViewWindow.TabStop = False
         GroupBox_PreViewWindow.Text = "プレビュー画面"
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Location = New Point(6, 72)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(67, 15)
+        Label18.TabIndex = 15
+        Label18.Text = "表示拡大率"
+        ' 
+        ' ComboBox_PreViewScale
+        ' 
+        ComboBox_PreViewScale.FormattingEnabled = True
+        ComboBox_PreViewScale.Location = New Point(79, 69)
+        ComboBox_PreViewScale.Name = "ComboBox_PreViewScale"
+        ComboBox_PreViewScale.Size = New Size(141, 23)
+        ComboBox_PreViewScale.TabIndex = 14
         ' 
         ' CheckBox_DestroyPrint
         ' 
@@ -999,4 +1020,6 @@ Partial Class Form_TeCASettings
     Friend WithEvents CheckBox_Wide As CheckBox
     Friend WithEvents Label17 As Label
     Friend WithEvents GroupBox_PreViewWindow As GroupBox
+    Friend WithEvents Label18 As Label
+    Friend WithEvents ComboBox_PreViewScale As ComboBox
 End Class
