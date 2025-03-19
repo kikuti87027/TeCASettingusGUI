@@ -11,6 +11,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		LocalTest|Any CPU = LocalTest|Any CPU
+		LocalTest|x64 = LocalTest|x64
 		NewRelease|Any CPU = NewRelease|Any CPU
 		NewRelease|x64 = NewRelease|x64
 		NewRelease2|Any CPU = NewRelease2|Any CPU
@@ -23,10 +25,14 @@ Global
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.LocalTest|Any CPU.ActiveCfg = LocalTest|Any CPU
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.LocalTest|Any CPU.Build.0 = LocalTest|Any CPU
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.LocalTest|x64.ActiveCfg = LocalTest|x64
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.LocalTest|x64.Build.0 = LocalTest|x64
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|Any CPU.ActiveCfg = NewRelease|Any CPU
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|Any CPU.Build.0 = NewRelease|Any CPU
-		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|x64.ActiveCfg = NewRelease|Any CPU
-		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|x64.Build.0 = NewRelease|Any CPU
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|x64.ActiveCfg = Release|x64
+		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease|x64.Build.0 = Release|x64
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease2|Any CPU.ActiveCfg = NewRelease2|Any CPU
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease2|x64.ActiveCfg = NewRelease2|x64
 		{CA30A627-81AC-40F4-8F78-DCC0FBC8EAE2}.NewRelease2|x64.Build.0 = NewRelease2|x64
@@ -37,6 +43,10 @@ Global
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.Debug|x64.Build.0 = Debug|Any CPU
+		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.LocalTest|Any CPU.ActiveCfg = LocalTest|Any CPU
+		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.LocalTest|Any CPU.Build.0 = LocalTest|Any CPU
+		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.LocalTest|x64.ActiveCfg = LocalTest|Any CPU
+		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.LocalTest|x64.Build.0 = LocalTest|Any CPU
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.NewRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.NewRelease|Any CPU.Build.0 = Release|Any CPU
 		{DD3DA377-45E6-4B04-9085-E4EB4EE8CAB0}.NewRelease|x64.ActiveCfg = Release|Any CPU

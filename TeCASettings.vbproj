@@ -18,7 +18,7 @@
     <Product>TeCAシステム設定ツール</Product>
     <AssemblyVersion>2.80.0</AssemblyVersion>
     <FileVersion>2.80.0</FileVersion>
-    <Configurations>Debug;Release;NewRelease;NewRelease2</Configurations>
+    <Configurations>Debug;Release;NewRelease;NewRelease2;LocalTest</Configurations>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
@@ -28,12 +28,14 @@
     <PlatformTarget>x64</PlatformTarget>
     <DefineDebug>False</DefineDebug>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <DefineDebug>False</DefineDebug>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NewRelease2|AnyCPU'">
@@ -41,6 +43,7 @@
     <Optimize>True</Optimize>
     <DefineDebug>True</DefineDebug>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NewRelease2|x64'">
@@ -48,27 +51,48 @@
     <Optimize>True</Optimize>
     <DefineDebug>True</DefineDebug>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
     <Optimize>False</Optimize>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LocalTest|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>False</Optimize>
+    <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
+    <DefineDebug>False</DefineDebug>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <Optimize>False</Optimize>
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LocalTest|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>False</Optimize>
+    <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
+    <DefineDebug>False</DefineDebug>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NewRelease|AnyCPU'">
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='NewRelease|x64'">
     <OutputPath>$(OutputPath)$(TargetFramework.ToLowerInvariant())\</OutputPath>
+    <DefineConstants>LOCALTEST</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

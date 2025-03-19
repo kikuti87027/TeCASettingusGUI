@@ -8,102 +8,17 @@ Imports TeCASettings.TRIGGERS
 Public Class Form_TeCASettings
     Inherits System.Windows.Forms.Form
 
-    Dim ClientID = IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
-    Dim SecretID = IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
-
-    Dim Scrollpath As String = WEB_PATH + "\web\client\app\app.js"
-    Dim vListScroll = IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
-    Dim vScrollArray() As String = {"EXCESS_ROWS_FILE_LIST",
-                                    "EXCESS_ROWS_WORKFLOW_LIST",
-                                    "EXCESS_ROWS_SHINSEI_FILE_LIST",
-                                    "EXCESS_ROWS_UPLOAD_FILE_LIST",
-                                    "EXCESS_ROWS_SEARCH_USER_LIST",
-                                    "EXCESS_ROWS_SELECT_USER_LIST",
-                                    "EXCESS_ROWS_PDF_PASSWORD_KAKUNIN_FILE_LIST"}
-
-    Dim GrabModePath As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
-    Dim GrabModeLine As String = IDSearch(GrabModePath, GrabModeLineData.keyword, QUOTA.ColonToCamma)
-
-    Dim mailPropPath As String = API_PATH + "\" + Tomcat_PATH + "\webapps\api#teca\WEB-INF\classes\mail.properties"
-    Dim mailPropArray() As String = {"mail.smtp.host",
-                                    "mail.transport.protocol",
-                                    "mail.smtp.port",
-                                    "mail.smtp.connectiontimeout",
-                                    "mail.smtp.timeout",
-                                    "mail.smtp.writetimeout",
-                                    "mail.smtp.starttls.enable",
-                                    "mail.smtp.auth",
-                                    "user",
-                                    "password",
-                                    "from.name"}
-
-    Dim TOUTArray As String(,) = {
-                                     {API_PATH + "\" + Tomcat_PATH + "\conf\web.xml", "<session-timeout>", QUOTA.WebXLM},
-                                     {WEB_PATH + "\web\server\config\environment\production.js", "sessionTimeout:", QUOTA.prodJS},
-                                     {WEB_PATH + "\web\server\config\environment\development.js", "sessionTimeout:", QUOTA.prodJS},
-                                     {API_PATH + "\" + Tomcat_PATH + "\webapps\api#teca\WEB-INF\beans.xml", "refreshTokenLifetime", QUOTA.beansXML}
-                                     }
-
     Dim CurrentPassword As String  '旧パスワード保管用
-
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
-    Dim ProgressValue As Integer = 0
-
     Dim CSS As New SwitchWords
-    Dim pdfJS_CurrentViewScale As String
-
+    Dim pdfJS_CurrentViewScale As String　'現在のプレビュー表示拡大率（編集前の退避）
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists As Boolean
+    Dim ProgressValue As Integer = 0
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'コンボ初期化
-        Me.ComboBox_LOG_LEVEL.DropDownStyle = ComboBoxStyle.DropDownList         '編集不可にする
-        Me.ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
-        Me.ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
-        Me.ComboBox_mail_transport_protocol.DropDownStyle = ComboBoxStyle.DropDownList
-        Me.ComboBox_PreViewScale.DropDownStyle = ComboBoxStyle.DropDownList
-        Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
-
-        With Me.ComboBox_LOG_LEVEL           '項目を追加する
-            .Items.Add("INFO")
-            .Items.Add("DEBUG")
-        End With
-
-        With Me.ComboBox_ExecMode           '項目を追加する
-            .Items.Add("変更せず再起動")
-            .Items.Add("変更して再起動")
-            .Items.Add("TeCAを停止する")
-            .Items.Add("TeCAを起動する")
-        End With
-
-        With Me.ComboBox_vScroll           '項目を追加する
-            .Items.Add("100")
-            .Items.Add("300")
-            .Items.Add("500")
-        End With
-
-        With Me.ComboBox_mail_transport_protocol           '項目を追加する
-            .Items.Add("smtp")
-            .Items.Add("smtps")
-        End With
-
-        With Me.ComboBox_FileSelectLineNum
-            .Items.Add("20")
-            .Items.Add("40")
-            .Items.Add("60")
-        End With
-
-        With ComboBox_PreViewScale
-            .Items.Add("自動ズーム")
-            .Items.Add("実際のサイズ")
-            .Items.Add("高さに合わせる")
-            .Items.Add("幅に合わせる")
-            .Items.Add("ページのサイズに合わせる")
-        End With
-
-        Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
-        Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
-        Me.Button_DWG.Text = "取出"
+        'コンボボックス初期化(初期項目投入と編集ロックON
+        ComboBox_initialize()
 
         '▼▼▼ファイル選択モーダル  現在の状態をコントロールに格納する
         '　モーダル行数
@@ -122,11 +37,11 @@ Public Class Form_TeCASettings
         End If
 
         '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
-
         For Each DetectLine As KeyValuePair(Of String, String) In CSS.pdfJS
             If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
                 Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
                 pdfJS_CurrentViewScale = DetectLine.Value.ToString
+                Exit For
             Else
                 Me.ComboBox_PreViewScale.SelectedIndex = 0
             End If
@@ -174,7 +89,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
 
-            db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, DT_option)
+        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, DT_option)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -196,8 +111,6 @@ Public Class Form_TeCASettings
 
         SQLCMD = Nothing
         db1_msg = Nothing
-
-
 
         '▼▼▼TeCA-DB2  値をコントロールに格納する
         '--------------------------------------
@@ -276,9 +189,9 @@ Public Class Form_TeCASettings
         For X As Integer = 0 To TOUTArray.GetLength(1) - 1
 
             If TOUTArray(X, 2) = QUOTA.beansXML Then
-                ResultValue(X) = Val(IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
             Else
-                ResultValue(X) = Val(IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
             End If
 
         Next
@@ -363,18 +276,18 @@ Public Class Form_TeCASettings
             Dim mailCHB As Control() = Me.Controls.Find("CheckBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
 
             If mailTX.Length > 0 Then
-                CType(mailTX(0), TextBox).Text = IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+                CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
                 If (MailCTRL = "password") Then
                     CurrentPassword = CType(mailTX(0), TextBox).Text  '前のパスワードは保管
                 End If
             End If
 
             If mailCB.Length > 0 Then
-                CType(mailCB(0), ComboBox).SelectedItem = IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+                CType(mailCB(0), ComboBox).SelectedItem = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
             End If
 
             If mailCHB.Length > 0 Then
-                If IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
+                If TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
                     CType(mailCHB(0), CheckBox).Checked = True
                 Else
                     CType(mailCHB(0), CheckBox).Checked = False
@@ -537,7 +450,7 @@ Public Class Form_TeCASettings
 
                 '【app.js】スクロールパラメータの更新
                 For Each targetKeyword As String In vScrollArray
-                    If (TextSwap(Scrollpath.ToString, targetKeyword, ComboBox_vScroll.SelectedItem.ToString, QUOTA.ColonToCamma)) = "Error" Then
+                    If (TXTFunc.TextSwap(Scrollpath.ToString, targetKeyword, ComboBox_vScroll.SelectedItem.ToString, QUOTA.ColonToCamma)) = "Error" Then
                         Label_notice.Text = "スクロールパラメータ更新エラー"
                         GroupBox_Progress.Visible = False
                         Exit Sub
@@ -547,7 +460,7 @@ Public Class Form_TeCASettings
                 '【production.js】ログインタイムアウトの更新
 
                 For X As Integer = 0 To TOUTArray.GetLength(1) - 1
-                    If (TextSwap(TOUTArray(X, 0).ToString, TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, TOUTArray(X, 2))) = "Error" Then
+                    If (TXTFunc.TextSwap(TOUTArray(X, 0).ToString, TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, TOUTArray(X, 2))) = "Error" Then
                         Label_notice.Text = "ログインタイムアウト更新エラー"
                         GroupBox_Progress.Visible = False
                         Exit Sub
@@ -601,13 +514,13 @@ Public Class Form_TeCASettings
                 If GrabModeBool <> CheckBox_GrabTool.Checked Then
                     Select Case CheckBox_GrabTool.Checked
                         Case True
-                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
+                            If (TXTFunc.TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
                             End If
                         Case False
-                            If (TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
+                            If (TXTFunc.TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
@@ -861,8 +774,8 @@ Public Class Form_TeCASettings
         End Select
 
 
-        vListScroll = IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
-        GrabModeLine = IDSearch(GrabModePath, GrabModeLineData.keyword, QUOTA.ColonToCamma)
+        vListScroll = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
+        GrabModeLine = TXTFunc.IDSearch(GrabModePath, GrabModeLineData.keyword, QUOTA.ColonToCamma)
 
         Label_notice.Text = "処理を完了しました。" + TeCA.IsLive().ToString
         Label_notice.Update()
@@ -871,197 +784,8 @@ Public Class Form_TeCASettings
         GroupBox_Progress.Visible = False
 
     End Sub
-    Private Function IDSearch(IDFile As String, keyWord As String, mode As Integer) As String
 
-        '   mode : true   キーワード    '取り出す文字列'   アポォで挟まれたところをとりだす
-        '   mode : 0(  　　キーワード:  取り出す文字列,　　 コロン以後からカンマまでをスペース除去で取り出す
 
-        '読み込む文字コードの指定(ここでは、Shift JIS)
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
-        Dim enc As System.Text.Encoding = System.Text.Encoding.GetEncoding("utf-8")
-
-        '検索の結果を格納
-        Dim result As String = ""
-
-        If (IO.File.Exists(IDFile) = True) Then
-
-            'すべての行を読み込む
-            For Each fff As String In System.IO.File.ReadAllLines(IDFile, enc)
-                '文字を検索
-                If fff.Contains(keyWord) Then
-                    Select Case mode
-                        Case QUOTA.Apostrofy
-                            Dim firstApo As Integer = fff.IndexOf(Chr(39))  '始まりアポォ位置
-                            Dim lasttApo As Integer = fff.LastIndexOf(Chr(39))  '終わりアポォ位置
-
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1)
-                            result = fff
-                        Case QUOTA.ColonToCamma
-                            Dim firstApo As Integer = fff.IndexOf(Chr(58))  '始まりコロ位置
-                            Dim lasttApo As Integer = fff.LastIndexOf(Chr(44))  '終わりカンマ位置
-
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
-                        Case QUOTA.EqualToCR
-                            Dim firstApo As Integer = fff.IndexOf(Chr(61))  '始まり[=]の位置
-                            If (fff.Substring(0, 1) <> "#") Then
-                                fff = fff.Substring(firstApo + 1)
-                                result = fff
-                            End If
-                        Case QUOTA.WebXLM
-                            Dim firstApo As Integer = fff.IndexOf(Chr(62))  '始まり[>]の位置
-                            Dim lasttApo As Integer = fff.LastIndexOf(Chr(60))  '終わり[<]の位置
-
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
-                        Case QUOTA.beansXML
-                            Dim firstApo As Integer = fff.IndexOf("value=") + 6  '始まり[value=]の位置
-                            Dim lasttApo As Integer = fff.LastIndexOf(Chr(34))  '終わり["]の位置
-
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
-                        Case QUOTA.prodJS
-                            Dim firstApo As Integer = fff.IndexOf(Chr(58))  '始まり[:]の位置
-                            Dim lasttApo As Integer = fff.IndexOf(Chr(42))  '終わり[*]の位置
-
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
-
-                        Case QUOTA.WholeLine
-                            result = fff
-
-                        Case Else
-                            result = "Invalid Qota Character"
-
-                    End Select
-                Else
-
-                    '結果に格納
-                End If
-            Next
-            IDSearch = result
-        Else
-            IDSearch = "File not Exist"
-        End If
-
-    End Function
-
-    ' 文字列strのstart文字目からlength文字分をnewstrに置き換えるメソッド
-    Shared Function Replace(ByVal str As String, ByVal start As Integer, ByVal length As Integer, ByVal newstr As String) As String
-        Return String.Concat(str.AsSpan(0, start), newstr, str.AsSpan(start + length))
-    End Function
-
-    ''' <summary>
-    ''' テキストファイルの指定キーワードを指定文字列に置換する     
-    ''' </summary>
-    ''' <param name="IDFile"></param>
-    ''' <param name="keyWord"></param>
-    ''' <param name="afterValue"></param>
-    ''' <param name="mode"></param>
-    ''' <returns></returns>
-    Private Shared Function TextSwap(IDFile As String, keyWord As String, afterValue As String, mode As Integer) As String
-
-        '読み取り属性を強制解除(Ver2.77）
-        Dim fas As FileAttributes = File.GetAttributes(IDFile)
-        If (fas And FileAttributes.ReadOnly) = FileAttributes.ReadOnly Then
-            fas = fas And Not FileAttributes.ReadOnly
-        End If
-        File.SetAttributes(IDFile, fas)
-
-        '読み込む文字コードの指定(UTF-8 Bombなし)
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
-        Dim enc As System.Text.Encoding = System.Text.Encoding.GetEncoding("utf-8")
-
-        Dim SRbuffer As String
-        Dim afterBuffer As String = ""
-
-        If (IO.File.Exists(IDFile) = True) Then
-
-            'すべての行を読み込む
-            Try
-                Using SR As New StreamReader(IDFile, enc)
-                    SRbuffer = SR.ReadToEnd()
-                End Using
-            Catch ex As Exception
-                TextSwap = "TextSwap:" + ex.ToString
-                Exit Function
-            End Try
-
-            '置換
-            If SRbuffer.Contains(keyWord, StringComparison.CurrentCulture) Then
-                Dim StartBuf As String = SRbuffer.Substring(SRbuffer.IndexOf(keyWord))
-
-                Select Case mode
-                    Case QUOTA.Apostrofy                             '  KEYWORD   'TARGETvalue'
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(39)) + SRbuffer.IndexOf(keyWord)  '始まりアポ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(39)) + firstApo  '終わりアポ位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + Chr(39))
-
-                    Case QUOTA.ColonToCamma                             '  KEYWORD :TARGETvalue,
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(58)) + SRbuffer.IndexOf(keyWord)  '始まりコロ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(44)) + firstApo  '終わりカンマ位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, " " + afterValue + Chr(44))
-
-                    Case QUOTA.WebXLM
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(62)) + SRbuffer.IndexOf(keyWord)  '始まりコロ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(60)) + firstApo  '終わりカンマ位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + " " + Chr(60))
-
-                    Case QUOTA.beansXML
-                        Dim firstApo As Integer = StartBuf.IndexOf("value=") + 6  '始まり[value=]の位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(34)) + firstApo  '終わりカンマ位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, (Val(afterValue) * 60).ToString + " " + Chr(34))
-
-                    Case QUOTA.prodJS
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(58)) + SRbuffer.IndexOf(keyWord)    '始まり[:]の位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(42)) + firstApo  '終わり[*]の位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + " " + Chr(42))
-
-                    Case QUOTA.WholeLine
-                        afterBuffer = SRbuffer.Replace(keyWord, afterValue)
-
-                    Case Else
-                        Dim unused As String = "Unsupported Qota Mode:" + mode.ToString
-
-                End Select
-
-            End If
-
-            If afterBuffer.Length < 10 Then
-                TextSwap = "Not Found String"
-                Exit Function
-            End If
-
-            Try
-                Dim SW As New StreamWriter(IDFile, False, enc)
-                SW.Write(afterBuffer)
-                SW.Close()
-
-                SRbuffer = Nothing
-                afterBuffer = Nothing
-
-            Catch ex As Exception
-                TextSwap = "Error"
-                MessageBox.Show("【数値：" + afterValue.ToString + "】へ変更できません。" + vbCrLf + "管理者権限で再試行下さい", "数値変更エラー")
-                Exit Function
-            End Try
-
-            TextSwap = "Success"
-        Else
-            TextSwap = "File not Found"
-        End If
-
-    End Function
 
 
     Private Sub LockDialog(SupervisorMode As Boolean, ONorOFF As Boolean)
@@ -1469,4 +1193,57 @@ Public Class Form_TeCASettings
 
     End Sub
 
+    Private Sub ComboBox_initialize()
+        'コンボ初期化(編集不可にする)
+        Me.ComboBox_LOG_LEVEL.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_mail_transport_protocol.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_PreViewScale.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
+
+        '各コンボに初期データを追加
+        With Me.ComboBox_LOG_LEVEL
+            .Items.Add("INFO")
+            .Items.Add("DEBUG")
+        End With
+
+        With Me.ComboBox_ExecMode
+            .Items.Add("変更せず再起動")
+            .Items.Add("変更して再起動")
+            .Items.Add("TeCAを停止する")
+            .Items.Add("TeCAを起動する")
+        End With
+
+        With Me.ComboBox_vScroll
+            .Items.Add("100")
+            .Items.Add("300")
+            .Items.Add("500")
+        End With
+
+        With Me.ComboBox_mail_transport_protocol
+            .Items.Add("smtp")
+            .Items.Add("smtps")
+        End With
+
+        With Me.ComboBox_FileSelectLineNum
+            .Items.Add("20")
+            .Items.Add("40")
+            .Items.Add("60")
+        End With
+
+        With ComboBox_PreViewScale
+            .Items.Add("自動ズーム")
+            .Items.Add("実際のサイズ")
+            .Items.Add("高さに合わせる")
+            .Items.Add("幅に合わせる")
+            .Items.Add("ページのサイズに合わせる")
+        End With
+
+        Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
+        Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
+        Me.Button_DWG.Text = "取出"
+
+
+    End Sub
 End Class
