@@ -15,11 +15,10 @@ Public Class TECA_sets
     Public Const SelectFileJS As String = WEB_PATH + "\web\client\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = WEB_PATH + "\web\client\app\select-file\select-file.html"
     Public Const SelectFileCSS As String = WEB_PATH + "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
-    Public Const preViewJS As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
     Public Const KOKAI_FLG_File As String = WEB_PATH + "\web\client\app\upload\upload.service.js"
     Public Const Scrollpath As String = WEB_PATH + "\web\client\app\app.js"
-    Public Const GrabModePath As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
+    Public Const preViewJS As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const mailPropPath As String = API_PATH + "\" + Tomcat_PATH + "\webapps\api#teca\WEB-INF\classes\mail.properties"
 
     'ID,SecretIDを取得
@@ -40,7 +39,7 @@ Public Class TECA_sets
     Public Const DefaultKokai_key As String = "zokusei[IDX_ZOKUSEI.KOKAI]"
 
     '手のひらツールのモード
-    Public Shared GrabModeLine As String = TXTFunc.IDSearch(GrabModePath, GrabModeLineData.keyword, QUOTA.ColonToCamma)
+    Public Shared GrabModeLine As String = TXTFunc.IDSearch(preViewJS, GrabModeLineData.keyword, QUOTA.ColonToCamma)
 
     'メール設定の項目リスト
     Public Shared ReadOnly mailPropArray As String() = {"mail.smtp.host",

@@ -434,9 +434,9 @@ Partial Class Form_TeCASettings
         CheckBox_GrabTool.AutoSize = True
         CheckBox_GrabTool.Location = New Point(6, 22)
         CheckBox_GrabTool.Name = "CheckBox_GrabTool"
-        CheckBox_GrabTool.Size = New Size(191, 19)
+        CheckBox_GrabTool.Size = New Size(234, 19)
         CheckBox_GrabTool.TabIndex = 12
-        CheckBox_GrabTool.Text = "「手のひらツール」を使用可能にする"
+        CheckBox_GrabTool.Text = "「手のひらツール」を最初から使用可能にする"
         CheckBox_GrabTool.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_MailServer

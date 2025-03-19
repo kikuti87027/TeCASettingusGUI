@@ -17,6 +17,9 @@ Public Class Form_TeCASettings
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        'プログレスバー初期化
+        Me.GroupBox_Progress.Visible = False
+
         'コンボボックス初期化(初期項目投入と編集ロックON
         ComboBox_initialize()
 
@@ -47,8 +50,65 @@ Public Class Form_TeCASettings
             End If
         Next
 
-        'プログレスバー初期化
-        Me.GroupBox_Progress.Visible = False
+        '--------------------------------------
+        '【app.js】のvScroll値をComboBoxに格納
+        '--------------------------------------
+        ComboBox_vScroll.SelectedItem = vListScroll
+
+        '--------------------------------------
+        '【pdf.js】のHandToolOnLoad値をChechBoxに格納
+        '       値が検出できればEnable、検出できないときはDisable
+        '--------------------------------------
+        CheckBox_GrabTool.Enabled = False
+
+        Select Case GrabModeLine
+            Case "false"
+                CheckBox_GrabTool.Enabled = True
+                CheckBox_GrabTool.Checked = False
+            Case "true"
+                CheckBox_GrabTool.Enabled = True
+                CheckBox_GrabTool.Checked = True
+            Case Else
+                CheckBox_GrabTool.Enabled = False
+        End Select
+
+        '--------------------------------------
+        '【タイムアウト値】の最小を求めてコンボへ格納
+        '--------------------------------------
+        Dim ResultValue(TOUTArray.GetLength(1) - 1) As Integer
+
+        For X As Integer = 0 To TOUTArray.GetLength(1) - 1
+
+            If TOUTArray(X, 2) = QUOTA.beansXML Then
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
+            Else
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
+            End If
+
+        Next
+
+        'コンボには求めた最小を中央値として、前後に倍々でコンボの選択肢を作る
+        'ただし、マイナス値や１２時間（720分）超は作らないようにする
+
+        With Me.ComboBox_LoginTimeout
+            For N As Integer = -3 To 3
+                Select Case N
+                    Case < 0
+                        If (ResultValue.Min \ ((N * 2) * -1)) > 0 Then
+                            .Items.Add((ResultValue.Min \ ((N * 2) * -1)).ToString)
+                        End If
+                    Case 0
+                        .Items.Add((ResultValue.Min).ToString)
+                    Case > 0
+                        If (ResultValue.Min * (N * 2)) < 721 Then
+                            .Items.Add((ResultValue.Min * (N * 2)).ToString)
+                        End If
+                End Select
+            Next
+        End With
+
+        ComboBox_LoginTimeout.SelectedItem = ResultValue.Min.ToString
+
 
         Dim rows1, rows2 As DataRow()
 
@@ -158,65 +218,6 @@ Public Class Form_TeCASettings
                 Next
             End If
         Next
-        '--------------------------------------
-        '【app.js】のvScroll値をComboBoxに格納
-        '--------------------------------------
-
-        ComboBox_vScroll.SelectedItem = vListScroll
-
-        '--------------------------------------
-        '【pdf.js】のHandToolOnLoad値をChechBoxに格納
-        '       値が検出できればEnable、検出できないときはDisable
-        '--------------------------------------
-        CheckBox_GrabTool.Enabled = False
-
-        Select Case GrabModeLine
-            Case "false"
-                CheckBox_GrabTool.Enabled = True
-                CheckBox_GrabTool.Checked = False
-            Case "true"
-                CheckBox_GrabTool.Enabled = True
-                CheckBox_GrabTool.Checked = True
-            Case Else
-                CheckBox_GrabTool.Enabled = False
-        End Select
-
-        '--------------------------------------
-        '【タイムアウト値】の最小を求めてコンボへ格納
-        '--------------------------------------
-        Dim ResultValue(TOUTArray.GetLength(1) - 1) As Integer
-
-        For X As Integer = 0 To TOUTArray.GetLength(1) - 1
-
-            If TOUTArray(X, 2) = QUOTA.beansXML Then
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
-            Else
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
-            End If
-
-        Next
-
-        'コンボには求めた最小を中央値として、前後に倍々でコンボの選択肢を作る
-        'ただし、マイナス値や１２時間（720分）超は作らないようにする
-
-        With Me.ComboBox_LoginTimeout
-            For N As Integer = -3 To 3
-                Select Case N
-                    Case < 0
-                        If (ResultValue.Min \ ((N * 2) * -1)) > 0 Then
-                            .Items.Add((ResultValue.Min \ ((N * 2) * -1)).ToString)
-                        End If
-                    Case 0
-                        .Items.Add((ResultValue.Min).ToString)
-                    Case > 0
-                        If (ResultValue.Min * (N * 2)) < 721 Then
-                            .Items.Add((ResultValue.Min * (N * 2)).ToString)
-                        End If
-                End Select
-            Next
-        End With
-
-        ComboBox_LoginTimeout.SelectedItem = ResultValue.Min.ToString
 
         '--------------------------------------
         '【DT_option】のキー検索結果を該当するTextBoxに格納
@@ -490,13 +491,12 @@ Public Class Form_TeCASettings
 
                 '【pdf.js】プレビュー表示拡大率コンボからの更新
                 If Not String.IsNullOrEmpty(pdfJS_CurrentViewScale) Then
-                    Label_notice.Text = Misc.ExchangeString(SelectFileJS, pdfJS_CurrentViewScale, CSS.pdfJS(ComboBox_PreViewScale.SelectedItem))
+                    Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, CSS.pdfJS(ComboBox_PreViewScale.SelectedItem))
                 Else
                     Label_notice.Text = "プレビュー表示拡大率を更新できません"
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
-
 
 
                 '【pdf.js】手のひらツールの更新
@@ -514,13 +514,13 @@ Public Class Form_TeCASettings
                 If GrabModeBool <> CheckBox_GrabTool.Checked Then
                     Select Case CheckBox_GrabTool.Checked
                         Case True
-                            If (TXTFunc.TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
+                            If (TXTFunc.TextSwap(preViewJS.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
                             End If
                         Case False
-                            If (TXTFunc.TextSwap(GrabModePath.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
+                            If (TXTFunc.TextSwap(preViewJS.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
                                 Label_notice.Text = "手のひらスイッチ更新エラー"
                                 GroupBox_Progress.Visible = False
                                 Exit Sub
@@ -775,7 +775,7 @@ Public Class Form_TeCASettings
 
 
         vListScroll = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
-        GrabModeLine = TXTFunc.IDSearch(GrabModePath, GrabModeLineData.keyword, QUOTA.ColonToCamma)
+        GrabModeLine = TXTFunc.IDSearch(preViewJS, GrabModeLineData.keyword, QUOTA.ColonToCamma)
 
         Label_notice.Text = "処理を完了しました。" + TeCA.IsLive().ToString
         Label_notice.Update()
