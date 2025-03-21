@@ -10,9 +10,9 @@ Public Class Form_TeCASettings
 
     Dim CurrentPassword As String  '旧パスワード保管用
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
-    Dim CSS As New SwitchWords
+    Dim DIC As New SwitchWords
     Dim pdfJS_CurrentViewScale As String　'現在のプレビュー表示拡大率（編集前の退避）
-    Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists As Boolean
+    Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow As Boolean
     Dim ProgressValue As Integer = 0
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -33,14 +33,14 @@ Public Class Form_TeCASettings
         End If
 
         'モーダル幅
-        If SelectFileCSS.Contains(CSS.SelextFileDIC("CSS_Normal")) Then
+        If Misc.FindString(SelectFileCSS_Width, DIC.SelectFileCSS_Width("CSS_Normal")) Then
             CheckBox_Wide.Checked = False
         Else
             CheckBox_Wide.Checked = True
         End If
 
         '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
-        For Each DetectLine As KeyValuePair(Of String, String) In CSS.pdfJS
+        For Each DetectLine As KeyValuePair(Of String, String) In DIC.pdfJS
             If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
                 Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
                 pdfJS_CurrentViewScale = DetectLine.Value.ToString
@@ -53,24 +53,19 @@ Public Class Form_TeCASettings
         '--------------------------------------
         '【app.js】のvScroll値をComboBoxに格納
         '--------------------------------------
-        ComboBox_vScroll.SelectedItem = vListScroll
+        ComboBox_vScroll.SelectedItem = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
 
         '--------------------------------------
         '【pdf.js】のHandToolOnLoad値をChechBoxに格納
-        '       値が検出できればEnable、検出できないときはDisable
         '--------------------------------------
-        CheckBox_GrabTool.Enabled = False
+        For Each DetectLine As KeyValuePair(Of Boolean, String) In DIC.pdfJS_Grab
+            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
+                GrabToolNow = DetectLine.Key
+                Exit For
+            End If
+        Next
 
-        Select Case GrabModeLine
-            Case "false"
-                CheckBox_GrabTool.Enabled = True
-                CheckBox_GrabTool.Checked = False
-            Case "true"
-                CheckBox_GrabTool.Enabled = True
-                CheckBox_GrabTool.Checked = True
-            Case Else
-                CheckBox_GrabTool.Enabled = False
-        End Select
+        CheckBox_GrabTool.Checked = GrabToolNow
 
         '--------------------------------------
         '【タイムアウト値】の最小を求めてコンボへ格納
@@ -109,7 +104,6 @@ Public Class Form_TeCASettings
 
         ComboBox_LoginTimeout.SelectedItem = ResultValue.Min.ToString
 
-
         Dim rows1, rows2 As DataRow()
 
         '▼▼▼TeCA-DB1  値をコントロールに格納する
@@ -121,7 +115,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.m_kaisha where invalid_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, Dt_kaisha)
+        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, Dt_kaisha)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -135,7 +129,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info_kyotsu "
 
-        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, Dt_systemInfo)
+        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, Dt_systemInfo)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -149,7 +143,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
 
-        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db1", SQLCMD, DT_option)
+        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, DT_option)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -163,7 +157,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info where del_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL("127.0.0.1", "db2", SQLCMD, DT_systemInfoDB2)
+        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db2", SQLCMD, DT_systemInfoDB2)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -355,7 +349,10 @@ Public Class Form_TeCASettings
         'TeCAの生死を表示する
         '--------------------------------------
         Label_notice.AutoSize = True
+
+#If Not DEBUG Then
         Label_notice.Text = TeCA.IsLive()
+#End If
     End Sub
 
     Private Sub Button_Nunsyo_Click(sender As Object, e As EventArgs) Handles Button_Nunsyo.Click
@@ -474,59 +471,39 @@ Public Class Form_TeCASettings
 
                 '【bootstrap.min.css】ファイル選択モーダルの横幅拡縮
                 If CheckBox_Wide.Checked Then
-                    ReplaceTextInFile(CSS.SelextFileDIC("CSS_Normal"), CSS.SelextFileDIC("CSS_Wide"), SelectFileCSS)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML1_Normal"), CSS.SelextFileDIC("HTML1_Wide"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML2_Normal"), CSS.SelextFileDIC("HTML2_Wide"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML3_Normal"), CSS.SelextFileDIC("HTML3_Wide"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("JS1_Normal"), CSS.SelextFileDIC("JS1_Wide"), SelectFileJS)
-                    ReplaceTextInFile(CSS.SelextFileDIC("JS2_Normal"), CSS.SelextFileDIC("JS2_Wide"), SelectFileJS)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("CSS_Normal"), DIC.SelectFileCSS_Width("CSS_Wide"), SelectFileCSS_Width)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML1_Normal"), DIC.SelectFileCSS_Width("HTML1_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML2_Normal"), DIC.SelectFileCSS_Width("HTML2_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML3_Normal"), DIC.SelectFileCSS_Width("HTML3_Wide"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("JS1_Normal"), DIC.SelectFileCSS_Width("JS1_Wide"), SelectFileJS)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("JS2_Normal"), DIC.SelectFileCSS_Width("JS2_Wide"), SelectFileJS)
                 Else
-                    ReplaceTextInFile(CSS.SelextFileDIC("CSS_Wide"), CSS.SelextFileDIC("CSS_Normal"), SelectFileCSS)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML1_Wide"), CSS.SelextFileDIC("HTML1_Normal"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML2_Wide"), CSS.SelextFileDIC("HTML2_Normal"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("HTML3_Wide"), CSS.SelextFileDIC("HTML3_Normal"), SelectFileHTML)
-                    ReplaceTextInFile(CSS.SelextFileDIC("JS1_Wide"), CSS.SelextFileDIC("JS1_Normal"), SelectFileJS)
-                    ReplaceTextInFile(CSS.SelextFileDIC("JS2_Wide"), CSS.SelextFileDIC("JS2_Normal"), SelectFileJS)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("CSS_Wide"), DIC.SelectFileCSS_Width("CSS_Normal"), SelectFileCSS_Width)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML1_Wide"), DIC.SelectFileCSS_Width("HTML1_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML2_Wide"), DIC.SelectFileCSS_Width("HTML2_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML3_Wide"), DIC.SelectFileCSS_Width("HTML3_Normal"), SelectFileHTML)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("JS1_Wide"), DIC.SelectFileCSS_Width("JS1_Normal"), SelectFileJS)
+                    ReplaceTextInFile(DIC.SelectFileCSS_Width("JS2_Wide"), DIC.SelectFileCSS_Width("JS2_Normal"), SelectFileJS)
                 End If
 
                 '【pdf.js】プレビュー表示拡大率コンボからの更新
                 If Not String.IsNullOrEmpty(pdfJS_CurrentViewScale) Then
-                    Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, CSS.pdfJS(ComboBox_PreViewScale.SelectedItem))
+                    Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, DIC.pdfJS(ComboBox_PreViewScale.SelectedItem))
                 Else
                     Label_notice.Text = "プレビュー表示拡大率を更新できません"
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
-
-                '【pdf.js】手のひらツールの更新
-                '　　　pdf.js行抽出データのtrue/Falseが正しい書式かどうか
-                Dim GrabModeBool As Boolean
-                Dim boolCheck As Boolean = Boolean.TryParse(GrabModeLine, GrabModeBool)
-                If boolCheck = False Then
-                    Label_notice.Text = "System File Of Grab Mode may Corrupted."
-                    Exit Sub
-                End If
-
-
                 'CheckBoxと行抽出true/falseが異なってるなら書き換える
                 '　　　　　(一致するなら書き換える必要はなし）
-                If GrabModeBool <> CheckBox_GrabTool.Checked Then
+                If GrabToolNow <> CheckBox_GrabTool.Checked Then
                     Select Case CheckBox_GrabTool.Checked
                         Case True
-                            If (TXTFunc.TextSwap(preViewJS.ToString, GrabModeLineData.keyword & " False,", GrabModeLineData.isON, QUOTA.WholeLine)) <> "Success" Then
-                                Label_notice.Text = "手のひらスイッチ更新エラー"
-                                GroupBox_Progress.Visible = False
-                                Exit Sub
-                            End If
+                            Label_notice.Text = $"GrabTool on:{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("false"), DIC.pdfJS_Grab("true"))}"
                         Case False
-                            If (TXTFunc.TextSwap(preViewJS.ToString, GrabModeLineData.keyword & " True,", GrabModeLineData.isOFF, QUOTA.WholeLine)) <> "Success" Then
-                                Label_notice.Text = "手のひらスイッチ更新エラー"
-                                GroupBox_Progress.Visible = False
-                                Exit Sub
-                            End If
+                            Label_notice.Text = $"GrabTool off：{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("true"), DIC.pdfJS_Grab("false"))}"
                     End Select
-
                 End If
 
                 '【mail.properties】の更新
@@ -773,11 +750,9 @@ Public Class Form_TeCASettings
 
         End Select
 
-
-        vListScroll = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
-        GrabModeLine = TXTFunc.IDSearch(preViewJS, GrabModeLineData.keyword, QUOTA.ColonToCamma)
-
+#If Not DEBUG Then
         Label_notice.Text = "処理を完了しました。" + TeCA.IsLive().ToString
+#End If
         Label_notice.Update()
 
 
@@ -785,26 +760,28 @@ Public Class Form_TeCASettings
 
     End Sub
 
-
-
-
     Private Sub LockDialog(SupervisorMode As Boolean, ONorOFF As Boolean)
         'SupervisorMode:   True=Photron / False=User
         'ONorOFF： true or False
 
-        GroupBox_Upload.Enabled = ONorOFF
+        'システム情報/APIタブ
+        GroupBox_APIparams.Enabled = ONorOFF
+        '操作タブ
         GroupBox_PDF.Enabled = ONorOFF
         GroupBox_General.Enabled = ONorOFF
-        CheckBox_メール通知.Enabled = ONorOFF
-        ComboBox_LOG_LEVEL.Enabled = ONorOFF
-        ComboBox_ExecMode.Enabled = True
-        GroupBox_APIparams.Enabled = ONorOFF
-        GroupBox_MailServer.Enabled = ONorOFF
         GroupBox_DWG.Enabled = ONorOFF
-        ComboBox_ExecMode.Enabled = ONorOFF
-        GroupBox_KOKAI.Enabled = ONorOFF
+        '画面デザインタブ
         GroupBox_FileSelector.Enabled = ONorOFF
         GroupBox_PreViewWindow.Enabled = ONorOFF
+        'メール通知タブ
+        GroupBox_MailServer.Enabled = ONorOFF
+        CheckBox_メール通知.Enabled = ONorOFF
+        'アップロード/公開タブ
+        GroupBox_Upload.Enabled = ONorOFF
+        GroupBox_KOKAI.Enabled = ONorOFF
+
+        ComboBox_ExecMode.Enabled = ONorOFF
+
 
         If (SupervisorMode = True) Then
             TextBox_Domain.Enabled = ONorOFF
@@ -860,6 +837,9 @@ Public Class Form_TeCASettings
     ''' <returns></returns>
     Private Function TeCA_Exec(exec_mode As String, beginProgress As Integer, endProgress As Integer) As String
 
+#If DEBUG Then
+        Return "Debug Mode: プロセス操作は行いません"
+#End If
         Dim ProgressCurrent As Integer = beginProgress
         Dim ProgressStep As Integer = (endProgress - beginProgress) \ 4
         Dim ProgressStepSub As Integer = (ProgressStep) \ 10
@@ -983,7 +963,7 @@ Public Class Form_TeCASettings
         ComboBox_mail_transport_protocol.SelectedItem = "smtp"
         CheckBox_mail_smtp_starttls_enable.Checked = False
         TextBox_mail_smtp_port.Text = "25"
-        TextBox_mail_smtp_host.Text = "127.0.0.1"
+        TextBox_mail_smtp_host.Text = DB_IPaddr
         CheckBox_mail_smtp_auth.Checked = False
         TextBox_password.Text = ""
         Me.Update()

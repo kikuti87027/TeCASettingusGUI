@@ -7,26 +7,27 @@ Public Class TECA_sets
 #If DEBUG Then
     Public Const API_PATH As String = "Z:\api"
     Public Const WEB_PATH As String = "Z:\web"
+    Public Const DB_IPaddr As String = "192.168.2.188"
 #Else
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
+    Public Const DB_IPaddr As String = "127.0.0.1"
 #End If
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
-    Public Const SelectFileJS As String = WEB_PATH + "\web\client\app\select-file\select-file.service.js"
-    Public Const SelectFileHTML As String = WEB_PATH + "\web\client\app\select-file\select-file.html"
-    Public Const SelectFileCSS As String = WEB_PATH + "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
-    Public Const IDpath As String = WEB_PATH + "\web\server\config\environment\production.js"
-    Public Const KOKAI_FLG_File As String = WEB_PATH + "\web\client\app\upload\upload.service.js"
-    Public Const Scrollpath As String = WEB_PATH + "\web\client\app\app.js"
-    Public Const preViewJS As String = WEB_PATH + "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
-    Public Const mailPropPath As String = API_PATH + "\" + Tomcat_PATH + "\webapps\api#teca\WEB-INF\classes\mail.properties"
+    Public Const SelectFileJS As String = WEB_PATH & "\web\client\app\select-file\select-file.service.js"
+    Public Const SelectFileHTML As String = WEB_PATH & "\web\client\app\select-file\select-file.html"
+    Public Const SelectFileCSS_Width As String = WEB_PATH & "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
+    Public Const IDpath As String = WEB_PATH & "\web\server\config\environment\production.js"
+    Public Const KOKAI_FLG_File As String = WEB_PATH & "\web\client\app\upload\upload.service.js"
+    Public Const Scrollpath As String = WEB_PATH & "\web\client\app\app.js"
+    Public Const preViewJS As String = WEB_PATH & "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
+    Public Const mailPropPath As String = API_PATH & "\" + Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\mail.properties"
 
     'ID,SecretIDを取得
-    Public Shared ClientID = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
-    Public Shared SecretID = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
+    Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
+    Public Shared ReadOnly SecretID = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
 
     'スクロールバッファの現在値の取得と、変更先の一覧を定義
-    Public Shared vListScroll = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
     Public Shared ReadOnly vScrollArray As String() = {"EXCESS_ROWS_FILE_LIST",
                                     "EXCESS_ROWS_WORKFLOW_LIST",
                                     "EXCESS_ROWS_SHINSEI_FILE_LIST",
@@ -37,9 +38,6 @@ Public Class TECA_sets
 
     '公開/非公開の検索キー定義
     Public Const DefaultKokai_key As String = "zokusei[IDX_ZOKUSEI.KOKAI]"
-
-    '手のひらツールのモード
-    Public Shared GrabModeLine As String = TXTFunc.IDSearch(preViewJS, GrabModeLineData.keyword, QUOTA.ColonToCamma)
 
     'メール設定の項目リスト
     Public Shared ReadOnly mailPropArray As String() = {"mail.smtp.host",
@@ -113,7 +111,7 @@ Public Class TRIGGERS
 
     '================編集内容を切り替える定数をDICで定義================
     Public Class SwitchWords
-        Public SelextFileDIC As New Dictionary(Of String, String) From {
+        Public SelectFileCSS_Width As New Dictionary(Of String, String) From {
         {"HTML1_Normal", "<div class=""modal-header"">"}, {"HTML1_Wide", "<div class=""modal-header modal-lg"">"},
         {"HTML2_Normal", "<div class=""modal-body select-file-modal"">"}, {"HTML2_Wide", "<div class=""modal-lg select-file-modal"">"},
         {"HTML3_Normal", "<div class=""modal-footer"">"}, {"HTML3_Wide", "<div class=""modal-footer modal-lg"" >"},
@@ -128,6 +126,11 @@ Public Class TRIGGERS
         {"幅に合わせる", "var DEFAULT_SCALE_VALUE = 'page-width';"},
         {"ページのサイズに合わせる", "var DEFAULT_SCALE_VALUE = 'page-fit';"}
     }
+        Public pdfJS_Grab As New Dictionary(Of Boolean, String) From {
+        {True, """enableHandToolOnLoad"": true,"},
+        {False, """enableHandToolOnLoad"": false,"}
+    }
+
     End Class
 
     Public Shared Function ReplaceTextInFile(OLDString As String, NEWString As String, filePath As String, Optional FindOnly As Boolean = False) As Integer
