@@ -12,6 +12,7 @@ Public Class Form_TeCASettings
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
     Dim DIC As New SwitchWords
     Dim pdfJS_CurrentViewScale As String　'現在のプレビュー表示拡大率（編集前の退避）
+    Dim Thubnail_current As String　'現在のプレビューサムネイル解像度（編集前の退避）
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow As Boolean
     Dim ProgressValue As Integer = 0
 
@@ -47,6 +48,20 @@ Public Class Form_TeCASettings
                 Exit For
             Else
                 Me.ComboBox_PreViewScale.SelectedIndex = 0
+            End If
+        Next
+
+        '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
+        Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
+        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, "db2", "postgres", "PCJJWEqb2d",, True)
+
+        For Each ResolVal As KeyValuePair(Of String, String) In DIC.ThmbNailvalues
+            If ResolVal.Value = ThumbSize Then
+                Me.ComboBox_ThumbnailRatio.SelectedItem = ResolVal.Key
+                Thubnail_current = ResolVal.Key
+                Exit For
+            Else
+                Me.ComboBox_ThumbnailRatio.SelectedIndex = 1
             End If
         Next
 
@@ -466,6 +481,12 @@ Public Class Form_TeCASettings
 
                 Next
 
+                '【t_system_info】サムネール解像度の更新
+                If Thubnail_current <> ComboBox_ThumbnailRatio.SelectedItem Then
+                    Label_notice.Text = TeCA.UpdateDB(DIC.ThmbNailCmds(ComboBox_ThumbnailRatio.SelectedItem), "db2")
+                End If
+
+
                 '【select-file.service.js】ファイル選択モーダルの行数更新
                 Label_notice.Text = KeyValueParser.ReplaceValue(SelectFileJS, "var DEFAULT_DISP_CNT", ComboBox_FileSelectLineNum.SelectedItem)
 
@@ -710,11 +731,9 @@ Public Class Form_TeCASettings
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", "db2")
 
                 'PipeMan実行
-                If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
+                If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
                     Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Once]"
-                    Thread.Sleep(3000)
                     Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Twice]"
-                    Thread.Sleep(3000)
 
                     Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET del_flg = True WHERE shori_chu_flg = True;", "db2")
                     Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET shori_chu_flg = True WHERE shori_chu_flg = True;", "db2")
@@ -773,6 +792,8 @@ Public Class Form_TeCASettings
         '画面デザインタブ
         GroupBox_FileSelector.Enabled = ONorOFF
         GroupBox_PreViewWindow.Enabled = ONorOFF
+        GroupBox_Thumbnail.Enabled = ONorOFF
+
         'メール通知タブ
         GroupBox_MailServer.Enabled = ONorOFF
         CheckBox_メール通知.Enabled = ONorOFF
@@ -1181,6 +1202,7 @@ Public Class Form_TeCASettings
         Me.ComboBox_mail_transport_protocol.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_PreViewScale.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_ThumbnailRatio.DropDownStyle = ComboBoxStyle.DropDownList
 
         '各コンボに初期データを追加
         With Me.ComboBox_LOG_LEVEL
@@ -1218,6 +1240,12 @@ Public Class Form_TeCASettings
             .Items.Add("高さに合わせる")
             .Items.Add("幅に合わせる")
             .Items.Add("ページのサイズに合わせる")
+        End With
+
+        With ComboBox_ThumbnailRatio
+            .Items.Add("小")
+            .Items.Add("標準")
+            .Items.Add("大")
         End With
 
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"

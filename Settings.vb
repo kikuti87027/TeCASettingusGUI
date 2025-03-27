@@ -130,6 +130,25 @@ Public Class TRIGGERS
         {True, """enableHandToolOnLoad"": true,"},
         {False, """enableHandToolOnLoad"": false,"}
     }
+        Public ThmbNailCmds As New Dictionary(Of String, String) From {
+        {"小", "UPDATE t_system_info SET info_val = '150' WHERE info_key ='THUMBNAIL_HEIGHT_MAX';"},
+        {"標準", "UPDATE t_system_info SET info_val = '300' WHERE info_key ='THUMBNAIL_HEIGHT_MAX';"},
+        {"大", "UPDATE t_system_info SET info_val = '600' WHERE info_key ='THUMBNAIL_HEIGHT_MAX';"}
+    }
+        Public ThmbNailvalues As New Dictionary(Of String, String) From {
+        {"小", "150"},
+        {"標準", "300"},
+        {"大", "600"}
+    }
+        Public ReINDEXcmds As New Dictionary(Of String, String) From {
+        {"pgrnDrop", "DROP EXTENSION IF EXISTS pgroonga CASCADE;"},
+        {"pgrnCreate1", "CREATE EXTENSION pgroonga;"},
+        {"index1", "CREATE INDEX IDX_FILE_INFO_1_P ON public.t_file_info USING pgroonga (zokusei)  WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"},
+        {"index2", "CREATE INDEX IDX_FILE_INFO_2_P ON public.t_file_info USING pgroonga (pdf_text_zembun_kensaku COLLATE pg_catalog.""default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"},
+        {"index3", "CREATE INDEX IDX_FILE_INFO_3_P ON public.t_file_info USING pgroonga (pdf_edit_comment_zembun_kensaku COLLATE pg_catalog.""Default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"},
+        {"index4", "CREATE INDEX IDX_FILE_INFO_4_P ON public.t_file_info USING pgroonga (pdf_text_old_zembun_kensaku COLLATE pg_catalog.""default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"}
+    }
+
 
     End Class
 

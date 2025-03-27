@@ -92,10 +92,12 @@ Partial Class Form_TeCASettings
         TabPage1 = New TabPage()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
+        GroupBox_Thumbnail = New GroupBox()
+        Label19 = New Label()
+        ComboBox_ThumbnailRatio = New ComboBox()
         GroupBox_PreViewWindow = New GroupBox()
         Label18 = New Label()
         ComboBox_PreViewScale = New ComboBox()
-        CheckBox_DestroyPrint = New CheckBox()
         GroupBox_FileSelector = New GroupBox()
         Label17 = New Label()
         ComboBox_FileSelectLineNum = New ComboBox()
@@ -115,6 +117,7 @@ Partial Class Form_TeCASettings
         TabPage1.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
+        GroupBox_Thumbnail.SuspendLayout()
         GroupBox_PreViewWindow.SuspendLayout()
         GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
@@ -771,6 +774,7 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage4
         ' 
+        TabPage4.Controls.Add(GroupBox_Thumbnail)
         TabPage4.Controls.Add(GroupBox_PreViewWindow)
         TabPage4.Controls.Add(GroupBox_FileSelector)
         TabPage4.Location = New Point(4, 24)
@@ -781,23 +785,50 @@ Partial Class Form_TeCASettings
         TabPage4.Text = "画面デザイン"
         TabPage4.UseVisualStyleBackColor = True
         ' 
+        ' GroupBox_Thumbnail
+        ' 
+        GroupBox_Thumbnail.Controls.Add(Label19)
+        GroupBox_Thumbnail.Controls.Add(ComboBox_ThumbnailRatio)
+        GroupBox_Thumbnail.Location = New Point(11, 194)
+        GroupBox_Thumbnail.Name = "GroupBox_Thumbnail"
+        GroupBox_Thumbnail.Size = New Size(354, 53)
+        GroupBox_Thumbnail.TabIndex = 16
+        GroupBox_Thumbnail.TabStop = False
+        GroupBox_Thumbnail.Text = "検索結果ウィンドウ"
+        ' 
+        ' Label19
+        ' 
+        Label19.AutoSize = True
+        Label19.Location = New Point(6, 21)
+        Label19.Name = "Label19"
+        Label19.Size = New Size(82, 15)
+        Label19.TabIndex = 15
+        Label19.Text = "サムネイルサイズ"
+        ' 
+        ' ComboBox_ThumbnailRatio
+        ' 
+        ComboBox_ThumbnailRatio.FormattingEnabled = True
+        ComboBox_ThumbnailRatio.Location = New Point(103, 18)
+        ComboBox_ThumbnailRatio.Name = "ComboBox_ThumbnailRatio"
+        ComboBox_ThumbnailRatio.Size = New Size(61, 23)
+        ComboBox_ThumbnailRatio.TabIndex = 14
+        ' 
         ' GroupBox_PreViewWindow
         ' 
         GroupBox_PreViewWindow.Controls.Add(Label18)
         GroupBox_PreViewWindow.Controls.Add(ComboBox_PreViewScale)
         GroupBox_PreViewWindow.Controls.Add(CheckBox_GrabTool)
-        GroupBox_PreViewWindow.Controls.Add(CheckBox_DestroyPrint)
         GroupBox_PreViewWindow.Location = New Point(11, 15)
         GroupBox_PreViewWindow.Name = "GroupBox_PreViewWindow"
-        GroupBox_PreViewWindow.Size = New Size(354, 98)
+        GroupBox_PreViewWindow.Size = New Size(354, 79)
         GroupBox_PreViewWindow.TabIndex = 15
         GroupBox_PreViewWindow.TabStop = False
-        GroupBox_PreViewWindow.Text = "プレビュー画面"
+        GroupBox_PreViewWindow.Text = "プレビューウィンドウ"
         ' 
         ' Label18
         ' 
         Label18.AutoSize = True
-        Label18.Location = New Point(6, 72)
+        Label18.Location = New Point(6, 46)
         Label18.Name = "Label18"
         Label18.Size = New Size(67, 15)
         Label18.TabIndex = 15
@@ -806,29 +837,19 @@ Partial Class Form_TeCASettings
         ' ComboBox_PreViewScale
         ' 
         ComboBox_PreViewScale.FormattingEnabled = True
-        ComboBox_PreViewScale.Location = New Point(79, 69)
+        ComboBox_PreViewScale.Location = New Point(79, 43)
         ComboBox_PreViewScale.Name = "ComboBox_PreViewScale"
         ComboBox_PreViewScale.Size = New Size(141, 23)
         ComboBox_PreViewScale.TabIndex = 14
-        ' 
-        ' CheckBox_DestroyPrint
-        ' 
-        CheckBox_DestroyPrint.AutoSize = True
-        CheckBox_DestroyPrint.Location = New Point(6, 45)
-        CheckBox_DestroyPrint.Name = "CheckBox_DestroyPrint"
-        CheckBox_DestroyPrint.Size = New Size(170, 19)
-        CheckBox_DestroyPrint.TabIndex = 13
-        CheckBox_DestroyPrint.Text = "「右クリックで印刷」を抑止する"
-        CheckBox_DestroyPrint.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_FileSelector
         ' 
         GroupBox_FileSelector.Controls.Add(Label17)
         GroupBox_FileSelector.Controls.Add(ComboBox_FileSelectLineNum)
         GroupBox_FileSelector.Controls.Add(CheckBox_Wide)
-        GroupBox_FileSelector.Location = New Point(7, 134)
+        GroupBox_FileSelector.Location = New Point(7, 100)
         GroupBox_FileSelector.Name = "GroupBox_FileSelector"
-        GroupBox_FileSelector.Size = New Size(358, 135)
+        GroupBox_FileSelector.Size = New Size(358, 88)
         GroupBox_FileSelector.TabIndex = 14
         GroupBox_FileSelector.TabStop = False
         GroupBox_FileSelector.Text = "ファイル選択ポップアップ"
@@ -930,6 +951,8 @@ Partial Class Form_TeCASettings
         TabPage1.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
+        GroupBox_Thumbnail.ResumeLayout(False)
+        GroupBox_Thumbnail.PerformLayout()
         GroupBox_PreViewWindow.ResumeLayout(False)
         GroupBox_PreViewWindow.PerformLayout()
         GroupBox_FileSelector.ResumeLayout(False)
@@ -1014,7 +1037,6 @@ Partial Class Form_TeCASettings
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents TabPage3 As TabPage
     Friend WithEvents TabPage4 As TabPage
-    Friend WithEvents CheckBox_DestroyPrint As CheckBox
     Friend WithEvents GroupBox_FileSelector As GroupBox
     Friend WithEvents ComboBox_FileSelectLineNum As ComboBox
     Friend WithEvents CheckBox_Wide As CheckBox
@@ -1022,4 +1044,7 @@ Partial Class Form_TeCASettings
     Friend WithEvents GroupBox_PreViewWindow As GroupBox
     Friend WithEvents Label18 As Label
     Friend WithEvents ComboBox_PreViewScale As ComboBox
+    Friend WithEvents GroupBox_Thumbnail As GroupBox
+    Friend WithEvents Label19 As Label
+    Friend WithEvents ComboBox_ThumbnailRatio As ComboBox
 End Class
