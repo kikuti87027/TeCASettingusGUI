@@ -438,19 +438,9 @@ Public Class Form_TeCASettings
 
                 'PipeMan実行
                 If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
-
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Once]"
-                    Thread.Sleep(3000)
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Twice]"
-                    Thread.Sleep(3000)
-
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET del_flg = True WHERE shori_chu_flg = True;", "db2")
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET shori_chu_flg = True WHERE shori_chu_flg = True;", "db2")
-
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_1_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_2_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_3_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_4_P;", "db2")
+                    TeCA.SvcCtrls("PG_REBOOT", True)
+                Else
+                    TeCA.SvcCtrls("PG_REBOOT")
                 End If
 
                 Label_notice.Text = TeCA_Exec("START", 80, 100).ToString
@@ -736,38 +726,23 @@ Public Class Form_TeCASettings
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", "db2")
 
                 'PipeMan実行
-                If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Once]"
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Twice]"
-
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET del_flg = True WHERE shori_chu_flg = True;", "db2")
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET shori_chu_flg = True WHERE shori_chu_flg = True;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_1_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_2_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_3_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_4_P;", "db2")
+                If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
+                    TeCA.SvcCtrls("PG_REBOOT", True)
+                Else
+                    TeCA.SvcCtrls("PG_REBOOT")
                 End If
                 Label_notice.Text = TeCA_Exec("START", 80, 100).ToString
+
             Case "TeCAを停止する"
 
                 Label_notice.Text = TeCA_Exec("STOP", 0, 100).ToString
 
                 'PipeMan実行
                 If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Once]"
-                    Thread.Sleep(3000)
-                    Label_notice.Text = TeCA.SvcCtrls("PG_REBOOT") & "[Boot-Twice]"
-                    Thread.Sleep(3000)
-
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET del_flg = True WHERE shori_chu_flg = True;", "db2")
-                    Label_notice.Text = "PipeMan : " & TeCA.UpdateDB("UPDATE t_shori_result_info SET shori_chu_flg = True WHERE shori_chu_flg = True;", "db2")
-
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_1_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_2_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_3_P;", "db2")
-                    Label_notice.Text = "ReIndex : " & TeCA.UpdateDB("REINDEX INDEX IDX_FILE_INFO_4_P;", "db2")
+                    TeCA.SvcCtrls("PG_REBOOT", True)
+                Else
+                    TeCA.SvcCtrls("PG_REBOOT")
                 End If
-
 
             Case "TeCAを起動する"
                 Label_notice.Text = TeCA_Exec("START", 0, 100).ToString
@@ -855,7 +830,7 @@ Public Class Form_TeCASettings
     End Sub
 
     ''' <summary>
-    ''' TeCAのサービスを起動/停止する
+    ''' プログレスバー付きでTeCAのサービスを起動/停止する
     ''' </summary>
     ''' <param name="exec_mode">START/STOP</param>
     ''' <param name="beginProgress">プログレスバー開始％位置</param>
