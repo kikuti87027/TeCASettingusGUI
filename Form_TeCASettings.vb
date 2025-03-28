@@ -527,6 +527,11 @@ Public Class Form_TeCASettings
                     End Select
                 End If
 
+                '【apache/httpd.conf】AH000558エラーをこっそり直す
+                If Misc.FindString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default")) Then
+                    Misc.ExchangeString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default"), DIC.ApacheAH00558("Fixed"))
+                End If
+
                 '【mail.properties】の更新
                 If (CheckBox_メール通知.Checked = True) Then
 

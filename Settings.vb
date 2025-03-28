@@ -14,6 +14,8 @@ Public Class TECA_sets
     Public Const DB_IPaddr As String = "127.0.0.1"
 #End If
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
+    Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
+
     Public Const SelectFileJS As String = WEB_PATH & "\web\client\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = WEB_PATH & "\web\client\app\select-file\select-file.html"
     Public Const SelectFileCSS_Width As String = WEB_PATH & "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
@@ -147,6 +149,10 @@ Public Class TRIGGERS
         {"index2", "CREATE INDEX IDX_FILE_INFO_2_P ON public.t_file_info USING pgroonga (pdf_text_zembun_kensaku COLLATE pg_catalog.""default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"},
         {"index3", "CREATE INDEX IDX_FILE_INFO_3_P ON public.t_file_info USING pgroonga (pdf_edit_comment_zembun_kensaku COLLATE pg_catalog.""Default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"},
         {"index4", "CREATE INDEX IDX_FILE_INFO_4_P ON public.t_file_info USING pgroonga (pdf_text_old_zembun_kensaku COLLATE pg_catalog.""default"") WITH (tokenizer='TokenBigramSplitSymbolAlphaDigit');"}
+    }
+        Public ApacheAH00558 As New Dictionary(Of String, String) From {
+        {"Default", "#ServerName www.example.com:80"},
+        {"Fixed", "ServerName localhost:80"}
     }
 
 
