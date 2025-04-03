@@ -51,6 +51,21 @@ Public Class Form_TeCASettings
             End If
         Next
 
+        '▼▼▼production.jsに127.0.0.1の記載があるならSetLocal:check On
+        If Misc.FindString(SetLocalArray(3, 0), SetLocalArray(3, 2)) Then
+            CheckBox_setLocal.Checked = True
+        Else
+            CheckBox_setLocal.Checked = False
+        End If
+
+        '▼▼▼pdfconverter.propertiesの画像データ設定をコンボへ
+        If Misc.FindString(pdfconvpropPath, "png=pdfAutoConverterEx") Then
+            ComboBox_RasterConvert.SelectedItem = "EX"
+        Else
+            ComboBox_RasterConvert.SelectedItem = "CAD"
+        End If
+
+
         '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
         Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
         Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, "db2", "postgres", "PCJJWEqb2d",, True)
@@ -344,7 +359,7 @@ Public Class Form_TeCASettings
         'ダイアログコントロールを全部非表示
         '--------------------------------------
         '全アイテムをDisable
-        LockDialog(True, False)
+        LockDialog(False, True)
         Button_Exec.Enabled = False
         GroupBox_MailServer.Enabled = False
         GroupBox_APIparams.Enabled = False
@@ -376,15 +391,15 @@ Public Class Form_TeCASettings
         '認証未入力は抜ける
         If ((TextBox_ClientID.Text = "") Or (TextBox_SecretID.Text = "")) Then
             GroupBox_ninsyo.Text = "ClientIDとSecretIDが未入力です。"
-            LockDialog(True, False)  '全アイテムをDisable
+            LockDialog(False, True)  '全アイテムをDisable
             Exit Sub
         End If
 
         '認証入力
         If ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID)) Then
             GroupBox_ninsyo.Text = "設定値を変更できます。"
-            LockDialog(True, False)  '全アイテムをDisable
-            LockDialog(False, True)  '制限付きでアイテムをEnable
+            LockDialog(False, True)  '全アイテムをDisable
+            LockDialog(True)  '制限付きでアイテムをEnable
             Button_Exec.Enabled = True
         Else
             If ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor")) Then
@@ -393,7 +408,7 @@ Public Class Form_TeCASettings
                 Button_Exec.Enabled = True
             Else
                 GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
-                LockDialog(True, False)  '全アイテムをDisable
+                LockDialog(False, True)  '全アイテムをDisable
                 Button_Exec.Enabled = False
 
                 Exit Sub
@@ -502,6 +517,23 @@ Public Class Form_TeCASettings
                     Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, DIC.pdfJS(ComboBox_PreViewScale.SelectedItem))
                 Else
                     Label_notice.Text = "プレビュー表示拡大率を更新できません"
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
+
+                '【SetLocal】の更新 
+                If CheckBox_setLocal.Checked Then
+                    For X = 0 To 3
+                        Label_notice.Text = Misc.ExchangeString(SetLocalArray(X, 0), SetLocalArray(X, 1), SetLocalArray(X, 2), True, "Shift_JIS")
+                    Next
+                End If
+
+                Dim exchangeFtypes As Integer
+                For Each FType In pdfConvFtypeArray
+                    exchangeFtypes += Misc.ExchangeString(pdfconvpropPath, FType, FType & "=" & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
+                Next
+                If exchangeFtypes <> pdfConvFtypeArray.Length Then
+                    MessageBox.Show("PDFConverterの画像データ設定を更新できません")
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
@@ -758,8 +790,12 @@ Public Class Form_TeCASettings
         GroupBox_Progress.Visible = False
 
     End Sub
-
-    Private Sub LockDialog(SupervisorMode As Boolean, ONorOFF As Boolean)
+    ''' <summary>
+    ''' ダイアログのロック制御 
+    ''' </summary>
+    ''' <param name="SupervisorMode">SUperVisorModeのときに機能するアイテムも制御する</param>
+    ''' <param name="ONorOFF"></param>
+    Private Sub LockDialog(ONorOFF As Boolean, Optional SupervisorMode As Boolean = False)
         'SupervisorMode:   True=Photron / False=User
         'ONorOFF： true or False
 
@@ -784,10 +820,17 @@ Public Class Form_TeCASettings
         ComboBox_ExecMode.Enabled = ONorOFF
 
 
-        If (SupervisorMode = True) Then
+        If SupervisorMode Then
             TextBox_Domain.Enabled = ONorOFF
             TextBox_MaxUsers.Enabled = ONorOFF
             TextBox_UPLOAD_SIZE_MAX.Enabled = ONorOFF
+
+            'supervisorModeの例外（ONだったら操作不能にする
+            If CheckBox_setLocal.Checked Then
+                CheckBox_setLocal.Enabled = False
+            Else
+                CheckBox_setLocal.Enabled = True
+            End If
         End If
     End Sub
 
@@ -797,8 +840,8 @@ Public Class Form_TeCASettings
             Case "変更して再起動"
                 If ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID)) Then
                     GroupBox_ninsyo.Text = "設定値を変更できます。"
-                    LockDialog(True, False)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
-                    LockDialog(False, True)  'UserModeでアイテムをEnable
+                    LockDialog(False, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
+                    LockDialog(True)  'UserModeでアイテムをEnable
                     Button_Exec.Enabled = True
                 Else
                     If ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor")) Then
@@ -807,7 +850,7 @@ Public Class Form_TeCASettings
                         Button_Exec.Enabled = True
                     Else
                         GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
-                        LockDialog(True, False)  '全アイテムをDisable
+                        LockDialog(False, True)  '全アイテムをDisable
                         Button_Exec.Enabled = False
                         Exit Sub
 
@@ -815,7 +858,7 @@ Public Class Form_TeCASettings
                 End If
 
             Case Else
-                '  LockDialog(True, False)  '全アイテムをDisable
+                '  LockDialog(False,True )  '全アイテムをDisable
 
         End Select
 
@@ -1183,6 +1226,7 @@ Public Class Form_TeCASettings
         Me.ComboBox_PreViewScale.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_ThumbnailRatio.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
 
         '各コンボに初期データを追加
         With Me.ComboBox_LOG_LEVEL
@@ -1228,10 +1272,17 @@ Public Class Form_TeCASettings
             .Items.Add("大")
         End With
 
+        With ComboBox_RasterConvert
+            .Items.Add("CAD")
+            .Items.Add("EX")
+        End With
+
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
         Me.Button_DWG.Text = "取出"
 
 
     End Sub
+
+
 End Class

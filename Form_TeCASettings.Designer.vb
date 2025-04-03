@@ -34,6 +34,7 @@ Partial Class Form_TeCASettings
         Label2 = New Label()
         Label3 = New Label()
         GroupBox_PDF = New GroupBox()
+        Label20 = New Label()
         TextBox_PDF_CONVERSION_MAX_BATCH = New TextBox()
         TextBox_PDF_CONVERSION_MAX_IMMEDIATE = New TextBox()
         Button_Exec = New Button()
@@ -90,6 +91,7 @@ Partial Class Form_TeCASettings
         Label_notice = New Label()
         TabControl1 = New TabControl()
         TabPage1 = New TabPage()
+        CheckBox_setLocal = New CheckBox()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
         GroupBox_Thumbnail = New GroupBox()
@@ -104,6 +106,7 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
+        ComboBox_RasterConvert = New ComboBox()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -214,7 +217,7 @@ Partial Class Form_TeCASettings
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Location = New Point(103, 47)
+        Label3.Location = New Point(101, 47)
         Label3.Name = "Label3"
         Label3.Size = New Size(134, 15)
         Label3.TabIndex = 5
@@ -222,16 +225,27 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_PDF
         ' 
+        GroupBox_PDF.Controls.Add(ComboBox_RasterConvert)
+        GroupBox_PDF.Controls.Add(Label20)
         GroupBox_PDF.Controls.Add(TextBox_PDF_CONVERSION_MAX_BATCH)
         GroupBox_PDF.Controls.Add(TextBox_PDF_CONVERSION_MAX_IMMEDIATE)
         GroupBox_PDF.Controls.Add(Label3)
         GroupBox_PDF.Controls.Add(Label2)
         GroupBox_PDF.Location = New Point(5, 12)
         GroupBox_PDF.Name = "GroupBox_PDF"
-        GroupBox_PDF.Size = New Size(358, 78)
+        GroupBox_PDF.Size = New Size(358, 100)
         GroupBox_PDF.TabIndex = 3
         GroupBox_PDF.TabStop = False
         GroupBox_PDF.Text = "PDF変換"
+        ' 
+        ' Label20
+        ' 
+        Label20.AutoSize = True
+        Label20.Location = New Point(144, 75)
+        Label20.Name = "Label20"
+        Label20.Size = New Size(80, 15)
+        Label20.TabIndex = 9
+        Label20.Text = "画像変換モード"
         ' 
         ' TextBox_PDF_CONVERSION_MAX_BATCH
         ' 
@@ -306,7 +320,7 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_LOG_LEVEL.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_LOG_LEVEL.FormattingEnabled = True
-        ComboBox_LOG_LEVEL.Location = New Point(246, 45)
+        ComboBox_LOG_LEVEL.Location = New Point(246, 43)
         ComboBox_LOG_LEVEL.Name = "ComboBox_LOG_LEVEL"
         ComboBox_LOG_LEVEL.Size = New Size(99, 23)
         ComboBox_LOG_LEVEL.TabIndex = 10
@@ -314,7 +328,7 @@ Partial Class Form_TeCASettings
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(175, 50)
+        Label1.Location = New Point(175, 48)
         Label1.Name = "Label1"
         Label1.Size = New Size(49, 15)
         Label1.TabIndex = 4
@@ -389,9 +403,9 @@ Partial Class Form_TeCASettings
         GroupBox_General.Controls.Add(Label_vScroll)
         GroupBox_General.Controls.Add(ComboBox_LOG_LEVEL)
         GroupBox_General.Controls.Add(Label1)
-        GroupBox_General.Location = New Point(5, 104)
+        GroupBox_General.Location = New Point(5, 131)
         GroupBox_General.Name = "GroupBox_General"
-        GroupBox_General.Size = New Size(358, 130)
+        GroupBox_General.Size = New Size(358, 103)
         GroupBox_General.TabIndex = 9
         GroupBox_General.TabStop = False
         GroupBox_General.Text = "全般"
@@ -400,7 +414,7 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_LoginTimeout.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_LoginTimeout.FormattingEnabled = True
-        ComboBox_LoginTimeout.Location = New Point(246, 74)
+        ComboBox_LoginTimeout.Location = New Point(246, 72)
         ComboBox_LoginTimeout.Name = "ComboBox_LoginTimeout"
         ComboBox_LoginTimeout.Size = New Size(99, 23)
         ComboBox_LoginTimeout.TabIndex = 11
@@ -408,7 +422,7 @@ Partial Class Form_TeCASettings
         ' Label16
         ' 
         Label16.AutoSize = True
-        Label16.Location = New Point(112, 79)
+        Label16.Location = New Point(112, 77)
         Label16.Name = "Label16"
         Label16.Size = New Size(123, 15)
         Label16.TabIndex = 11
@@ -418,7 +432,7 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_vScroll.FormattingEnabled = True
-        ComboBox_vScroll.Location = New Point(246, 18)
+        ComboBox_vScroll.Location = New Point(246, 16)
         ComboBox_vScroll.Name = "ComboBox_vScroll"
         ComboBox_vScroll.Size = New Size(99, 23)
         ComboBox_vScroll.TabIndex = 9
@@ -426,7 +440,7 @@ Partial Class Form_TeCASettings
         ' Label_vScroll
         ' 
         Label_vScroll.AutoSize = True
-        Label_vScroll.Location = New Point(127, 21)
+        Label_vScroll.Location = New Point(127, 19)
         Label_vScroll.Name = "Label_vScroll"
         Label_vScroll.Size = New Size(97, 15)
         Label_vScroll.TabIndex = 5
@@ -617,7 +631,7 @@ Partial Class Form_TeCASettings
         ' 
         GroupBox_APIparams.Controls.Add(TextBox_UPLOAD_CHUNK_SIZE)
         GroupBox_APIparams.Controls.Add(Label14)
-        GroupBox_APIparams.Location = New Point(5, 44)
+        GroupBox_APIparams.Location = New Point(7, 77)
         GroupBox_APIparams.Name = "GroupBox_APIparams"
         GroupBox_APIparams.Size = New Size(358, 39)
         GroupBox_APIparams.TabIndex = 18
@@ -744,6 +758,7 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage1
         ' 
+        TabPage1.Controls.Add(CheckBox_setLocal)
         TabPage1.Controls.Add(Label_Domain)
         TabPage1.Controls.Add(TextBox_Domain)
         TabPage1.Controls.Add(GroupBox_APIparams)
@@ -757,6 +772,16 @@ Partial Class Form_TeCASettings
         TabPage1.TabIndex = 2
         TabPage1.Text = "システム情報・API"
         TabPage1.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBox_setLocal
+        ' 
+        CheckBox_setLocal.AutoSize = True
+        CheckBox_setLocal.Location = New Point(15, 39)
+        CheckBox_setLocal.Name = "CheckBox_setLocal"
+        CheckBox_setLocal.Size = New Size(113, 19)
+        CheckBox_setLocal.TabIndex = 19
+        CheckBox_setLocal.Text = "LocalHostの設定"
+        CheckBox_setLocal.UseVisualStyleBackColor = True
         ' 
         ' TabPage3
         ' 
@@ -907,6 +932,15 @@ Partial Class Form_TeCASettings
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
+        ' ComboBox_RasterConvert
+        ' 
+        ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox_RasterConvert.FormattingEnabled = True
+        ComboBox_RasterConvert.Location = New Point(247, 73)
+        ComboBox_RasterConvert.Name = "ComboBox_RasterConvert"
+        ComboBox_RasterConvert.Size = New Size(99, 23)
+        ComboBox_RasterConvert.TabIndex = 10
+        ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
@@ -928,7 +962,7 @@ Partial Class Form_TeCASettings
         MdiChildrenMinimizedAnchorBottom = False
         MinimizeBox = False
         Name = "Form_TeCASettings"
-        Text = "TeCAシステム設定と再起動 Ver2.80"
+        Text = "TeCAシステム設定と再起動 Ver3.00"
         GroupBox_ninsyo.ResumeLayout(False)
         GroupBox_ninsyo.PerformLayout()
         GroupBox_PDF.ResumeLayout(False)
@@ -1047,4 +1081,7 @@ Partial Class Form_TeCASettings
     Friend WithEvents GroupBox_Thumbnail As GroupBox
     Friend WithEvents Label19 As Label
     Friend WithEvents ComboBox_ThumbnailRatio As ComboBox
+    Friend WithEvents CheckBox_setLocal As CheckBox
+    Friend WithEvents Label20 As Label
+    Friend WithEvents ComboBox_RasterConvert As ComboBox
 End Class

@@ -46,13 +46,15 @@ kikuchi
  <param name="key">検索対象の文字列</param>
  <returns>見つかればTrue,見つからないならFalse</returns>
 </member>
-<member name="M:kikuchi.Misc.ExchangeString(System.String,System.String,System.String)">
+<member name="M:kikuchi.Misc.ExchangeString(System.String,System.String,System.String,System.Boolean,System.String)">
  <summary>
  ファイル内文字列を痴漢
  </summary>
  <param name="filePath">ファイルパス</param>
  <param name="BeforeStr">差し替え前の文字列</param>
- <param name="AfterStr">差し替え後のの文字列</param>
+ <param name="AfterStr">差し替え後の文字列</param>
+ <param name="LineMode">一部でもBeforeStrがあれば、一行丸ごとAfterStrに差し替える</param>
+ <param name="EncMode">Shift_JIS, UTF-8 </param>
  <returns>処理した個数</returns>
 </member>
 <member name="M:kikuchi.Misc.WriteTraceLog(System.String,System.String,System.Exception,System.String)">

@@ -24,6 +24,8 @@ Public Class TECA_sets
     Public Const Scrollpath As String = WEB_PATH & "\web\client\app\app.js"
     Public Const preViewJS As String = WEB_PATH & "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const mailPropPath As String = API_PATH & "\" + Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\mail.properties"
+    Public Const pdfconvpropPath As String = API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\pdf_converter.properties"
+
 
     'ID,SecretIDを取得
     Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
@@ -63,6 +65,17 @@ Public Class TECA_sets
                                      }
 
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
+
+    'SetLocal用定数群
+    Public Shared ReadOnly SetLocalArray As String(,) = {
+                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
+                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db1.properties", "db1.url=jdbc:postgresql:", "db1.url=jdbc:postgresql://127.0.0.1:5432/db1"},
+                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db2.properties", "db2.url=jdbc:postgresql:", "db2.url=jdbc:postgresql://127.0.0.1:5432/db2"},
+                                     {WEB_PATH & "\web\server\config\environment\production.js", "address", vbTab & vbTab & "address: '127.0.0.1',"}
+                                     }
+
+    'PDF_converter.propertiesの変更先リスト
+    Public Shared ReadOnly pdfConvFtypeArray As String() = {"bmp", "png", "gif", "tif", "tiff", "jpg", "jpeg"}
 
     Public Class QUOTA
         Public Const ColonToCamma As Integer = 0  '      キーワード: 置換対象値,   【コロン～カンマ間が置換対象】
@@ -153,6 +166,11 @@ Public Class TRIGGERS
         Public ApacheAH00558 As New Dictionary(Of String, String) From {
         {"Default", "#ServerName www.example.com:80"},
         {"Fixed", "ServerName localhost:80"}
+    }
+
+        Public RasConv As New Dictionary(Of String, String) From {
+        {"CAD", "pdfZConverter"},
+        {"EX", "pdfAutoConverterEx"}
     }
 
 
