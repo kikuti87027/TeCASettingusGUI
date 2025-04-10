@@ -202,16 +202,21 @@ kikuchi
 強制的にDBを削除する 
  </summary>
  <param name="targetDatabase">DB名</param>
- <param name="passwd">パスワード</param>
+ <param name="connstring">DB接続文字列</param>
  <returns>Trueで成功、Falseで失敗</returns>
 </member>
-<member name="M:kikuchi.TeCA.CanConnectDB(System.String,System.String,System.String)">
+<member name="M:kikuchi.TeCA.TerminateSession(System.String,System.String)">
+ <summary>
+ 指定されたデータベースのセッションを強制終了します。
+ </summary>
+ <param name="connString">接続文字列</param>
+ <param name="targetDb">ターゲットのデータベース名</param>
+ <returns>メッセージ</returns>
+</member>
+<member name="M:kikuchi.TeCA.CanConnectDB(System.String)">
  <summary>
  LocalのDBに接続できれば[Success],出来ないなら[Error]
  </summary>
- <param name="userId">DBログイン</param>
- <param name="password">DBパスワード</param>
- <param name="databaseName">DB名</param>
  <returns></returns>
 </member>
 <member name="M:kikuchi.TeCA.CheckTriggerExists(System.String,System.String,System.String)">

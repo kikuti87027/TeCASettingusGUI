@@ -34,6 +34,7 @@ Partial Class Form_TeCASettings
         Label2 = New Label()
         Label3 = New Label()
         GroupBox_PDF = New GroupBox()
+        ComboBox_RasterConvert = New ComboBox()
         Label20 = New Label()
         TextBox_PDF_CONVERSION_MAX_BATCH = New TextBox()
         TextBox_PDF_CONVERSION_MAX_IMMEDIATE = New TextBox()
@@ -106,7 +107,6 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
-        ComboBox_RasterConvert = New ComboBox()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -237,6 +237,15 @@ Partial Class Form_TeCASettings
         GroupBox_PDF.TabIndex = 3
         GroupBox_PDF.TabStop = False
         GroupBox_PDF.Text = "PDF変換"
+        ' 
+        ' ComboBox_RasterConvert
+        ' 
+        ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox_RasterConvert.FormattingEnabled = True
+        ComboBox_RasterConvert.Location = New Point(247, 73)
+        ComboBox_RasterConvert.Name = "ComboBox_RasterConvert"
+        ComboBox_RasterConvert.Size = New Size(99, 23)
+        ComboBox_RasterConvert.TabIndex = 10
         ' 
         ' Label20
         ' 
@@ -709,9 +718,9 @@ Partial Class Form_TeCASettings
         CheckBox_PublicateWorkflowOK.AutoSize = True
         CheckBox_PublicateWorkflowOK.Location = New Point(12, 66)
         CheckBox_PublicateWorkflowOK.Name = "CheckBox_PublicateWorkflowOK"
-        CheckBox_PublicateWorkflowOK.Size = New Size(178, 19)
+        CheckBox_PublicateWorkflowOK.Size = New Size(203, 19)
         CheckBox_PublicateWorkflowOK.TabIndex = 29
-        CheckBox_PublicateWorkflowOK.Text = "ワークフロー完了で自動公開する"
+        CheckBox_PublicateWorkflowOK.Text = "ワークフローを完了したら自動公開する"
         CheckBox_PublicateWorkflowOK.UseVisualStyleBackColor = True
         ' 
         ' CheckBox_UnpublicCheckin
@@ -719,9 +728,9 @@ Partial Class Form_TeCASettings
         CheckBox_UnpublicCheckin.AutoSize = True
         CheckBox_UnpublicCheckin.Location = New Point(12, 42)
         CheckBox_UnpublicCheckin.Name = "CheckBox_UnpublicCheckin"
-        CheckBox_UnpublicCheckin.Size = New Size(245, 19)
+        CheckBox_UnpublicCheckin.Size = New Size(224, 19)
         CheckBox_UnpublicCheckin.TabIndex = 28
-        CheckBox_UnpublicCheckin.Text = "差し替え、チェックイン時は非公開を規定にする"
+        CheckBox_UnpublicCheckin.Text = "差し替え、チェックイン直後は非公開にする"
         CheckBox_UnpublicCheckin.UseVisualStyleBackColor = True
         ' 
         ' CheckBox_UploadDefault
@@ -729,9 +738,9 @@ Partial Class Form_TeCASettings
         CheckBox_UploadDefault.AutoSize = True
         CheckBox_UploadDefault.Location = New Point(12, 18)
         CheckBox_UploadDefault.Name = "CheckBox_UploadDefault"
-        CheckBox_UploadDefault.Size = New Size(196, 19)
+        CheckBox_UploadDefault.Size = New Size(175, 19)
         CheckBox_UploadDefault.TabIndex = 27
-        CheckBox_UploadDefault.Text = "アップロード時は非公開を既定にする"
+        CheckBox_UploadDefault.Text = "アップロード直後は非公開にする"
         CheckBox_UploadDefault.UseVisualStyleBackColor = True
         ' 
         ' Label_notice
@@ -931,15 +940,6 @@ Partial Class Form_TeCASettings
         TabPage2.TabIndex = 1
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
-        ' 
-        ' ComboBox_RasterConvert
-        ' 
-        ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
-        ComboBox_RasterConvert.FormattingEnabled = True
-        ComboBox_RasterConvert.Location = New Point(247, 73)
-        ComboBox_RasterConvert.Name = "ComboBox_RasterConvert"
-        ComboBox_RasterConvert.Size = New Size(99, 23)
-        ComboBox_RasterConvert.TabIndex = 10
         ' 
         ' Form_TeCASettings
         ' 

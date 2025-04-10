@@ -65,6 +65,7 @@ Public Class TECA_sets
                                      }
 
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
+    Public Const connStrdb1 As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db1"
 
     'SetLocal用定数群
     Public Shared ReadOnly SetLocalArray As String(,) = {

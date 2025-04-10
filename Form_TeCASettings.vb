@@ -68,7 +68,7 @@ Public Class Form_TeCASettings
 
         '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
         Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
-        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, "db2", "postgres", "PCJJWEqb2d",, True)
+        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, connStr, True)
 
         For Each ResolVal As KeyValuePair(Of String, String) In DIC.ThmbNailvalues
             If ResolVal.Value = ThumbSize Then
@@ -145,7 +145,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.m_kaisha where invalid_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, Dt_kaisha)
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_kaisha)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -159,7 +159,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info_kyotsu "
 
-        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, Dt_systemInfo)
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_systemInfo)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -173,7 +173,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
 
-        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db1", SQLCMD, DT_option)
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, DT_option)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
@@ -187,7 +187,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info where del_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL(DB_IPaddr, "db2", SQLCMD, DT_systemInfoDB2)
+        db1_msg = TeCA.DBtoDTBL(connStr, SQLCMD, DT_systemInfoDB2)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = db1_msg.ToString
             Exit Sub
