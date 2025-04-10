@@ -79,7 +79,9 @@ Partial Class Form_TeCASettings
         ComboBox_mail_transport_protocol = New ComboBox()
         ColorDialog1 = New ColorDialog()
         GroupBox_APIparams = New GroupBox()
+        TextBoxAuthText = New TextBox()
         TextBox_UPLOAD_CHUNK_SIZE = New TextBox()
+        Label22 = New Label()
         Label14 = New Label()
         GroupBox_DWG = New GroupBox()
         Button_DWG = New Button()
@@ -92,7 +94,12 @@ Partial Class Form_TeCASettings
         Label_notice = New Label()
         TabControl1 = New TabControl()
         TabPage1 = New TabPage()
+        GroupBox_SystemID = New GroupBox()
+        TextBoxSecretID = New TextBox()
         CheckBox_setLocal = New CheckBox()
+        Label21 = New Label()
+        TextBoxClientID = New TextBox()
+        Label_ClientID = New Label()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
         GroupBox_Thumbnail = New GroupBox()
@@ -118,6 +125,7 @@ Partial Class Form_TeCASettings
         GroupBox_KOKAI.SuspendLayout()
         TabControl1.SuspendLayout()
         TabPage1.SuspendLayout()
+        GroupBox_SystemID.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
         GroupBox_Thumbnail.SuspendLayout()
@@ -190,7 +198,7 @@ Partial Class Form_TeCASettings
         ' Label_Domain
         ' 
         Label_Domain.AutoSize = True
-        Label_Domain.Location = New Point(15, 13)
+        Label_Domain.Location = New Point(7, 14)
         Label_Domain.Name = "Label_Domain"
         Label_Domain.Size = New Size(69, 15)
         Label_Domain.TabIndex = 4
@@ -199,7 +207,7 @@ Partial Class Form_TeCASettings
         ' Label_MaxUser
         ' 
         Label_MaxUser.AutoSize = True
-        Label_MaxUser.Location = New Point(229, 12)
+        Label_MaxUser.Location = New Point(224, 17)
         Label_MaxUser.Name = "Label_MaxUser"
         Label_MaxUser.Size = New Size(79, 15)
         Label_MaxUser.TabIndex = 4
@@ -373,16 +381,16 @@ Partial Class Form_TeCASettings
         ' 
         ' TextBox_Domain
         ' 
-        TextBox_Domain.Location = New Point(85, 10)
+        TextBox_Domain.Location = New Point(79, 11)
         TextBox_Domain.Name = "TextBox_Domain"
-        TextBox_Domain.Size = New Size(138, 23)
+        TextBox_Domain.Size = New Size(129, 23)
         TextBox_Domain.TabIndex = 3
         ' 
         ' TextBox_MaxUsers
         ' 
         TextBox_MaxUsers.AllowDrop = True
         TextBox_MaxUsers.Cursor = Cursors.UpArrow
-        TextBox_MaxUsers.Location = New Point(314, 9)
+        TextBox_MaxUsers.Location = New Point(309, 14)
         TextBox_MaxUsers.Name = "TextBox_MaxUsers"
         TextBox_MaxUsers.Size = New Size(51, 23)
         TextBox_MaxUsers.TabIndex = 4
@@ -638,26 +646,44 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_APIparams
         ' 
+        GroupBox_APIparams.Controls.Add(TextBoxAuthText)
         GroupBox_APIparams.Controls.Add(TextBox_UPLOAD_CHUNK_SIZE)
+        GroupBox_APIparams.Controls.Add(Label22)
         GroupBox_APIparams.Controls.Add(Label14)
-        GroupBox_APIparams.Location = New Point(7, 77)
+        GroupBox_APIparams.Location = New Point(7, 54)
         GroupBox_APIparams.Name = "GroupBox_APIparams"
-        GroupBox_APIparams.Size = New Size(358, 39)
+        GroupBox_APIparams.Size = New Size(358, 83)
         GroupBox_APIparams.TabIndex = 18
         GroupBox_APIparams.TabStop = False
         GroupBox_APIparams.Text = "APIパラメータ"
         ' 
+        ' TextBoxAuthText
+        ' 
+        TextBoxAuthText.Location = New Point(66, 16)
+        TextBoxAuthText.Name = "TextBoxAuthText"
+        TextBoxAuthText.Size = New Size(286, 23)
+        TextBoxAuthText.TabIndex = 28
+        ' 
         ' TextBox_UPLOAD_CHUNK_SIZE
         ' 
-        TextBox_UPLOAD_CHUNK_SIZE.Location = New Point(224, 12)
+        TextBox_UPLOAD_CHUNK_SIZE.Location = New Point(222, 45)
         TextBox_UPLOAD_CHUNK_SIZE.Name = "TextBox_UPLOAD_CHUNK_SIZE"
         TextBox_UPLOAD_CHUNK_SIZE.Size = New Size(130, 23)
         TextBox_UPLOAD_CHUNK_SIZE.TabIndex = 24
         ' 
+        ' Label22
+        ' 
+        Label22.AutoSize = True
+        Label22.Location = New Point(6, 20)
+        Label22.Name = "Label22"
+        Label22.Size = New Size(54, 15)
+        Label22.TabIndex = 27
+        Label22.Text = "AuthText"
+        ' 
         ' Label14
         ' 
         Label14.AutoSize = True
-        Label14.Location = New Point(71, 15)
+        Label14.Location = New Point(69, 48)
         Label14.Name = "Label14"
         Label14.Size = New Size(125, 15)
         Label14.TabIndex = 7
@@ -767,12 +793,12 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage1
         ' 
-        TabPage1.Controls.Add(CheckBox_setLocal)
+        TabPage1.Controls.Add(GroupBox_SystemID)
         TabPage1.Controls.Add(Label_Domain)
         TabPage1.Controls.Add(TextBox_Domain)
-        TabPage1.Controls.Add(GroupBox_APIparams)
-        TabPage1.Controls.Add(Label_MaxUser)
         TabPage1.Controls.Add(TextBox_MaxUsers)
+        TabPage1.Controls.Add(Label_MaxUser)
+        TabPage1.Controls.Add(GroupBox_APIparams)
         TabPage1.Location = New Point(4, 24)
         TabPage1.Margin = New Padding(2)
         TabPage1.Name = "TabPage1"
@@ -782,15 +808,61 @@ Partial Class Form_TeCASettings
         TabPage1.Text = "システム情報・API"
         TabPage1.UseVisualStyleBackColor = True
         ' 
+        ' GroupBox_SystemID
+        ' 
+        GroupBox_SystemID.Controls.Add(TextBoxSecretID)
+        GroupBox_SystemID.Controls.Add(CheckBox_setLocal)
+        GroupBox_SystemID.Controls.Add(Label21)
+        GroupBox_SystemID.Controls.Add(TextBoxClientID)
+        GroupBox_SystemID.Controls.Add(Label_ClientID)
+        GroupBox_SystemID.Location = New Point(5, 176)
+        GroupBox_SystemID.Name = "GroupBox_SystemID"
+        GroupBox_SystemID.Size = New Size(358, 83)
+        GroupBox_SystemID.TabIndex = 20
+        GroupBox_SystemID.TabStop = False
+        GroupBox_SystemID.Text = "ソフトウェア識別情報"
+        ' 
+        ' TextBoxSecretID
+        ' 
+        TextBoxSecretID.Location = New Point(183, 46)
+        TextBoxSecretID.Name = "TextBoxSecretID"
+        TextBoxSecretID.Size = New Size(169, 23)
+        TextBoxSecretID.TabIndex = 26
+        ' 
         ' CheckBox_setLocal
         ' 
         CheckBox_setLocal.AutoSize = True
-        CheckBox_setLocal.Location = New Point(15, 39)
+        CheckBox_setLocal.Location = New Point(8, 24)
         CheckBox_setLocal.Name = "CheckBox_setLocal"
         CheckBox_setLocal.Size = New Size(113, 19)
         CheckBox_setLocal.TabIndex = 19
         CheckBox_setLocal.Text = "LocalHostの設定"
         CheckBox_setLocal.UseVisualStyleBackColor = True
+        ' 
+        ' Label21
+        ' 
+        Label21.AutoSize = True
+        Label21.Location = New Point(127, 49)
+        Label21.Name = "Label21"
+        Label21.Size = New Size(50, 15)
+        Label21.TabIndex = 25
+        Label21.Text = "SecretID"
+        ' 
+        ' TextBoxClientID
+        ' 
+        TextBoxClientID.Location = New Point(183, 19)
+        TextBoxClientID.Name = "TextBoxClientID"
+        TextBoxClientID.Size = New Size(170, 23)
+        TextBoxClientID.TabIndex = 24
+        ' 
+        ' Label_ClientID
+        ' 
+        Label_ClientID.AutoSize = True
+        Label_ClientID.Location = New Point(127, 25)
+        Label_ClientID.Name = "Label_ClientID"
+        Label_ClientID.Size = New Size(48, 15)
+        Label_ClientID.TabIndex = 7
+        Label_ClientID.Text = "ClientID"
         ' 
         ' TabPage3
         ' 
@@ -983,6 +1055,8 @@ Partial Class Form_TeCASettings
         TabControl1.ResumeLayout(False)
         TabPage1.ResumeLayout(False)
         TabPage1.PerformLayout()
+        GroupBox_SystemID.ResumeLayout(False)
+        GroupBox_SystemID.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
         GroupBox_Thumbnail.ResumeLayout(False)
@@ -1084,4 +1158,11 @@ Partial Class Form_TeCASettings
     Friend WithEvents CheckBox_setLocal As CheckBox
     Friend WithEvents Label20 As Label
     Friend WithEvents ComboBox_RasterConvert As ComboBox
+    Friend WithEvents GroupBox_SystemID As GroupBox
+    Friend WithEvents TextBoxSecretID As TextBox
+    Friend WithEvents Label21 As Label
+    Friend WithEvents TextBoxClientID As TextBox
+    Friend WithEvents Label_ClientID As Label
+    Friend WithEvents TextBoxAuthText As TextBox
+    Friend WithEvents Label22 As Label
 End Class

@@ -12,20 +12,26 @@ Public Class TECA_sets
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const DB_IPaddr As String = "127.0.0.1"
+
+    Public Const AllowedPWD As String = ".deny"
 #End If
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
+    Public Const TeCAappPath As String = API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca"
+
     Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
+    Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
+    Public Const ClientWebPath As String = WEB_PATH & "\web\client"
 
-    Public Const SelectFileJS As String = WEB_PATH & "\web\client\app\select-file\select-file.service.js"
-    Public Const SelectFileHTML As String = WEB_PATH & "\web\client\app\select-file\select-file.html"
-    Public Const SelectFileCSS_Width As String = WEB_PATH & "\web\client\components\bootstrap\dist\css\bootstrap.min.css"
-    Public Const IDpath As String = WEB_PATH & "\web\server\config\environment\production.js"
-    Public Const KOKAI_FLG_File As String = WEB_PATH & "\web\client\app\upload\upload.service.js"
-    Public Const Scrollpath As String = WEB_PATH & "\web\client\app\app.js"
-    Public Const preViewJS As String = WEB_PATH & "\web\client\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
-    Public Const mailPropPath As String = API_PATH & "\" + Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\mail.properties"
-    Public Const pdfconvpropPath As String = API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\pdf_converter.properties"
+    Public Const SelectFileJS As String = ClientWebPath & "\app\select-file\select-file.service.js"
+    Public Const SelectFileHTML As String = ClientWebPath & "\app\select-file\select-file.html"
+    Public Const SelectFileCSS_Width As String = ClientWebPath & "\components\bootstrap\dist\css\bootstrap.min.css"
+    Public Const KOKAI_FLG_File As String = ClientWebPath & "\app\upload\upload.service.js"
+    Public Const Scrollpath As String = ClientWebPath & "\app\app.js"
+    Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
+    Public Const IDpath As String = ServerWebPath & "\production.js"
 
+    Public Const mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
+    Public Const pdfconvpropPath As String = TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
 
     'ID,SecretIDを取得
     Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
@@ -168,12 +174,16 @@ Public Class TRIGGERS
         {"Default", "#ServerName www.example.com:80"},
         {"Fixed", "ServerName localhost:80"}
     }
-
         Public RasConv As New Dictionary(Of String, String) From {
         {"CAD", "pdfZConverter"},
         {"EX", "pdfAutoConverterEx"}
     }
-
+        Public ClientIDPATH As New Dictionary(Of String, String) From {
+                {"beansXML", TECA_sets.TeCAappPath & "\WEB-INF\beans.xml"},
+                {"developmentJS", TECA_sets.ServerWebPath & "\development.js"},
+                {"prodductionJS", TECA_sets.IDpath},
+                {"testJS", TECA_sets.ServerWebPath & "\test.js"}
+    }
 
     End Class
 

@@ -40,6 +40,17 @@ Public Class Form_TeCASettings
             CheckBox_Wide.Checked = True
         End If
 
+        '▼▼▼ClientID/SecretID  現在の状態をコントロールに格納する
+        '　ClientID
+        Dim ClientID As String = KeyValueParser.FindValue(IDpath, "clientId")
+        Dim secretID As String = KeyValueParser.FindValue(IDpath, "clientSecret")
+        Dim base64 As New MyBase64str("UTF-8")
+        Dim IDenc64 As String = base64.Encode(ClientID & ":" & secretID)
+
+        Me.TextBoxClientID.AppendText(ClientID)
+        Me.TextBoxSecretID.AppendText(secretID)
+        Me.TextBoxAuthText.AppendText(IDenc64)
+
         '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
         For Each DetectLine As KeyValuePair(Of String, String) In DIC.pdfJS
             If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
@@ -396,25 +407,35 @@ Public Class Form_TeCASettings
         End If
 
         '認証入力
-        If ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID)) Then
-            GroupBox_ninsyo.Text = "設定値を変更できます。"
-            LockDialog(False, True)  '全アイテムをDisable
-            LockDialog(True)  '制限付きでアイテムをEnable
-            Button_Exec.Enabled = True
-        Else
-            If ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor")) Then
+        LockDialog(False, True, True)  '全アイテムをDisable
+        Button_Exec.Enabled = True
+
+        Select Case True
+            Case TextBox_ClientID.Text = ClientID AndAlso TextBox_SecretID.Text = SecretID
+                ' NormalUserMode
+                GroupBox_ninsyo.Text = "設定値を変更できます。"
+                TabPage2.Text = "アップロード"
+                LockDialog(True)  '制限付きでアイテムをEnable
+
+            Case TextBox_ClientID.Text = ClientID & AllowedPWD AndAlso TextBox_SecretID.Text = SecretID
+                ' AllowedUserMode
+                TabPage2.Text = "アップロード・公開"
+                GroupBox_ninsyo.Text = "公開機能も設定値を変更できます。"
+                LockDialog(True, False, True)  'AlloedModeでEnable
+
+            Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisor"
+                ' SupervisorMode
                 GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
+                TabPage2.Text = "アップロード・公開"
                 LockDialog(True, True)  '全アイテムをEnable
-                Button_Exec.Enabled = True
-            Else
+
+            Case Else
                 GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
-                LockDialog(False, True)  '全アイテムをDisable
+                TabPage2.Text = "アップロード"
                 Button_Exec.Enabled = False
 
                 Exit Sub
-
-            End If
-        End If
+        End Select
 
         If (CheckBox_メール通知.Checked = False) Then
             GroupBox_MailServer.Enabled = False
@@ -528,6 +549,7 @@ Public Class Form_TeCASettings
                     Next
                 End If
 
+                '【PDF_Convert.properties】の更新 
                 Dim exchangeFtypes As Integer
                 For Each FType In pdfConvFtypeArray
                     exchangeFtypes += Misc.ExchangeString(pdfconvpropPath, FType, FType & "=" & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
@@ -547,6 +569,18 @@ Public Class Form_TeCASettings
                         Case False
                             Label_notice.Text = $"GrabTool off：{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("true"), DIC.pdfJS_Grab("false"))}"
                     End Select
+                End If
+
+                '【ClientID/SecretID】の更新
+                Dim exchangeResult As Integer = 0
+                For Each IDs As KeyValuePair(Of String, String) In DIC.ClientIDPATH
+                    exchangeResult += Misc.ExchangeString(IDs.Value, ClientID, Me.TextBoxClientID.Text.ToString)
+                    exchangeResult += Misc.ExchangeString(IDs.Value, SecretID, Me.TextBoxSecretID.Text.ToString)
+                Next
+                If exchangeResult >= 8 Then
+                    MessageBox.Show("ClientID/SecretIDの更新に失敗しました。")
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
                 End If
 
                 '【apache/httpd.conf】AH000558エラーをこっそり直す
@@ -747,15 +781,15 @@ Public Class Form_TeCASettings
                 End If
 
                 '【DB関連パラメータ】DLG入力値で更新する
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_SIZE_MAX.Text.ToString + "' WHERE info_key='UPLOAD_SIZE_MAX' ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_FILE_NUMBER_MAX.Text.ToString + "' WHERE info_key='UPLOAD_FILE_NUMBER_MAX' ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_IMMEDIATE' ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_BATCH.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_BATCH' ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + ComboBox_LOG_LEVEL.SelectedItem.ToString + "' WHERE info_key='LOG_LEVEL' ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_option SET umu_flg='" + CheckBox_メール通知.Checked.ToString + "' WHERE id=2 ", "db1")
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", "db2")
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_SIZE_MAX.Text.ToString + "' WHERE info_key='UPLOAD_SIZE_MAX' ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_FILE_NUMBER_MAX.Text.ToString + "' WHERE info_key='UPLOAD_FILE_NUMBER_MAX' ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_IMMEDIATE' ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_BATCH.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_BATCH' ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + ComboBox_LOG_LEVEL.SelectedItem.ToString + "' WHERE info_key='LOG_LEVEL' ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_option SET umu_flg='" + CheckBox_メール通知.Checked.ToString + "' WHERE id=2 ", connStrdb1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", connStr)
 
                 'PipeMan実行
                 If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
@@ -795,9 +829,14 @@ Public Class Form_TeCASettings
     ''' </summary>
     ''' <param name="SupervisorMode">SUperVisorModeのときに機能するアイテムも制御する</param>
     ''' <param name="ONorOFF"></param>
-    Private Sub LockDialog(ONorOFF As Boolean, Optional SupervisorMode As Boolean = False)
+    Private Sub LockDialog(ONorOFF As Boolean, Optional SupervisorMode As Boolean = False, Optional AllowedMode As Boolean = False)
         'SupervisorMode:   True=Photron / False=User
         'ONorOFF： true or False
+
+        'authTextは表示するだけのアイテムにする
+        TextBoxAuthText.Enabled = True
+        TextBoxAuthText.ReadOnly = True
+
 
         'システム情報/APIタブ
         GroupBox_APIparams.Enabled = ONorOFF
@@ -819,11 +858,17 @@ Public Class Form_TeCASettings
 
         ComboBox_ExecMode.Enabled = ONorOFF
 
+        If AllowedMode Then
+            GroupBox_KOKAI.Visible = ONorOFF
+        End If
+
 
         If SupervisorMode Then
             TextBox_Domain.Enabled = ONorOFF
             TextBox_MaxUsers.Enabled = ONorOFF
             TextBox_UPLOAD_SIZE_MAX.Enabled = ONorOFF
+            GroupBox_SystemID.Visible = ONorOFF
+            GroupBox_KOKAI.Visible = ONorOFF
 
             'supervisorModeの例外（ONだったら操作不能にする
             If CheckBox_setLocal.Checked Then
@@ -1280,9 +1325,28 @@ Public Class Form_TeCASettings
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
         Me.Button_DWG.Text = "取出"
+        Me.TabPage2.Text = "アップロード"
 
 
     End Sub
 
+
+End Class
+
+Public Class MyBase64str
+
+    Private ReadOnly enc As Encoding
+
+    Public Sub New(ByVal encStr As String)
+        enc = Encoding.GetEncoding(encStr)
+    End Sub
+
+    Public Function Encode(ByVal str As String) As String
+        Return Convert.ToBase64String(enc.GetBytes(str))
+    End Function
+
+    Public Function Decode(ByVal str As String) As String
+        Return enc.GetString(Convert.FromBase64String(str))
+    End Function
 
 End Class

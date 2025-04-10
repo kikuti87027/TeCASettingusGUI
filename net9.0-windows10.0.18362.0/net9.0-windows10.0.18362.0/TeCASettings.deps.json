@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "TeCASettings/2.80.0": {
+      "TeCASettings/3.00": {
         "dependencies": {
           "Azure.Core": "1.45.0",
           "CXuesong.Shims.VisualBasic.Devices": "0.3.0",
@@ -256,7 +256,7 @@
     }
   },
   "libraries": {
-    "TeCASettings/2.80.0": {
+    "TeCASettings/3.00": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
