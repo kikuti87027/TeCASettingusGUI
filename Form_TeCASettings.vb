@@ -1,13 +1,10 @@
 Imports System.IO
 Imports System.ServiceProcess
 Imports System.Text
-Imports System.Threading
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
 
 Public Class Form_TeCASettings
-    Inherits System.Windows.Forms.Form
-
     Dim CurrentPassword As String  '旧パスワード保管用
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
     Dim DIC As New SwitchWords
@@ -18,354 +15,21 @@ Public Class Form_TeCASettings
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        'TeCAサーバーかどうか確認
+        If Not TeCA.IsRunableEnvoronment(TECA_sets.TeCAServices) Then
+            MessageBox.Show("TeCASettingsはTeCAサーバー上でのみ使用可能です。", "注意", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Me.Close()
+        End If
+
         'プログレスバー初期化
         Me.GroupBox_Progress.Visible = False
 
         'コンボボックス初期化(初期項目投入と編集ロックON
         ComboBox_initialize()
 
-        '▼▼▼ファイル選択モーダル  現在の状態をコントロールに格納する
-        '　モーダル行数
-        Dim SelectFileLinesNow As String = KeyValueParser.FindValue(SelectFileJS, "var DEFAULT_DISP_CNT")
-        If {"20", "40", "60"}.Contains(SelectFileLinesNow) Then
-            Me.ComboBox_FileSelectLineNum.SelectedItem = SelectFileLinesNow
-        Else
-            Me.ComboBox_FileSelectLineNum.SelectedIndex = 0
-        End If
 
-        'モーダル幅
-        If Misc.FindString(SelectFileCSS_Width, DIC.SelectFileCSS_Width("CSS_Normal")) Then
-            CheckBox_Wide.Checked = False
-        Else
-            CheckBox_Wide.Checked = True
-        End If
+        InitializeControls()
 
-        '▼▼▼ClientID/SecretID  現在の状態をコントロールに格納する
-        '　ClientID
-        Dim ClientID As String = KeyValueParser.FindValue(IDpath, "clientId")
-        Dim secretID As String = KeyValueParser.FindValue(IDpath, "clientSecret")
-        Dim base64 As New MyBase64str("UTF-8")
-        Dim IDenc64 As String = base64.Encode(ClientID & ":" & secretID)
-
-        Me.TextBoxClientID.AppendText(ClientID)
-        Me.TextBoxSecretID.AppendText(secretID)
-        Me.TextBoxAuthText.AppendText(IDenc64)
-
-        '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
-        For Each DetectLine As KeyValuePair(Of String, String) In DIC.pdfJS
-            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
-                Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
-                pdfJS_CurrentViewScale = DetectLine.Value.ToString
-                Exit For
-            Else
-                Me.ComboBox_PreViewScale.SelectedIndex = 0
-            End If
-        Next
-
-        '▼▼▼production.jsに127.0.0.1の記載があるならSetLocal:check On
-        If Misc.FindString(SetLocalArray(3, 0), SetLocalArray(3, 2)) Then
-            CheckBox_setLocal.Checked = True
-        Else
-            CheckBox_setLocal.Checked = False
-        End If
-
-        '▼▼▼pdfconverter.propertiesの画像データ設定をコンボへ
-        If Misc.FindString(pdfconvpropPath, "png=pdfAutoConverterEx") Then
-            ComboBox_RasterConvert.SelectedItem = "EX"
-        Else
-            ComboBox_RasterConvert.SelectedItem = "CAD"
-        End If
-
-
-        '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
-        Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
-        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, connStr, True)
-
-        For Each ResolVal As KeyValuePair(Of String, String) In DIC.ThmbNailvalues
-            If ResolVal.Value = ThumbSize Then
-                Me.ComboBox_ThumbnailRatio.SelectedItem = ResolVal.Key
-                Thubnail_current = ResolVal.Key
-                Exit For
-            Else
-                Me.ComboBox_ThumbnailRatio.SelectedIndex = 1
-            End If
-        Next
-
-        '--------------------------------------
-        '【app.js】のvScroll値をComboBoxに格納
-        '--------------------------------------
-        ComboBox_vScroll.SelectedItem = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
-
-        '--------------------------------------
-        '【pdf.js】のHandToolOnLoad値をChechBoxに格納
-        '--------------------------------------
-        For Each DetectLine As KeyValuePair(Of Boolean, String) In DIC.pdfJS_Grab
-            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
-                GrabToolNow = DetectLine.Key
-                Exit For
-            End If
-        Next
-
-        CheckBox_GrabTool.Checked = GrabToolNow
-
-        '--------------------------------------
-        '【タイムアウト値】の最小を求めてコンボへ格納
-        '--------------------------------------
-        Dim ResultValue(TOUTArray.GetLength(1) - 1) As Integer
-
-        For X As Integer = 0 To TOUTArray.GetLength(1) - 1
-
-            If TOUTArray(X, 2) = QUOTA.beansXML Then
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
-            Else
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
-            End If
-
-        Next
-
-        'コンボには求めた最小を中央値として、前後に倍々でコンボの選択肢を作る
-        'ただし、マイナス値や１２時間（720分）超は作らないようにする
-
-        With Me.ComboBox_LoginTimeout
-            For N As Integer = -3 To 3
-                Select Case N
-                    Case < 0
-                        If (ResultValue.Min \ ((N * 2) * -1)) > 0 Then
-                            .Items.Add((ResultValue.Min \ ((N * 2) * -1)).ToString)
-                        End If
-                    Case 0
-                        .Items.Add((ResultValue.Min).ToString)
-                    Case > 0
-                        If (ResultValue.Min * (N * 2)) < 721 Then
-                            .Items.Add((ResultValue.Min * (N * 2)).ToString)
-                        End If
-                End Select
-            Next
-        End With
-
-        ComboBox_LoginTimeout.SelectedItem = ResultValue.Min.ToString
-
-        Dim rows1, rows2 As DataRow()
-
-        '▼▼▼TeCA-DB1  値をコントロールに格納する
-
-        Dim db1_msg As String
-        Dim SQLCMD As String
-        '--------------------------------------
-        '[db1.m_kaisha]のSELECT結果をDt_kaisyaに格納
-        '--------------------------------------
-        SQLCMD = "select * from public.m_kaisha where invalid_flg = false"
-
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_kaisha)
-        If (db1_msg.Length > 5) Then
-            Label_notice.Text = db1_msg.ToString
-            Exit Sub
-        End If
-
-        SQLCMD = Nothing
-        db1_msg = Nothing
-
-        '--------------------------------------
-        '[db1.t_system_info_kyotsu]のSELECT結果を【Dt_systemInfo】に格納
-        '--------------------------------------
-        SQLCMD = "select * from public.t_system_info_kyotsu "
-
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_systemInfo)
-        If (db1_msg.Length > 5) Then
-            Label_notice.Text = db1_msg.ToString
-            Exit Sub
-        End If
-
-        SQLCMD = Nothing
-        db1_msg = Nothing
-
-        '--------------------------------------
-        '[db1.m_option]のSELECT結果（メール通知）を【Dt_option】に格納
-        '--------------------------------------
-        SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
-
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, DT_option)
-        If (db1_msg.Length > 5) Then
-            Label_notice.Text = db1_msg.ToString
-            Exit Sub
-        End If
-
-        SQLCMD = Nothing
-        db1_msg = Nothing
-
-        '--------------------------------------
-        '[db2.t_system_info]のSELECT結果を[DT_systemInfoDB2]に格納
-        '--------------------------------------
-        SQLCMD = "select * from public.t_system_info where del_flg = false"
-
-        db1_msg = TeCA.DBtoDTBL(connStr, SQLCMD, DT_systemInfoDB2)
-        If (db1_msg.Length > 5) Then
-            Label_notice.Text = db1_msg.ToString
-            Exit Sub
-        End If
-
-        SQLCMD = Nothing
-        db1_msg = Nothing
-
-        '▼▼▼TeCA-DB2  値をコントロールに格納する
-        '--------------------------------------
-        '[DT_kaisya]でID=1（メインドメイン）を探し【ドメインと人数】をコントロールへ格納
-        '--------------------------------------
-        rows1 = Dt_kaisha.Select("id = 1")
-
-        If rows1.Length <> 0 Then　　　　　　　　　　　　　　　'ID=1の行データ存在を確認
-            For Each d1 As DataRow In rows1
-                TextBox_Domain.Text = d1("domain_name")
-                TextBox_MaxUsers.Text = d1("sys_riyo_user_max")
-            Next
-        End If
-
-        '--------------------------------------
-        '【DT_systemInfo】のキー検索結果を該当するTextBox/Comboに格納
-        '--------------------------------------
-        Dim info_keyArray() As String = {"UPLOAD_SIZE_MAX",
-                                         "UPLOAD_FILE_NUMBER_MAX",
-                                         "PDF_CONVERSION_MAX_IMMEDIATE",
-                                         "PDF_CONVERSION_MAX_BATCH",
-                                         "LOG_LEVEL"}
-
-        For Each single_infoKey As String In info_keyArray
-
-            rows1 = Dt_systemInfo.Select("info_key = '" + single_infoKey + "'")
-
-            If rows1.Length <> 0 Then
-                For Each d1 As DataRow In rows1
-
-                    'TextBoxを探す
-                    Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
-                    'ConboBoxを探す
-                    Dim csCB As Control() = Me.Controls.Find("ComboBox_" + single_infoKey, True)
-
-                    '見つかったらTextを直す
-                    If csTX.Length > 0 Then
-                        CType(csTX(0), TextBox).Text = d1("info_val")
-                    End If
-                    '見つかったらComboを直す
-                    If csCB.Length > 0 Then
-                        CType(csCB(0), ComboBox).SelectedItem = d1("info_val")
-                    End If
-
-                Next
-            End If
-        Next
-
-        '--------------------------------------
-        '【DT_option】のキー検索結果を該当するTextBoxに格納
-        '--------------------------------------
-        Dim option_keyArray() As String = {"メール通知"}
-
-        For Each single_infoKey As String In option_keyArray
-
-            rows2 = DT_option.Select("name = '" + single_infoKey + "'")
-
-            If rows2.Length <> 0 Then
-                For Each d1 As DataRow In rows2
-
-                    'CheckBoxを探す
-                    Dim cs As Control() = Me.Controls.Find("CheckBox_" + single_infoKey, True)
-
-                    '見つかったらTextを直す
-                    If cs.Length > 0 Then
-                        CType(cs(0), CheckBox).Checked = d1("umu_flg")
-
-                    End If
-                Next
-            End If
-        Next
-
-        '--------------------------------------
-        '【DT_systemInfoDB2】のキー検索結果を該当するTextBoxに格納
-        '--------------------------------------
-        Dim DB2_keyArray() As String = {"UPLOAD_CHUNK_SIZE"}
-
-        For Each single_infoKey As String In DB2_keyArray
-
-            rows2 = DT_systemInfoDB2.Select("info_key = '" + single_infoKey + "'")
-
-            If rows2.Length <> 0 Then
-                For Each d1 As DataRow In rows2
-
-                    'TextBoxを探す
-                    Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
-
-                    '見つかったらTextを直す
-                    If csTX.Length > 0 Then
-                        CType(csTX(0), TextBox).Text = d1("info_val")
-                    End If
-
-                Next
-            End If
-        Next
-
-        '--------------------------------------
-        '【mail.properties】のキー検索結果を該当するControlに格納
-        '--------------------------------------
-        For Each MailCTRL As String In mailPropArray
-
-            Dim mailTX As Control() = Me.Controls.Find("TextBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
-            Dim mailCB As Control() = Me.Controls.Find("ComboBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
-            Dim mailCHB As Control() = Me.Controls.Find("CheckBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
-
-            If mailTX.Length > 0 Then
-                CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
-                If (MailCTRL = "password") Then
-                    CurrentPassword = CType(mailTX(0), TextBox).Text  '前のパスワードは保管
-                End If
-            End If
-
-            If mailCB.Length > 0 Then
-                CType(mailCB(0), ComboBox).SelectedItem = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
-            End If
-
-            If mailCHB.Length > 0 Then
-                If TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
-                    CType(mailCHB(0), CheckBox).Checked = True
-                Else
-                    CType(mailCHB(0), CheckBox).Checked = False
-                End If
-            End If
-        Next
-
-        '--------------------------------------
-        '【公開/非公開】現状をチェックボックスに反映
-        '--------------------------------------
-        '【□　アップロードは非公開にする】
-        DefaultKokai_Exists = Misc.FindFormula(KOKAI_FLG_File, DefaultKokai_key, "Const.UPLOAD_PUBLIC_OFF;")
-        If DefaultKokai_Exists Then
-            CheckBox_UploadDefault.Checked = True
-        Else
-            CheckBox_UploadDefault.Checked = False
-        End If
-
-        TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", connStr)
-
-        If TRG_CheckInUNPUBLIC_exists Then
-            CheckBox_UnpublicCheckin.Checked = True
-        Else
-            CheckBox_UnpublicCheckin.Checked = False
-
-        End If
-
-        TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", connStr)
-
-        If TRG_ApprovePUBLIC_exists Then
-            CheckBox_PublicateWorkflowOK.Checked = True
-        Else
-            CheckBox_PublicateWorkflowOK.Checked = False
-
-        End If
-
-
-        'SMTP認証OFFのときはパスワードDisable
-        If CheckBox_mail_smtp_auth.Checked = False Then
-            TextBox_password.Enabled = False
-            Label11.Enabled = False
-        End If
         '--------------------------------------
         'ダイアログコントロールを全部非表示
         '--------------------------------------
@@ -509,7 +173,7 @@ Public Class Form_TeCASettings
 
                 '【t_system_info】サムネール解像度の更新
                 If Thubnail_current <> ComboBox_ThumbnailRatio.SelectedItem Then
-                    Label_notice.Text = TeCA.UpdateDB(DIC.ThmbNailCmds(ComboBox_ThumbnailRatio.SelectedItem), "db2")
+                    Label_notice.Text = TeCA.UpdateDB(DIC.ThmbNailCmds(ComboBox_ThumbnailRatio.SelectedItem), connStr)
                 End If
 
 
@@ -577,7 +241,7 @@ Public Class Form_TeCASettings
                     exchangeResult += Misc.ExchangeString(IDs.Value, ClientID, Me.TextBoxClientID.Text.ToString)
                     exchangeResult += Misc.ExchangeString(IDs.Value, SecretID, Me.TextBoxSecretID.Text.ToString)
                 Next
-                If exchangeResult >= 8 Then
+                If exchangeResult < 8 Then
                     MessageBox.Show("ClientID/SecretIDの更新に失敗しました。")
                     GroupBox_Progress.Visible = False
                     Exit Sub
@@ -762,22 +426,22 @@ Public Class Form_TeCASettings
                 TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", connStr)
 
                 If Not TRG_CheckInUNPUBLIC_exists AndAlso CheckBox_UnpublicCheckin.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerFunc"), "db2")
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_Trigger"), "db2")
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerFunc"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_Trigger"), connStr)
                 End If
                 If TRG_CheckInUNPUBLIC_exists AndAlso Not CheckBox_UnpublicCheckin.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerDROP"), "db2")
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerDROP"), connStr)
                 End If
 
                 '■ワークフローが承認されたら公開する（CheckBox_PublicateWorkflowOK）
                 TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", connStr)
 
                 If Not TRG_ApprovePUBLIC_exists AndAlso CheckBox_PublicateWorkflowOK.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerFunc"), "db2")
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_Trigger"), "db2")
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerFunc"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_Trigger"), connStr)
                 End If
                 If TRG_ApprovePUBLIC_exists AndAlso Not CheckBox_PublicateWorkflowOK.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), "db2")
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), connStr)
                 End If
 
                 '【DB関連パラメータ】DLG入力値で更新する
@@ -822,6 +486,8 @@ Public Class Form_TeCASettings
 
 
         GroupBox_Progress.Visible = False
+
+        InitializeControls()
 
     End Sub
     ''' <summary>
@@ -926,29 +592,22 @@ Public Class Form_TeCASettings
     ''' <returns></returns>
     Private Function TeCA_Exec(exec_mode As String, beginProgress As Integer, endProgress As Integer) As String
 
-#If DEBUG Then
-        Return "Debug Mode: プロセス操作は行いません"
-#End If
-        Dim ProgressCurrent As Integer = beginProgress
-        Dim ProgressStep As Integer = (endProgress - beginProgress) \ 4
-        Dim ProgressStepSub As Integer = (ProgressStep) \ 10
-
-        ProgressBar.Value = beginProgress
-
-        Dim RunningMsg As String = ""
-
         Dim ServiceArray() As String = {"Apache2.4",
                                          "Tomcat8",
                                          "zunouteca",
                                          "yacexsvc"}
 
+        Dim ProgressStep As Integer = (endProgress - beginProgress) \ ServiceArray.Length
+
+        ProgressBar.Value = beginProgress
+        Dim RunningMsg As String = ""
+
         For Each ServiceName As String In ServiceArray
             Dim sc As New ServiceController(ServiceName)
 
-            ProgressCurrent += ProgressStep
-            ProgressBar.Value = ProgressCurrent
+            ProgressBar.Value += ProgressStep
 
-            GroupBox_Progress.Text = exec_mode.ToString + " : " + ProgressCurrent.ToString + "% in Progress."
+            GroupBox_Progress.Text = exec_mode.ToString + " : " + ProgressBar.Value.ToString + "% in Progress."
             GroupBox_Progress.Update()
 
             'サービス存在確認
@@ -1330,6 +989,353 @@ Public Class Form_TeCASettings
 
     End Sub
 
+    Private Sub InitializeControls()
+
+        '▼▼▼ファイル選択モーダル  現在の状態をコントロールに格納する
+        '　モーダル行数
+        Dim SelectFileLinesNow As String = KeyValueParser.FindValue(SelectFileJS, "var DEFAULT_DISP_CNT")
+        If {"20", "40", "60"}.Contains(SelectFileLinesNow) Then
+            Me.ComboBox_FileSelectLineNum.SelectedItem = SelectFileLinesNow
+        Else
+            Me.ComboBox_FileSelectLineNum.SelectedIndex = 0
+        End If
+
+        'モーダル幅
+        If Misc.FindString(SelectFileCSS_Width, DIC.SelectFileCSS_Width("CSS_Normal")) Then
+            CheckBox_Wide.Checked = False
+        Else
+            CheckBox_Wide.Checked = True
+        End If
+
+        '▼▼▼ClientID/SecretID  現在の状態をコントロールに格納する
+        '　ClientID
+        Dim ClientID As String = KeyValueParser.FindValue(IDpath, "clientId")
+        Dim secretID As String = KeyValueParser.FindValue(IDpath, "clientSecret")
+        Dim base64 As New MyBase64str("UTF-8")
+        Dim IDenc64 As String = base64.Encode(ClientID & ":" & secretID)
+
+        Me.TextBoxClientID.Text = ClientID
+        Me.TextBoxSecretID.Text = secretID
+        Me.TextBoxAuthText.Text = IDenc64
+
+        '▼▼▼プレビュー画面拡大モード　現在の状態をコントロールに格納する
+        For Each DetectLine As KeyValuePair(Of String, String) In DIC.pdfJS
+            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
+                Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
+                pdfJS_CurrentViewScale = DetectLine.Value.ToString
+                Exit For
+            Else
+                Me.ComboBox_PreViewScale.SelectedIndex = 0
+            End If
+        Next
+
+        '▼▼▼production.jsに127.0.0.1の記載があるならSetLocal:check On
+        If Misc.FindString(SetLocalArray(3, 0), SetLocalArray(3, 2)) Then
+            CheckBox_setLocal.Checked = True
+        Else
+            CheckBox_setLocal.Checked = False
+        End If
+
+        '▼▼▼pdfconverter.propertiesの画像データ設定をコンボへ
+        If Misc.FindString(pdfconvpropPath, "png=pdfAutoConverterEx") Then
+            ComboBox_RasterConvert.SelectedItem = "EX"
+        Else
+            ComboBox_RasterConvert.SelectedItem = "CAD"
+        End If
+
+
+        '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
+        Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
+        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, connStr, True)
+
+        For Each ResolVal As KeyValuePair(Of String, String) In DIC.ThmbNailvalues
+            If ResolVal.Value = ThumbSize Then
+                Me.ComboBox_ThumbnailRatio.SelectedItem = ResolVal.Key
+                Thubnail_current = ResolVal.Key
+                Exit For
+            Else
+                Me.ComboBox_ThumbnailRatio.SelectedIndex = 1
+            End If
+        Next
+
+        '--------------------------------------
+        '【app.js】のvScroll値をComboBoxに格納
+        '--------------------------------------
+        ComboBox_vScroll.SelectedItem = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
+
+        '--------------------------------------
+        '【pdf.js】のHandToolOnLoad値をChechBoxに格納
+        '--------------------------------------
+        For Each DetectLine As KeyValuePair(Of Boolean, String) In DIC.pdfJS_Grab
+            If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
+                GrabToolNow = DetectLine.Key
+                Exit For
+            End If
+        Next
+
+        CheckBox_GrabTool.Checked = GrabToolNow
+
+        '--------------------------------------
+        '【タイムアウト値】の最小を求めてコンボへ格納
+        '--------------------------------------
+        Dim ResultValue(TOUTArray.GetLength(1) - 1) As Integer
+
+        For X As Integer = 0 To TOUTArray.GetLength(1) - 1
+
+            If TOUTArray(X, 2) = QUOTA.beansXML Then
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
+            Else
+                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
+            End If
+
+        Next
+
+        'コンボには求めた最小を中央値として、前後に倍々でコンボの選択肢を作る
+        'ただし、マイナス値や１２時間（720分）超は作らないようにする
+
+        With Me.ComboBox_LoginTimeout
+            For N As Integer = -3 To 3
+                Select Case N
+                    Case < 0
+                        If (ResultValue.Min \ ((N * 2) * -1)) > 0 Then
+                            .Items.Add((ResultValue.Min \ ((N * 2) * -1)).ToString)
+                        End If
+                    Case 0
+                        .Items.Add((ResultValue.Min).ToString)
+                    Case > 0
+                        If (ResultValue.Min * (N * 2)) < 721 Then
+                            .Items.Add((ResultValue.Min * (N * 2)).ToString)
+                        End If
+                End Select
+            Next
+        End With
+
+        ComboBox_LoginTimeout.SelectedItem = ResultValue.Min.ToString
+
+        Dim rows1, rows2 As DataRow()
+
+        '▼▼▼TeCA-DB1  値をコントロールに格納する
+
+        Dim db1_msg As String
+        Dim SQLCMD As String
+        '--------------------------------------
+        '[db1.m_kaisha]のSELECT結果をDt_kaisyaに格納
+        '--------------------------------------
+        SQLCMD = "select * from public.m_kaisha where invalid_flg = false"
+
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_kaisha)
+        If (db1_msg.Length > 5) Then
+            Label_notice.Text = "[DT_kaisha]" & db1_msg.ToString
+            Exit Sub
+        End If
+
+        SQLCMD = Nothing
+        db1_msg = Nothing
+
+        '--------------------------------------
+        '[db1.t_system_info_kyotsu]のSELECT結果を【Dt_systemInfo】に格納
+        '--------------------------------------
+        SQLCMD = "select * from public.t_system_info_kyotsu "
+
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_systemInfo)
+        If (db1_msg.Length > 5) Then
+            Label_notice.Text = "[DT_systemInfo]" & db1_msg.ToString
+            Exit Sub
+        End If
+
+        SQLCMD = Nothing
+        db1_msg = Nothing
+
+        '--------------------------------------
+        '[db1.m_option]のSELECT結果（メール通知）を【Dt_option】に格納
+        '--------------------------------------
+        SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='メール通知'"
+
+        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, DT_option)
+        If (db1_msg.Length > 5) Then
+            Label_notice.Text = "[DT_option]" & db1_msg.ToString
+            Exit Sub
+        End If
+
+        SQLCMD = Nothing
+        db1_msg = Nothing
+
+        '--------------------------------------
+        '[db2.t_system_info]のSELECT結果を[DT_systemInfoDB2]に格納
+        '--------------------------------------
+        SQLCMD = "select * from public.t_system_info where del_flg = false"
+
+        db1_msg = TeCA.DBtoDTBL(connStr, SQLCMD, DT_systemInfoDB2)
+        If (db1_msg.Length > 5) Then
+            Label_notice.Text = "[DT_systemInfoDB2]" & db1_msg.ToString
+            Exit Sub
+        End If
+
+        SQLCMD = Nothing
+        db1_msg = Nothing
+
+        '▼▼▼TeCA-DB2  値をコントロールに格納する
+        '--------------------------------------
+        '[DT_kaisya]でID=1（メインドメイン）を探し【ドメインと人数】をコントロールへ格納
+        '--------------------------------------
+        rows1 = Dt_kaisha.Select("id = 1")
+
+        If rows1.Length <> 0 Then　　　　　　　　　　　　　　　'ID=1の行データ存在を確認
+            For Each d1 As DataRow In rows1
+                TextBox_Domain.Text = d1("domain_name")
+                TextBox_MaxUsers.Text = d1("sys_riyo_user_max")
+            Next
+        End If
+
+        '--------------------------------------
+        '【DT_systemInfo】のキー検索結果を該当するTextBox/Comboに格納
+        '--------------------------------------
+        Dim info_keyArray() As String = {"UPLOAD_SIZE_MAX",
+                                         "UPLOAD_FILE_NUMBER_MAX",
+                                         "PDF_CONVERSION_MAX_IMMEDIATE",
+                                         "PDF_CONVERSION_MAX_BATCH",
+                                         "LOG_LEVEL"}
+
+        For Each single_infoKey As String In info_keyArray
+
+            rows1 = Dt_systemInfo.Select("info_key = '" + single_infoKey + "'")
+
+            If rows1.Length <> 0 Then
+                For Each d1 As DataRow In rows1
+
+                    'TextBoxを探す
+                    Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
+                    'ConboBoxを探す
+                    Dim csCB As Control() = Me.Controls.Find("ComboBox_" + single_infoKey, True)
+
+                    '見つかったらTextを直す
+                    If csTX.Length > 0 Then
+                        CType(csTX(0), TextBox).Text = d1("info_val")
+                    End If
+                    '見つかったらComboを直す
+                    If csCB.Length > 0 Then
+                        CType(csCB(0), ComboBox).SelectedItem = d1("info_val")
+                    End If
+
+                Next
+            End If
+        Next
+
+        '--------------------------------------
+        '【DT_option】のキー検索結果を該当するTextBoxに格納
+        '--------------------------------------
+        Dim option_keyArray() As String = {"メール通知"}
+
+        For Each single_infoKey As String In option_keyArray
+
+            rows2 = DT_option.Select("name = '" + single_infoKey + "'")
+
+            If rows2.Length <> 0 Then
+                For Each d1 As DataRow In rows2
+
+                    'CheckBoxを探す
+                    Dim cs As Control() = Me.Controls.Find("CheckBox_" + single_infoKey, True)
+
+                    '見つかったらTextを直す
+                    If cs.Length > 0 Then
+                        CType(cs(0), CheckBox).Checked = d1("umu_flg")
+
+                    End If
+                Next
+            End If
+        Next
+
+        '--------------------------------------
+        '【DT_systemInfoDB2】のキー検索結果を該当するTextBoxに格納
+        '--------------------------------------
+        Dim DB2_keyArray() As String = {"UPLOAD_CHUNK_SIZE"}
+
+        For Each single_infoKey As String In DB2_keyArray
+
+            rows2 = DT_systemInfoDB2.Select("info_key = '" + single_infoKey + "'")
+
+            If rows2.Length <> 0 Then
+                For Each d1 As DataRow In rows2
+
+                    'TextBoxを探す
+                    Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
+
+                    '見つかったらTextを直す
+                    If csTX.Length > 0 Then
+                        CType(csTX(0), TextBox).Text = d1("info_val")
+                    End If
+
+                Next
+            End If
+        Next
+
+        '--------------------------------------
+        '【mail.properties】のキー検索結果を該当するControlに格納
+        '--------------------------------------
+        For Each MailCTRL As String In mailPropArray
+
+            Dim mailTX As Control() = Me.Controls.Find("TextBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
+            Dim mailCB As Control() = Me.Controls.Find("ComboBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
+            Dim mailCHB As Control() = Me.Controls.Find("CheckBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
+
+            If mailTX.Length > 0 Then
+                CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+                If (MailCTRL = "password") Then
+                    CurrentPassword = CType(mailTX(0), TextBox).Text  '前のパスワードは保管
+                End If
+            End If
+
+            If mailCB.Length > 0 Then
+                CType(mailCB(0), ComboBox).SelectedItem = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+            End If
+
+            If mailCHB.Length > 0 Then
+                If TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
+                    CType(mailCHB(0), CheckBox).Checked = True
+                Else
+                    CType(mailCHB(0), CheckBox).Checked = False
+                End If
+            End If
+        Next
+
+        '--------------------------------------
+        '【公開/非公開】現状をチェックボックスに反映
+        '--------------------------------------
+        '【□　アップロードは非公開にする】
+        DefaultKokai_Exists = Misc.FindFormula(KOKAI_FLG_File, DefaultKokai_key, "Const.UPLOAD_PUBLIC_OFF;")
+        If DefaultKokai_Exists Then
+            CheckBox_UploadDefault.Checked = True
+        Else
+            CheckBox_UploadDefault.Checked = False
+        End If
+
+        TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", connStr)
+
+        If TRG_CheckInUNPUBLIC_exists Then
+            CheckBox_UnpublicCheckin.Checked = True
+        Else
+            CheckBox_UnpublicCheckin.Checked = False
+
+        End If
+
+        TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", connStr)
+
+        If TRG_ApprovePUBLIC_exists Then
+            CheckBox_PublicateWorkflowOK.Checked = True
+        Else
+            CheckBox_PublicateWorkflowOK.Checked = False
+
+        End If
+
+
+        'SMTP認証OFFのときはパスワードDisable
+        If CheckBox_mail_smtp_auth.Checked = False Then
+            TextBox_password.Enabled = False
+            Label11.Enabled = False
+        End If
+
+
+    End Sub
 
 End Class
 

@@ -4,17 +4,11 @@ Imports System.Text
 Public Class TECA_sets
 
     '================操作対象ファイル群パスを定義するクラス================
-#If DEBUG Then
-    Public Const API_PATH As String = "Z:\api"
-    Public Const WEB_PATH As String = "Z:\web"
-    Public Const DB_IPaddr As String = "192.168.2.188"
-#Else
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const DB_IPaddr As String = "127.0.0.1"
 
     Public Const AllowedPWD As String = ".deny"
-#End If
     Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
     Public Const TeCAappPath As String = API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca"
 
@@ -36,6 +30,9 @@ Public Class TECA_sets
     'ID,SecretIDを取得
     Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
     Public Shared ReadOnly SecretID = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
+
+    'TeCA環境かどうかを判断するサービスの名称
+    Public Shared ReadOnly TeCAServices As String() = {"tomcat", "apache2.4", "postgresql"}
 
     'スクロールバッファの現在値の取得と、変更先の一覧を定義
     Public Shared ReadOnly vScrollArray As String() = {"EXCESS_ROWS_FILE_LIST",
