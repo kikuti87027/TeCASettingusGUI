@@ -95,6 +95,7 @@ Partial Class Form_TeCASettings
         TabControl1 = New TabControl()
         TabPage1 = New TabPage()
         GroupBox_SystemID = New GroupBox()
+        Button_ChangePwd = New Button()
         TextBoxSecretID = New TextBox()
         CheckBox_setLocal = New CheckBox()
         Label21 = New Label()
@@ -793,6 +794,7 @@ Partial Class Form_TeCASettings
         ' 
         ' TabPage1
         ' 
+        TabPage1.Controls.Add(Button_ChangePwd)
         TabPage1.Controls.Add(GroupBox_SystemID)
         TabPage1.Controls.Add(Label_Domain)
         TabPage1.Controls.Add(TextBox_Domain)
@@ -817,10 +819,19 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.Controls.Add(Label_ClientID)
         GroupBox_SystemID.Location = New Point(5, 176)
         GroupBox_SystemID.Name = "GroupBox_SystemID"
-        GroupBox_SystemID.Size = New Size(358, 83)
+        GroupBox_SystemID.Size = New Size(358, 105)
         GroupBox_SystemID.TabIndex = 20
         GroupBox_SystemID.TabStop = False
         GroupBox_SystemID.Text = "ソフトウェア識別情報"
+        ' 
+        ' Button_ChangePwd
+        ' 
+        Button_ChangePwd.Location = New Point(196, 143)
+        Button_ChangePwd.Name = "Button_ChangePwd"
+        Button_ChangePwd.Size = New Size(169, 24)
+        Button_ChangePwd.TabIndex = 21
+        Button_ChangePwd.Text = "パスワードの強制変更"
+        Button_ChangePwd.UseVisualStyleBackColor = True
         ' 
         ' TextBoxSecretID
         ' 
@@ -1165,4 +1176,5 @@ Partial Class Form_TeCASettings
     Friend WithEvents Label_ClientID As Label
     Friend WithEvents TextBoxAuthText As TextBox
     Friend WithEvents Label22 As Label
+    Friend WithEvents Button_ChangePwd As Button
 End Class

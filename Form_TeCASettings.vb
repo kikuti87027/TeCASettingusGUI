@@ -506,6 +506,7 @@ Public Class Form_TeCASettings
 
         'システム情報/APIタブ
         GroupBox_APIparams.Enabled = ONorOFF
+        Button_ChangePwd.Enabled = ONorOFF
         '操作タブ
         GroupBox_PDF.Enabled = ONorOFF
         GroupBox_General.Enabled = ONorOFF
@@ -1337,6 +1338,10 @@ Public Class Form_TeCASettings
 
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button_ChangePwd.Click
+        Dim frm As New Form_ChangePWD()
+        frm.Show()
+    End Sub
 End Class
 
 Public Class MyBase64str

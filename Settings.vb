@@ -1,5 +1,6 @@
 ﻿Imports System.IO
 Imports System.Text
+Imports BCrypt.Net
 
 Public Class TECA_sets
 
@@ -402,5 +403,21 @@ Public Class TXTFunc
             TextSwap = "File not Found"
         End If
 
+    End Function
+
+    Public Shared Function HashPassword(password As String) As String
+        ' 入力値
+        Dim workFactor As Integer = 8  ' ← ストレッチング回数の調整
+
+        ' ハッシュ生成
+        Dim hashedPassword As String = BCrypt.Net.BCrypt.HashPassword(password, workFactor)
+
+        ' 照合テスト
+        Dim isValid As Boolean = BCrypt.Net.BCrypt.Verify(password, hashedPassword)
+        If isValid Then
+            Return hashedPassword
+        Else
+            Return "ERROR:hashing failed"
+        End If
     End Function
 End Class
