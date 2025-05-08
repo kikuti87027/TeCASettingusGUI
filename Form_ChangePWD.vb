@@ -23,6 +23,8 @@ Public Class Form_ChangePWD
             Dim login_id As String = rows("login_id").ToString()
             ComboBox_UserID.Items.Add(login_id) ' コンボボックスに追加
         Next
+
+        ComboBox_UserID.DropDownStyle = ComboBoxStyle.DropDownList
     End Sub
 
     Private Sub ComboBox_UserID_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox_UserID.SelectedIndexChanged

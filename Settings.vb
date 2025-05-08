@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports BCrypt.Net
+Imports System.Reflection
 
 Public Class TECA_sets
 
@@ -16,12 +17,14 @@ Public Class TECA_sets
     Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
     Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
     Public Const ClientWebPath As String = WEB_PATH & "\web\client"
+    Public Const webVerPath As String = WEB_PATH & "\web\server\api\common\const.js"
 
     Public Const SelectFileJS As String = ClientWebPath & "\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = ClientWebPath & "\app\select-file\select-file.html"
     Public Const SelectFileCSS_Width As String = ClientWebPath & "\components\bootstrap\dist\css\bootstrap.min.css"
     Public Const KOKAI_FLG_File As String = ClientWebPath & "\app\upload\upload.service.js"
     Public Const Scrollpath As String = ClientWebPath & "\app\app.js"
+    Public Const mainHTMLpath As String = ClientWebPath & "\app\main\main.html"
     Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
@@ -419,5 +422,26 @@ Public Class TXTFunc
         Else
             Return "ERROR:hashing failed"
         End If
+    End Function
+End Class
+
+Public Class HtmlLoader
+    ' 埋め込みリソースのHTMLを読み込んで文字列として返す
+    Public Shared Function LoadHtmlFromResource(resourceName As String) As String
+        Dim assembly As Assembly = Assembly.GetExecutingAssembly()
+
+        ' 名前空間.ファイル名 という形式で指定（プロジェクト名やフォルダ構造に応じて変化）
+        Dim fullResourceName As String = assembly.GetManifestResourceNames().
+            FirstOrDefault(Function(name) name.EndsWith(resourceName))
+
+        If String.IsNullOrEmpty(fullResourceName) Then
+            Throw New FileNotFoundException("リソースが見つかりません: " & resourceName)
+        End If
+
+        Using stream As Stream = assembly.GetManifestResourceStream(fullResourceName)
+            Using reader As New StreamReader(stream)
+                Return reader.ReadToEnd()
+            End Using
+        End Using
     End Function
 End Class

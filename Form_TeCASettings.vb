@@ -3,6 +3,7 @@ Imports System.ServiceProcess
 Imports System.Text
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
+Imports NuGet.Versioning
 
 Public Class Form_TeCASettings
     Dim CurrentPassword As String  '旧パスワード保管用
@@ -12,6 +13,7 @@ Public Class Form_TeCASettings
     Dim Thubnail_current As String　'現在のプレビューサムネイル解像度（編集前の退避）
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow As Boolean
     Dim ProgressValue As Integer = 0
+    Dim WebVersionStr As String = ""
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -443,6 +445,22 @@ Public Class Form_TeCASettings
                 If TRG_ApprovePUBLIC_exists AndAlso Not CheckBox_PublicateWorkflowOK.Checked Then
                     Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), connStr)
                 End If
+
+                '■公開機能を使用可能にする（CheckBox_EnableKokai）
+                Dim resourceHTML As String
+
+                If CheckBox_EnableKokai.Checked Then
+                    resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}.html"
+                Else
+                    resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}_公開削除.html"
+                End If
+
+                Try
+                    Dim htmlContents As String = HtmlLoader.LoadHtmlFromResource(resourceHTML)
+                    File.WriteAllText(mainHTMLpath, htmlContents, System.Text.Encoding.UTF8)
+                Catch ex As Exception
+                    MessageBox.Show("公開機能の更新に失敗しました。", "エラー")
+                End Try
 
                 '【DB関連パラメータ】DLG入力値で更新する
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", connStrdb1)
@@ -1042,6 +1060,16 @@ Public Class Form_TeCASettings
             ComboBox_RasterConvert.SelectedItem = "EX"
         Else
             ComboBox_RasterConvert.SelectedItem = "CAD"
+        End If
+
+        '▼▼▼web/main/main.html　　公開機能の有無をCheckBoxへ
+        Dim webVersion = NuGetVersion.Parse(KeyValueParser.FindValue(webVerPath, "VERSION"))
+        WebVersionStr = webVersion.ToString
+
+        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(mainHTMLpath, "<!-- 【公開日時】 -->") Then
+            CheckBox_EnableKokai.Checked = True
+        Else
+            CheckBox_EnableKokai.Checked = False
         End If
 
 

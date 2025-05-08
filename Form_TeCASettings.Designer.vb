@@ -94,8 +94,8 @@ Partial Class Form_TeCASettings
         Label_notice = New Label()
         TabControl1 = New TabControl()
         TabPage1 = New TabPage()
-        GroupBox_SystemID = New GroupBox()
         Button_ChangePwd = New Button()
+        GroupBox_SystemID = New GroupBox()
         TextBoxSecretID = New TextBox()
         CheckBox_setLocal = New CheckBox()
         Label21 = New Label()
@@ -115,6 +115,7 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
+        CheckBox_EnableKokai = New CheckBox()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -730,12 +731,13 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_KOKAI
         ' 
+        GroupBox_KOKAI.Controls.Add(CheckBox_EnableKokai)
         GroupBox_KOKAI.Controls.Add(CheckBox_PublicateWorkflowOK)
         GroupBox_KOKAI.Controls.Add(CheckBox_UnpublicCheckin)
         GroupBox_KOKAI.Controls.Add(CheckBox_UploadDefault)
         GroupBox_KOKAI.Location = New Point(5, 101)
         GroupBox_KOKAI.Name = "GroupBox_KOKAI"
-        GroupBox_KOKAI.Size = New Size(358, 88)
+        GroupBox_KOKAI.Size = New Size(358, 117)
         GroupBox_KOKAI.TabIndex = 9
         GroupBox_KOKAI.TabStop = False
         GroupBox_KOKAI.Text = "公開の既定値"
@@ -810,6 +812,15 @@ Partial Class Form_TeCASettings
         TabPage1.Text = "システム情報・API"
         TabPage1.UseVisualStyleBackColor = True
         ' 
+        ' Button_ChangePwd
+        ' 
+        Button_ChangePwd.Location = New Point(196, 143)
+        Button_ChangePwd.Name = "Button_ChangePwd"
+        Button_ChangePwd.Size = New Size(169, 24)
+        Button_ChangePwd.TabIndex = 21
+        Button_ChangePwd.Text = "パスワードの強制変更"
+        Button_ChangePwd.UseVisualStyleBackColor = True
+        ' 
         ' GroupBox_SystemID
         ' 
         GroupBox_SystemID.Controls.Add(TextBoxSecretID)
@@ -823,15 +834,6 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.TabIndex = 20
         GroupBox_SystemID.TabStop = False
         GroupBox_SystemID.Text = "ソフトウェア識別情報"
-        ' 
-        ' Button_ChangePwd
-        ' 
-        Button_ChangePwd.Location = New Point(196, 143)
-        Button_ChangePwd.Name = "Button_ChangePwd"
-        Button_ChangePwd.Size = New Size(169, 24)
-        Button_ChangePwd.TabIndex = 21
-        Button_ChangePwd.Text = "パスワードの強制変更"
-        Button_ChangePwd.UseVisualStyleBackColor = True
         ' 
         ' TextBoxSecretID
         ' 
@@ -1024,6 +1026,17 @@ Partial Class Form_TeCASettings
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
+        ' CheckBox_EnableKokai
+        ' 
+        CheckBox_EnableKokai.AutoSize = True
+        CheckBox_EnableKokai.Location = New Point(12, 91)
+        CheckBox_EnableKokai.Name = "CheckBox_EnableKokai"
+        CheckBox_EnableKokai.Size = New Size(159, 19)
+        CheckBox_EnableKokai.TabIndex = 30
+        CheckBox_EnableKokai.Text = "公開機能を使用可能にする"
+        CheckBox_EnableKokai.TextImageRelation = TextImageRelation.TextBeforeImage
+        CheckBox_EnableKokai.UseVisualStyleBackColor = True
+        ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
@@ -1177,4 +1190,5 @@ Partial Class Form_TeCASettings
     Friend WithEvents TextBoxAuthText As TextBox
     Friend WithEvents Label22 As Label
     Friend WithEvents Button_ChangePwd As Button
+    Friend WithEvents CheckBox_EnableKokai As CheckBox
 End Class
