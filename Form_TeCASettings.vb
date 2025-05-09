@@ -1062,7 +1062,7 @@ Public Class Form_TeCASettings
             ComboBox_RasterConvert.SelectedItem = "CAD"
         End If
 
-        '▼▼▼web/main/main.html　　公開機能の有無をCheckBoxへ
+        '▼▼▼web/server/main/main.html　　公開機能の有無をCheckBoxへ
         Dim webVersion = NuGetVersion.Parse(KeyValueParser.FindValue(webVerPath, "VERSION"))
         WebVersionStr = webVersion.ToString
 
