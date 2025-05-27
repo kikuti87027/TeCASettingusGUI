@@ -16,8 +16,8 @@
     <Title>TeCASettings</Title>
     <Authors>M.Kikuchi</Authors>
     <Product>TeCAシステム設定ツール</Product>
-    <AssemblyVersion>3.00</AssemblyVersion>
-    <FileVersion>3.00</FileVersion>
+    <AssemblyVersion>3.01</AssemblyVersion>
+    <FileVersion>3.01</FileVersion>
     <Configurations>Debug;Release;NewRelease;NewRelease2;LocalTest</Configurations>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
