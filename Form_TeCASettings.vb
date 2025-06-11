@@ -1,9 +1,10 @@
 Imports System.IO
+Imports System.Reflection
 Imports System.ServiceProcess
 Imports System.Text
+Imports NuGet.Versioning
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
-Imports NuGet.Versioning
 
 Public Class Form_TeCASettings
     Dim CurrentPassword As String  '旧パスワード保管用
@@ -15,7 +16,13 @@ Public Class Form_TeCASettings
     Dim ProgressValue As Integer = 0
     Dim WebVersionStr As String = ""
 
+    ReadOnly assembly As Assembly = assembly.GetExecutingAssembly()
+    ReadOnly version As Version = assembly.GetName().Version
+    ReadOnly versionString As String = version.ToString()
+
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Me.Text = "図脳TeCA　システム設定ツール Ver." + versionString.ToString
 
         'TeCAサーバーかどうか確認
         If Not TeCA.IsRunableEnvoronment(TECA_sets.TeCAServices) Then
@@ -28,8 +35,6 @@ Public Class Form_TeCASettings
 
         'コンボボックス初期化(初期項目投入と編集ロックON
         ComboBox_initialize()
-
-
         InitializeControls()
 
         '--------------------------------------

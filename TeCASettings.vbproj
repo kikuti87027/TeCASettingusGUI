@@ -10,19 +10,21 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-    <Version>3.00</Version>
-    <Company>Photron</Company>
+	<Version>3.00</Version>
+	<InformationalVersion>3.00</InformationalVersion>
+	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
     <Title>TeCASettings</Title>
     <Authors>M.Kikuchi</Authors>
     <Product>TeCAシステム設定ツール</Product>
-    <AssemblyVersion>3.01</AssemblyVersion>
-    <FileVersion>3.01</FileVersion>
     <Configurations>Debug;Release;NewRelease;NewRelease2;LocalTest</Configurations>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <Copyright>Photron Limited.</Copyright>
+    <FileVersion>3.1.0＋A</FileVersion>
+    <AssemblyVersion>3.1.0</AssemblyVersion>
+    <NeutralLanguage>ja-JP</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
