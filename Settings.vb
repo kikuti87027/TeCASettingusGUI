@@ -83,7 +83,7 @@ Public Class TECA_sets
                                      }
 
     'PDF_converter.propertiesの変更先リスト
-    Public Shared ReadOnly pdfConvFtypeArray As String() = {"bmp", "png", "gif", "tif", "tiff", "jpg", "jpeg"}
+    Public Shared ReadOnly pdfConvFtypeArray As String() = {"bmp=", "png=", "gif=", "tif=", "tiff=", "jpg=", "jpeg="}
 
     Public Class QUOTA
         Public Const ColonToCamma As Integer = 0  '      キーワード: 置換対象値,   【コロン～カンマ間が置換対象】

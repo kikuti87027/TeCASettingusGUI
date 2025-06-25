@@ -223,7 +223,7 @@ Public Class Form_TeCASettings
                 '【PDF_Convert.properties】の更新 
                 Dim exchangeFtypes As Integer
                 For Each FType In pdfConvFtypeArray
-                    exchangeFtypes += Misc.ExchangeString(pdfconvpropPath, FType, FType & "=" & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
+                    exchangeFtypes += Misc.ExchangeString(pdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
                 Next
                 If exchangeFtypes <> pdfConvFtypeArray.Length Then
                     MessageBox.Show("PDFConverter変換：拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
