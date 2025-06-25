@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.00</Version>
+	<Version>3.11</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -22,8 +22,8 @@
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <Copyright>Photron Limited.</Copyright>
-    <FileVersion>3.1.0＋A</FileVersion>
-    <AssemblyVersion>3.1.0</AssemblyVersion>
+    <FileVersion>3.1.1</FileVersion>
+    <AssemblyVersion>3.1.1</AssemblyVersion>
     <NeutralLanguage>ja-JP</NeutralLanguage>
   </PropertyGroup>
 
