@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "TeCASettings/3.11": {
+      "TeCASettings/3.12": {
         "dependencies": {
           "Azure.Core": "1.46.0",
           "BCrypt.Net-Next": "4.0.3",
@@ -18,7 +18,7 @@
           "System.Management": "10.0.0-preview.3.25171.5",
           "System.ServiceProcess.ServiceController": "10.0.0-preview.3.25171.5",
           "log4net": "3.1.0-preview.3",
-          "kikuchi": "1.62.0.0",
+          "kikuchi": "1.66.0.0",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.18362.57"
         },
         "runtime": {
@@ -236,11 +236,11 @@
           }
         }
       },
-      "kikuchi/1.62.0.0": {
+      "kikuchi/1.66.0.0": {
         "runtime": {
           "kikuchi.dll": {
-            "assemblyVersion": "1.62.0.0",
-            "fileVersion": "1.62.0.0"
+            "assemblyVersion": "1.66.0.0",
+            "fileVersion": "1.66.0.0"
           }
         }
       },
@@ -263,7 +263,7 @@
     }
   },
   "libraries": {
-    "TeCASettings/3.11": {
+    "TeCASettings/3.12": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -427,7 +427,7 @@
       "path": "system.serviceprocess.servicecontroller/10.0.0-preview.3.25171.5",
       "hashPath": "system.serviceprocess.servicecontroller.10.0.0-preview.3.25171.5.nupkg.sha512"
     },
-    "kikuchi/1.62.0.0": {
+    "kikuchi/1.66.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

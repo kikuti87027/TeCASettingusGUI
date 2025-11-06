@@ -168,14 +168,13 @@ Public Class Form_TeCASettings
                 Next
 
                 '【production.js】ログインタイムアウトの更新
+                For X As Integer = 0 To TECA_sets.TOUTArray.GetLength(1)
+                    Dim swapResult As String = TXTFunc.TextSwap(TECA_sets.TOUTArray(X, 0).ToString, TECA_sets.TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, TECA_sets.TOUTArray(X, 2))
 
-                For X As Integer = 0 To TOUTArray.GetLength(1) - 1
-                    If (TXTFunc.TextSwap(TOUTArray(X, 0).ToString, TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, TOUTArray(X, 2))) = "Error" Then
-                        Label_notice.Text = "ログインタイムアウト更新エラー"
-                        GroupBox_Progress.Visible = False
+                    If (swapResult = "Error") Then
+                        Label_notice.Text = " ログインタイムアウト更新エラー"
                         Exit Sub
                     End If
-
                 Next
 
                 '【t_system_info】サムネール解像度の更新
@@ -1112,9 +1111,9 @@ Public Class Form_TeCASettings
         '--------------------------------------
         '【タイムアウト値】の最小を求めてコンボへ格納
         '--------------------------------------
-        Dim ResultValue(TOUTArray.GetLength(1) - 1) As Integer
+        Dim ResultValue(TOUTArray.GetLength(1)) As Integer
 
-        For X As Integer = 0 To TOUTArray.GetLength(1) - 1
+        For X As Integer = 0 To TOUTArray.GetLength(1)
 
             If TOUTArray(X, 2) = QUOTA.beansXML Then
                 ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60

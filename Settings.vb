@@ -334,7 +334,8 @@ Public Class TXTFunc
 
             '置換
             If SRbuffer.Contains(keyWord, StringComparison.CurrentCulture) Then
-                Dim StartBuf As String = SRbuffer.Substring(SRbuffer.IndexOf(keyWord))
+                Dim SRBuf_KeyPos As Integer = SRbuffer.IndexOf(keyWord)
+                Dim StartBuf As String = SRbuffer.Substring(SRBuf_KeyPos)
 
                 Select Case mode
                     Case TECA_sets.QUOTA.Apostrofy                             '  KEYWORD   'TARGETvalue'
@@ -359,11 +360,11 @@ Public Class TXTFunc
                         afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + " " + Chr(60))
 
                     Case TECA_sets.QUOTA.beansXML
-                        Dim firstApo As Integer = StartBuf.IndexOf("value=") + 6  '始まり[value=]の位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(34)) + firstApo  '終わりカンマ位置
+                        Dim ValueStartPos As Integer = SRBuf_KeyPos + StartBuf.IndexOf("value=") + 6  　　　'値の始まり位置 [value=]の6文字分を飛ばす
+                        Dim EndBuf As String = SRbuffer.Substring(ValueStartPos + 1, 10)
+                        Dim ValueEndPos As Integer = ValueStartPos + 1 + EndBuf.IndexOf(Chr(34))            '値の終わり ["]の位置
 
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, (Val(afterValue) * 60).ToString + " " + Chr(34))
+                        afterBuffer = Replace(SRbuffer, ValueStartPos + 1, ValueEndPos - ValueStartPos - 1, (Val(afterValue) * 60).ToString)
 
                     Case TECA_sets.QUOTA.prodJS
                         Dim firstApo As Integer = StartBuf.IndexOf(Chr(58)) + SRbuffer.IndexOf(keyWord)    '始まり[:]の位置
