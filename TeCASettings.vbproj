@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.12</Version>
+	<Version>3.14</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -22,8 +22,8 @@
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <Copyright>Photron Limited.</Copyright>
-    <FileVersion>3.1.2</FileVersion>
-    <AssemblyVersion>3.1.2</AssemblyVersion>
+    <FileVersion></FileVersion>
+    <AssemblyVersion></AssemblyVersion>
     <NeutralLanguage>ja-JP</NeutralLanguage>
   </PropertyGroup>
 
@@ -99,29 +99,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="main.html\main_1_12_0.html" />
-    <None Remove="main.html\main_1_12_0_公開削除.html" />
-    <None Remove="main.html\main_1_12_1.html" />
-    <None Remove="main.html\main_1_12_1_公開削除.html" />
-    <None Remove="main.html\main_1_13_0.html" />
-    <None Remove="main.html\main_1_13_0_公開削除.html" />
-    <None Remove="main.html\main_1_14_0.html" />
-    <None Remove="main.html\main_1_14_0_公開削除.html" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Icons\64.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="main.html\main_1_12_0.html" />
-    <EmbeddedResource Include="main.html\main_1_12_0_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_12_1.html" />
-    <EmbeddedResource Include="main.html\main_1_12_1_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_13_0.html" />
-    <EmbeddedResource Include="main.html\main_1_13_0_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_14_0.html" />
-    <EmbeddedResource Include="main.html\main_1_14_0_公開削除.html" />
+    <EmbeddedResource Include="main.html\**\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -133,19 +115,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Core" Version="1.46.0" />
+    <PackageReference Include="Azure.Core" Version="1.50.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CXuesong.Shims.VisualBasic.Devices" Version="0.3.0" />
-    <PackageReference Include="log4net" Version="3.1.0-preview.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0-preview.25155.1">
+    <PackageReference Include="log4net" Version="3.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
-    <PackageReference Include="Npgsql" Version="9.0.3" />
-    <PackageReference Include="NuGet.Versioning" Version="6.13.2" />
-    <PackageReference Include="System.Management" Version="10.0.0-preview.3.25171.5" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0-preview.3.25171.5" />
+    <PackageReference Include="Npgsql" Version="9.0.4" />
+    <PackageReference Include="NuGet.Versioning" Version="7.0.0" />
+    <PackageReference Include="System.Management" Version="10.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

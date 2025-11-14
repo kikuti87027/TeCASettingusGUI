@@ -6,19 +6,19 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "TeCASettings/3.12": {
+      "TeCASettings/3.14": {
         "dependencies": {
-          "Azure.Core": "1.46.0",
+          "Azure.Core": "1.50.0",
           "BCrypt.Net-Next": "4.0.3",
           "CXuesong.Shims.VisualBasic.Devices": "0.3.0",
-          "Microsoft.CodeAnalysis.NetAnalyzers": "10.0.0-preview.25155.1",
+          "Microsoft.CodeAnalysis.NetAnalyzers": "10.0.100",
           "Microsoft.NETCore.Platforms": "8.0.0-preview.7.23375.6",
-          "Npgsql": "9.0.3",
-          "NuGet.Versioning": "6.13.2",
-          "System.Management": "10.0.0-preview.3.25171.5",
-          "System.ServiceProcess.ServiceController": "10.0.0-preview.3.25171.5",
-          "log4net": "3.1.0-preview.3",
-          "kikuchi": "1.66.0.0",
+          "Npgsql": "9.0.4",
+          "NuGet.Versioning": "7.0.0",
+          "System.Management": "10.0.0",
+          "System.ServiceProcess.ServiceController": "10.0.0",
+          "log4net": "3.2.0",
+          "kikuchi": "1.68.0.0",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.18362.57"
         },
         "runtime": {
@@ -37,16 +37,16 @@
           }
         }
       },
-      "Azure.Core/1.46.0": {
+      "Azure.Core/1.50.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "8.0.0",
-          "System.ClientModel": "1.4.0",
-          "System.Memory.Data": "6.0.1"
+          "System.ClientModel": "1.8.0",
+          "System.Memory.Data": "8.0.1"
         },
         "runtime": {
           "lib/net8.0/Azure.Core.dll": {
-            "assemblyVersion": "1.46.0.0",
-            "fileVersion": "1.4600.25.25604"
+            "assemblyVersion": "1.50.0.0",
+            "fileVersion": "1.5000.25.55604"
           }
         }
       },
@@ -66,14 +66,14 @@
           }
         }
       },
-      "log4net/3.1.0-preview.3": {
+      "log4net/3.2.0": {
         "dependencies": {
           "System.Configuration.ConfigurationManager": "4.5.0"
         },
         "runtime": {
           "lib/netstandard2.0/log4net.dll": {
-            "assemblyVersion": "3.1.0.0",
-            "fileVersion": "3.1.0.0"
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
           }
         }
       },
@@ -85,7 +85,7 @@
           }
         }
       },
-      "Microsoft.CodeAnalysis.NetAnalyzers/10.0.0-preview.25155.1": {},
+      "Microsoft.CodeAnalysis.NetAnalyzers/10.0.100": {},
       "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.2": {
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
@@ -106,42 +106,42 @@
         }
       },
       "Microsoft.NETCore.Platforms/8.0.0-preview.7.23375.6": {},
-      "Npgsql/9.0.3": {
+      "Npgsql/9.0.4": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
         },
         "runtime": {
           "lib/net8.0/Npgsql.dll": {
-            "assemblyVersion": "9.0.3.0",
-            "fileVersion": "9.0.3.0"
+            "assemblyVersion": "9.0.4.0",
+            "fileVersion": "9.0.4.0"
           }
         }
       },
-      "NuGet.Versioning/6.13.2": {
+      "NuGet.Versioning/7.0.0": {
         "runtime": {
-          "lib/netstandard2.0/NuGet.Versioning.dll": {
-            "assemblyVersion": "6.13.2.1",
-            "fileVersion": "6.13.2.1"
+          "lib/net8.0/NuGet.Versioning.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.0.289"
           }
         }
       },
-      "System.ClientModel/1.4.0": {
+      "System.ClientModel/1.8.0": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
-          "System.Memory.Data": "6.0.1"
+          "System.Memory.Data": "8.0.1"
         },
         "runtime": {
-          "lib/net8.0/System.ClientModel.dll": {
-            "assemblyVersion": "1.4.0.0",
-            "fileVersion": "1.400.25.25204"
+          "lib/net9.0/System.ClientModel.dll": {
+            "assemblyVersion": "1.8.0.0",
+            "fileVersion": "1.800.25.55302"
           }
         }
       },
-      "System.CodeDom/10.0.0-preview.3.25171.5": {
+      "System.CodeDom/10.0.0": {
         "runtime": {
           "lib/net9.0/System.CodeDom.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
@@ -151,11 +151,11 @@
           "System.Security.Permissions": "4.5.0"
         }
       },
-      "System.Diagnostics.EventLog/10.0.0-preview.3.25171.5": {
+      "System.Diagnostics.EventLog/10.0.0": {
         "runtime": {
           "lib/net9.0/System.Diagnostics.EventLog.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         },
         "runtimeTargets": {
@@ -169,18 +169,18 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
-      "System.Management/10.0.0-preview.3.25171.5": {
+      "System.Management/10.0.0": {
         "dependencies": {
-          "System.CodeDom": "10.0.0-preview.3.25171.5"
+          "System.CodeDom": "10.0.0"
         },
         "runtime": {
           "lib/net9.0/System.Management.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         },
         "runtimeTargets": {
@@ -188,15 +188,15 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
-      "System.Memory.Data/6.0.1": {
+      "System.Memory.Data/8.0.1": {
         "runtime": {
-          "lib/net6.0/System.Memory.Data.dll": {
-            "assemblyVersion": "6.0.0.1",
-            "fileVersion": "6.0.3624.51421"
+          "lib/net8.0/System.Memory.Data.dll": {
+            "assemblyVersion": "8.0.0.1",
+            "fileVersion": "8.0.1024.46610"
           }
         }
       },
@@ -217,14 +217,14 @@
           "Microsoft.NETCore.Platforms": "8.0.0-preview.7.23375.6"
         }
       },
-      "System.ServiceProcess.ServiceController/10.0.0-preview.3.25171.5": {
+      "System.ServiceProcess.ServiceController/10.0.0": {
         "dependencies": {
-          "System.Diagnostics.EventLog": "10.0.0-preview.3.25171.5"
+          "System.Diagnostics.EventLog": "10.0.0"
         },
         "runtime": {
           "lib/net9.0/System.ServiceProcess.ServiceController.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         },
         "runtimeTargets": {
@@ -232,15 +232,15 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.17105"
+            "fileVersion": "10.0.25.52411"
           }
         }
       },
-      "kikuchi/1.66.0.0": {
+      "kikuchi/1.68.0.0": {
         "runtime": {
           "kikuchi.dll": {
-            "assemblyVersion": "1.66.0.0",
-            "fileVersion": "1.66.0.0"
+            "assemblyVersion": "1.68.0.0",
+            "fileVersion": "1.68.0.0"
           }
         }
       },
@@ -263,7 +263,7 @@
     }
   },
   "libraries": {
-    "TeCASettings/3.12": {
+    "TeCASettings/3.14": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -273,12 +273,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Azure.Core/1.46.0": {
+    "Azure.Core/1.50.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-MNFRFDHqUBZkeViSrDX6bPfQhXsydKJXu64AntycIzSG+nemh39XCkhDvjES0uisJlHsVex/tmkfA2ZQt913DQ==",
-      "path": "azure.core/1.46.0",
-      "hashPath": "azure.core.1.46.0.nupkg.sha512"
+      "sha512": "sha512-GBNKZEhdIbTXxedvD3R7I/yDVFX9jJJEz02kCziFSJxspSQ5RMHc3GktulJ1s7+ffXaXD7kMgrtdQTaggyInLw==",
+      "path": "azure.core/1.50.0",
+      "hashPath": "azure.core.1.50.0.nupkg.sha512"
     },
     "BCrypt.Net-Next/4.0.3": {
       "type": "package",
@@ -294,12 +294,12 @@
       "path": "cxuesong.shims.visualbasic.devices/0.3.0",
       "hashPath": "cxuesong.shims.visualbasic.devices.0.3.0.nupkg.sha512"
     },
-    "log4net/3.1.0-preview.3": {
+    "log4net/3.2.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-P0cgKwcKrxreVKREl4TkhHXoAx5MrlunubJfUSAB0XE++VNxWEQJqCv6z58yCOBseTkVzADJ8NyajRvAtOMNkw==",
-      "path": "log4net/3.1.0-preview.3",
-      "hashPath": "log4net.3.1.0-preview.3.nupkg.sha512"
+      "sha512": "sha512-f/iwZ8ToR8FFK0xE0ym4IUSPakuvF/PnXomgMXJs7jxqOGqFn984xtA5IQXBhWXBu61a3yU0XiJCZ3ltENtPRg==",
+      "path": "log4net/3.2.0",
+      "hashPath": "log4net.3.2.0.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/8.0.0": {
       "type": "package",
@@ -308,12 +308,12 @@
       "path": "microsoft.bcl.asyncinterfaces/8.0.0",
       "hashPath": "microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512"
     },
-    "Microsoft.CodeAnalysis.NetAnalyzers/10.0.0-preview.25155.1": {
+    "Microsoft.CodeAnalysis.NetAnalyzers/10.0.100": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-g3mOQE4P2DYyocd0NSeJL2lzTV+/5TYZOkMT/2pMAG7Csey2ob+vgeLDLoO3j+9mgKBvfAF8gkp53xDAa5r7Tg==",
-      "path": "microsoft.codeanalysis.netanalyzers/10.0.0-preview.25155.1",
-      "hashPath": "microsoft.codeanalysis.netanalyzers.10.0.0-preview.25155.1.nupkg.sha512"
+      "sha512": "sha512-uj9VuyvqylnNueJfU7u2PkI/hEMpZl8Wg9BXyI0eatNEldU5jDYPdwsM8aDL18+1oLovju25MiqOPaGRBnG72A==",
+      "path": "microsoft.codeanalysis.netanalyzers/10.0.100",
+      "hashPath": "microsoft.codeanalysis.netanalyzers.10.0.100.nupkg.sha512"
     },
     "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.2": {
       "type": "package",
@@ -336,33 +336,33 @@
       "path": "microsoft.netcore.platforms/8.0.0-preview.7.23375.6",
       "hashPath": "microsoft.netcore.platforms.8.0.0-preview.7.23375.6.nupkg.sha512"
     },
-    "Npgsql/9.0.3": {
+    "Npgsql/9.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
-      "path": "npgsql/9.0.3",
-      "hashPath": "npgsql.9.0.3.nupkg.sha512"
+      "sha512": "sha512-68BASXH0FAEuL/J4J0eRfYC8/3vzqQTmoW8zDzNf0JgaVxc7LZeEkS6jaG0ib3voFLxY5ZiCwJG+uQM+mzuu0Q==",
+      "path": "npgsql/9.0.4",
+      "hashPath": "npgsql.9.0.4.nupkg.sha512"
     },
-    "NuGet.Versioning/6.13.2": {
+    "NuGet.Versioning/7.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-pGYNyvCVM+Z9jITTiJiuxFC8oJXFdh2k25ZDV4tSAOSuKyAWvh1VcfJy0WZGWdI6J7Avkbl0qra7XENYFSy4Ng==",
-      "path": "nuget.versioning/6.13.2",
-      "hashPath": "nuget.versioning.6.13.2.nupkg.sha512"
+      "sha512": "sha512-vMEhpystjAmHzWARE09PjYMWOiGgM+f9rJYMcXGs8soz9/url4qmU9O9Y+hy22kPuqozCMoGcJt0JzKRZ1woZg==",
+      "path": "nuget.versioning/7.0.0",
+      "hashPath": "nuget.versioning.7.0.0.nupkg.sha512"
     },
-    "System.ClientModel/1.4.0": {
+    "System.ClientModel/1.8.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-UIAc1qwbgjXksmpVk7obZbnzPqlpWPzbfkh0LdDnI8+7rXu1zmNNrcpWof8DFUytVgNcMFwFY1lT6lGxxovARw==",
-      "path": "system.clientmodel/1.4.0",
-      "hashPath": "system.clientmodel.1.4.0.nupkg.sha512"
+      "sha512": "sha512-AqRzhn0v29GGGLj/Z6gKq4lGNtvPHT4nHdG5PDJh9IfVjv/nYUVmX11hwwws1vDFeIAzrvmn0dPu8IjLtu6fAw==",
+      "path": "system.clientmodel/1.8.0",
+      "hashPath": "system.clientmodel.1.8.0.nupkg.sha512"
     },
-    "System.CodeDom/10.0.0-preview.3.25171.5": {
+    "System.CodeDom/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-GGd3KvdvegjatYwNEzfEZ8q0zLotqVcMDKfxLAi2vSS/lql5WdO5pZXkD6+tnKltR1Hk+Ca8AmcRLRPIOxkZgQ==",
-      "path": "system.codedom/10.0.0-preview.3.25171.5",
-      "hashPath": "system.codedom.10.0.0-preview.3.25171.5.nupkg.sha512"
+      "sha512": "sha512-QWERdKi/tQAx+MbrPxTGcpchqMANnVXNiv2r2tILBBB38E74buD+fABSUhozZ1G9kjbadFB0m+HPFMkhJPeFvA==",
+      "path": "system.codedom/10.0.0",
+      "hashPath": "system.codedom.10.0.0.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/4.5.0": {
       "type": "package",
@@ -371,26 +371,26 @@
       "path": "system.configuration.configurationmanager/4.5.0",
       "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
     },
-    "System.Diagnostics.EventLog/10.0.0-preview.3.25171.5": {
+    "System.Diagnostics.EventLog/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ABk8eOWyQ9Pgmz63EE9hmj0G0eLnWItwM9NV0OGMUOEdseVN1PeA1ryQUIQr5C1odDG2ip4oBTLGSrb5+Z2S3w==",
-      "path": "system.diagnostics.eventlog/10.0.0-preview.3.25171.5",
-      "hashPath": "system.diagnostics.eventlog.10.0.0-preview.3.25171.5.nupkg.sha512"
+      "sha512": "sha512-uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A==",
+      "path": "system.diagnostics.eventlog/10.0.0",
+      "hashPath": "system.diagnostics.eventlog.10.0.0.nupkg.sha512"
     },
-    "System.Management/10.0.0-preview.3.25171.5": {
+    "System.Management/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-dYFVqacUM76bZlVqTkpV/VNOevN2RH1bhqBjQ5Vp8aULQ4PeRuD71nfPzrYMdpvjnEj4PdLF9s395fE/7qWYEA==",
-      "path": "system.management/10.0.0-preview.3.25171.5",
-      "hashPath": "system.management.10.0.0-preview.3.25171.5.nupkg.sha512"
+      "sha512": "sha512-LE3rDZoPzulou78Tsq+3ALhUs4vatQ03v2QWbYVIenVPneUH/+LTUmHyyl098OxIFLQI6sNkZs8YHbUnT/sm3A==",
+      "path": "system.management/10.0.0",
+      "hashPath": "system.management.10.0.0.nupkg.sha512"
     },
-    "System.Memory.Data/6.0.1": {
+    "System.Memory.Data/8.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-yliDgLh9S9Mcy5hBIdZmX6yphYIW3NH+3HN1kV1m7V1e0s7LNTw/tHNjJP4U9nSMEgl3w1TzYv/KA1Tg9NYy6w==",
-      "path": "system.memory.data/6.0.1",
-      "hashPath": "system.memory.data.6.0.1.nupkg.sha512"
+      "sha512": "sha512-BVYuec3jV23EMRDeR7Dr1/qhx7369dZzJ9IWy2xylvb4YfXsrUxspWc4UWYid/tj4zZK58uGZqn2WQiaDMhmAg==",
+      "path": "system.memory.data/8.0.1",
+      "hashPath": "system.memory.data.8.0.1.nupkg.sha512"
     },
     "System.Security.AccessControl/4.5.0": {
       "type": "package",
@@ -420,14 +420,14 @@
       "path": "system.security.principal.windows/4.5.0",
       "hashPath": "system.security.principal.windows.4.5.0.nupkg.sha512"
     },
-    "System.ServiceProcess.ServiceController/10.0.0-preview.3.25171.5": {
+    "System.ServiceProcess.ServiceController/10.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/Co2ApycIZx6M9tXQQNgk0g/JE3mYCP2HI5/VdCb48ZNbC52Tcgapej+DdWZn24ejfWwq6mavY7YMnsFm9nVEQ==",
-      "path": "system.serviceprocess.servicecontroller/10.0.0-preview.3.25171.5",
-      "hashPath": "system.serviceprocess.servicecontroller.10.0.0-preview.3.25171.5.nupkg.sha512"
+      "sha512": "sha512-PaFmFQXX/qL1vl0CfdJUMPMYT8TOEHlcdEiOZtd4LV2rcaS/WDQM4bpECcbRM4BrD+DWkWd/jtb6iPOqAX9TWA==",
+      "path": "system.serviceprocess.servicecontroller/10.0.0",
+      "hashPath": "system.serviceprocess.servicecontroller.10.0.0.nupkg.sha512"
     },
-    "kikuchi/1.66.0.0": {
+    "kikuchi/1.68.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

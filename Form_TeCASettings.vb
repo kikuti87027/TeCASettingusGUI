@@ -2,6 +2,7 @@ Imports System.IO
 Imports System.Reflection
 Imports System.ServiceProcess
 Imports System.Text
+Imports System.Text.RegularExpressions
 Imports NuGet.Versioning
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
@@ -21,6 +22,7 @@ Public Class Form_TeCASettings
     ReadOnly versionString As String = version.ToString()
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
 
         Me.Text = "図脳TeCA　システム設定ツール Ver." + versionString.ToString
 
@@ -141,7 +143,7 @@ Public Class Form_TeCASettings
         Label_notice.AutoSize = True
         Select Case Me.ComboBox_ExecMode.SelectedItem.ToString
             Case "変更せず再起動"
-                Label_notice.Text = TeCA_Exec("STOP", 0, 80).ToString
+                Label_notice.Text = TeCA_Exec("Stop", 0, 80).ToString
 
                 'PipeMan実行
                 If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
@@ -156,7 +158,7 @@ Public Class Form_TeCASettings
 
                 Dim tmpFOLDER As String = Path.GetTempPath()
 
-                Label_notice.Text = TeCA_Exec("STOP", 0, 80).ToString
+                Label_notice.Text = TeCA_Exec("Stop", 0, 80).ToString
 
                 '【app.js】スクロールパラメータの更新
                 For Each targetKeyword As String In vScrollArray
@@ -463,7 +465,7 @@ Public Class Form_TeCASettings
                     Dim htmlContents As String = HtmlLoader.LoadHtmlFromResource(resourceHTML)
                     File.WriteAllText(mainHTMLpath, htmlContents, System.Text.Encoding.UTF8)
                 Catch ex As Exception
-                    MessageBox.Show("公開機能の更新に失敗しました。", "エラー")
+                    MessageBox.Show($"公開機能の更新に失敗しました。{ex.Message}", "エラー")
                 End Try
 
                 '【DB関連パラメータ】DLG入力値で更新する
@@ -616,7 +618,7 @@ Public Class Form_TeCASettings
     Private Function TeCA_Exec(exec_mode As String, beginProgress As Integer, endProgress As Integer) As String
 
         Dim ServiceArray() As String = {"Apache2.4",
-                                         "Tomcat8",
+                                         "Tomcat",
                                          "zunouteca",
                                          "yacexsvc"}
 
@@ -626,7 +628,7 @@ Public Class Form_TeCASettings
         Dim RunningMsg As String = ""
 
         For Each ServiceName As String In ServiceArray
-            Dim sc As New ServiceController(ServiceName)
+            Dim sc As New ServiceController(Misc.GetServiceNameByPartialName(ServiceName))
 
             ProgressBar.Value += ProgressStep
 
@@ -642,7 +644,7 @@ Public Class Form_TeCASettings
                 Exit For
             End Try
 
-            If (exec_mode = "STOP") Then
+            If (exec_mode.ToUpper = "STOP") Then
 
                 If ServiceName = "yacexsvc" Then Exit For
 
@@ -657,7 +659,7 @@ Public Class Form_TeCASettings
                 End Try
             End If
 
-            If (exec_mode = "START") Then
+            If (exec_mode.ToUpper = "START") Then
                 Try
                     Do While sc.Status <> ServiceControllerStatus.Running
                         sc.Start()
@@ -1391,5 +1393,7 @@ Public Class MyBase64str
     Public Function Decode(ByVal str As String) As String
         Return enc.GetString(Convert.FromBase64String(str))
     End Function
+
+
 
 End Class

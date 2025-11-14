@@ -11,8 +11,9 @@ Public Class TECA_sets
     Public Const DB_IPaddr As String = "127.0.0.1"
 
     Public Const AllowedPWD As String = ".deny"
-    Public Const Tomcat_PATH As String = "apache-tomcat-8.0.36"
-    Public Const TeCAappPath As String = API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca"
+    Public Shared Tomcat_PATH As String = Misc.ExtractInstallPathFromPath(Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).ToString, "tomcat")
+
+    Public Shared TeCAappPath As String = Tomcat_PATH & "\webapps\api#teca"
 
     Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
     Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
@@ -28,8 +29,8 @@ Public Class TECA_sets
     Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
-    Public Const mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
-    Public Const pdfconvpropPath As String = TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
+    Public Shared mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
+    Public Shared pdfconvpropPath As String = TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
 
     'ID,SecretIDを取得
     Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
@@ -65,10 +66,10 @@ Public Class TECA_sets
 
     '操作タイムアウトの変更先リスト
     Public Shared ReadOnly TOUTArray As String(,) = {
-                                     {API_PATH + "\" + Tomcat_PATH + "\conf\web.xml", "<session-timeout>", QUOTA.WebXLM},
+                                     {Tomcat_PATH + "\conf\web.xml", "<session-timeout>", QUOTA.WebXLM},
                                      {WEB_PATH + "\web\server\config\environment\production.js", "sessionTimeout:", QUOTA.prodJS},
                                      {WEB_PATH + "\web\server\config\environment\development.js", "sessionTimeout:", QUOTA.prodJS},
-                                     {API_PATH + "\" + Tomcat_PATH + "\webapps\api#teca\WEB-INF\beans.xml", "refreshTokenLifetime", QUOTA.beansXML}
+                                     {Tomcat_PATH + "\webapps\api#teca\WEB-INF\beans.xml", "refreshTokenLifetime", QUOTA.beansXML}
                                      }
 
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
@@ -76,9 +77,9 @@ Public Class TECA_sets
 
     'SetLocal用定数群
     Public Shared ReadOnly SetLocalArray As String(,) = {
-                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
-                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db1.properties", "db1.url=jdbc:postgresql:", "db1.url=jdbc:postgresql://127.0.0.1:5432/db1"},
-                                     {API_PATH & "\" & Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db2.properties", "db2.url=jdbc:postgresql:", "db2.url=jdbc:postgresql://127.0.0.1:5432/db2"},
+                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
+                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db1.properties", "db1.url=jdbc:postgresql:", "db1.url=jdbc:postgresql://127.0.0.1:5432/db1"},
+                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db2.properties", "db2.url=jdbc:postgresql:", "db2.url=jdbc:postgresql://127.0.0.1:5432/db2"},
                                      {WEB_PATH & "\web\server\config\environment\production.js", "address", vbTab & vbTab & "address: '127.0.0.1',"}
                                      }
 
