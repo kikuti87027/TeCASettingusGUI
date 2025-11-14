@@ -1126,7 +1126,11 @@ Public Class Form_TeCASettings
         Next
 
         'コンボには求めた最小を中央値として、前後に倍々でコンボの選択肢を作る
-        'ただし、マイナス値や１２時間（720分）超は作らないようにする
+        'ただし、マイナス値や6時間（360分）超は作らないようにする
+
+        If ComboBox_LoginTimeout.Items.Count > 0 Then
+            ComboBox_LoginTimeout.Items.Clear()
+        End If
 
         With Me.ComboBox_LoginTimeout
             For N As Integer = -3 To 3
@@ -1138,7 +1142,7 @@ Public Class Form_TeCASettings
                     Case 0
                         .Items.Add((ResultValue.Min).ToString)
                     Case > 0
-                        If (ResultValue.Min * (N * 2)) < 721 Then
+                        If (ResultValue.Min * (N * 2)) < 361 Then
                             .Items.Add((ResultValue.Min * (N * 2)).ToString)
                         End If
                 End Select
