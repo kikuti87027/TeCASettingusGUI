@@ -23,3 +23,17 @@
 							・【Nuget.Npgsql】　kikuchi.dllでの採用Ver9.0.4に合わせた。
 							・【ログインタイムアウト】設定上限(720分)をTeCACMDの設定上限（360分）にそろえた。
 							　　同コンボの選択肢が実行ごとに増えてしまう動作も抑制。
+25-11-14　Ver3.1.5　【PDFConvertバグ対応】
+							・【kikuchi.dll】Misc.ConvertBOMFileToNoBOM  を実装し、
+							　　　PDF変換時にPDF＿Convert.Propertiesの1行目で定義したファイル形式が変換エラーになる不具合を修正。
+
+25-11-26　Ver3.1.5.1　【認証パスワード追加】
+							・SupervisorModeの認証パスワードを、[ZUNOsypervisors]も追加。対応するIDはphotronのまま。
+
+25-12-01　Ver3.1.5.2　【1.15.1対応】
+							・公開機能差し替え用main.htmlの該当バージョン版のリソース添付。
+
+25-12-15　Ver3.1.5.3　【1.15.0 FIX対応】
+							・1.15.0FIXによりtomcat更新確認用(1.15.0.1）は抹消となったので、公開機能差し替え用main.htmlの
+							　1.15.0.1用を抹消し、1.15.0化しリソース添付。
+							

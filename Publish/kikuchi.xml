@@ -29,6 +29,19 @@ kikuchi
  <param name="targetKey">キー</param>
  <returns>値</returns>
 </member>
+<member name="M:kikuchi.KeyValueParser.ParseNPG_ConnStr(System.String)">
+ <summary>
+ Npgsqlの接続文字列を解析して、キーと値の辞書を返す。
+ 　呼び出し方：
+     Dim connStr As String = "Host=localhost;Port=5432;Database=mydb;Username=myuser;Password=mypassword;"
+     Dim parameters As Dictionary(Of String, String) = ParseNPG_ConnStr(connStr)
+     
+ 　　if parameters.TryGetValue("Host", hostValue)) then Console.Writeline($"{hostValue}")    ' "localhost"
+     
+ </summary>
+ <param name="connStr"></param>
+ <returns></returns>
+</member>
 <member name="M:kikuchi.Misc.FindFormula(System.String,System.String,System.String)">
  <summary>
  ファイル内に期待する「式＝値」の￥文字列があるかを確認
@@ -154,6 +167,37 @@ kikuchi
  <param name="shareName">ローカルPCのUNC共有名（例：\\LocalPC?LocalShare）</param>
  <returns>ローカルPCの共有フォルダ名の実パス。見当たらなければNothingを返す</returns>
 </member>
+<member name="M:kikuchi.Misc.GetPathFromService(System.String)">
+ <summary>
+ サービス情報DBを使ってserviceName からインストールパスを取得する
+ </summary>
+ <param name="serviceName"></param>
+ <returns></returns>
+</member>
+<member name="M:kikuchi.Misc.GetServiceNameByPartialName(System.String,System.Boolean)">
+ <summary>
+ サービス名の一部から、該当するサービスの正式な名称 (ServiceName) を返す関数。
+ サービスは1つしか存在しないという前提に基づいています。
+ </summary>
+ <param name="partialName">サービスの表示名 (DisplayName) に含まれる部分文字列。</param>
+ <returns>該当するサービスの正式な名称 (ServiceName)。見つからない場合は空文字列を返します。</returns>
+</member>
+<member name="M:kikuchi.Misc.ExtractInstallPathFromPath(System.String,System.String,System.String)">
+ <summary>
+ PATH文字列から指定されたキーワードを含むインストールパスを抽出します。
+ </summary>
+ <param name="pathString">Windowsの環境変数PATHの内容。</param>
+ <param name="keyword">検索するキーワード（例: "tomcat", "openjdk"）。</param>
+ <param name="subDirHint">インストールパスを特定するためのヒントとなるサブディレクトリ名（通常は "bin"）。</param>
+ <returns>抽出されたインストールパス（複数見つかった場合はカンマ区切り）。</returns>
+</member>
+<member name="M:kikuchi.Misc.ConvertBOMFileToNoBOM(System.String)">
+ <summary>
+ BOM付きUTF-8ファイルを読み込み、BOMなしUTF-8ファイルとして書き換えます。PDF_Convert.propertiesではBOMなし必須です。
+ </summary>
+ <param name="filePath">対象のファイルパス</param>
+ <returns>処理が成功した場合はTrue、失敗した場合はFalse</returns>
+</member>
 <member name="M:kikuchi.crypt.Encrypt(System.String)">
  <summary>
  文字列をAESで暗号化
@@ -248,7 +292,7 @@ kikuchi
  <param name="targetDb">ターゲットのデータベース名</param>
  <returns>メッセージ</returns>
 </member>
-<member name="M:kikuchi.TeCA.CanConnectDB(System.String)">
+<member name="M:kikuchi.TeCA.CanConnectDB(System.String,System.Boolean)">
  <summary>
  LocalのDBに接続できれば[Success],出来ないなら[Error]
  </summary>

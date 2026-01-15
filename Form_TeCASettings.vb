@@ -102,6 +102,13 @@ Public Class Form_TeCASettings
                 TabPage2.Text = "アップロード・公開"
                 LockDialog(True, True)  '全アイテムをEnable
 
+            Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisors"
+                ' SupervisorMode
+                GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
+                TabPage2.Text = "アップロード・公開"
+                LockDialog(True, True)  '全アイテムをEnable
+
+
             Case Else
                 GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
                 TabPage2.Text = "アップロード"
@@ -230,6 +237,10 @@ Public Class Form_TeCASettings
                     MessageBox.Show("PDFConverter変換：拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
                     GroupBox_Progress.Visible = False
                     Exit Sub
+                End If
+
+                If Not Misc.ConvertBOMFileToNoBOM(pdfconvpropPath) Then
+                    MessageBox.Show("PDF変換情報からBOMを排除できませんでした。", "PDF変換モード")
                 End If
 
                 'CheckBoxと行抽出true/falseが異なってるなら書き換える
