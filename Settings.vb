@@ -26,6 +26,8 @@ Public Class TECA_sets
     Public Const KOKAI_FLG_File As String = ClientWebPath & "\app\upload\upload.service.js"
     Public Const Scrollpath As String = ClientWebPath & "\app\app.js"
     Public Const mainHTMLpath As String = ClientWebPath & "\app\main\main.html"
+    Public Const mainSVCjs_path As String = ClientWebPath & "\app\main\main.service.js"
+    Public Const mainCSS_path As String = ClientWebPath & "\app\main\main.css"
     Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
@@ -186,6 +188,64 @@ Public Class TRIGGERS
                 {"prodductionJS", TECA_sets.IDpath},
                 {"testJS", TECA_sets.ServerWebPath & "\test.js"}
     }
+        '================ワークフロー詳細ペイン関連の編集(3か所）を切り替える定数をDICで定義================
+        Public workFlowListExpandable As New Dictionary(Of Boolean, String) From {
+        {False, "expandableRowTemplate: '<div class=""sub-grid"" ui-grid=""row.entity.subGridOptions"" ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-auto-resize ui-grid-pinning></div>',"},
+        {True, "expandableRowTemplate: '<div ui-grid=""row.entity.subGridOptions"" ng-style=""grid.appScope.getTableHeight(row.entity.subGridOptions, 50, 3, row.entity.subGridOptions.data.length )"" ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-auto-resize ui-grid-pinning></div>',"}
+    }
+        Public Shared ReadOnly workFlowListSubGridStrings As String = <![CDATA[
+					// ▼▼▼ 26-01-16 ワークフロー詳細ペイン：行数の自動増減機能の追加 ▼▼▼
+					// 1. 高さの計算（CommonServiceを使って正しい高さを算出）
+					//   第2引数:最大行数(50), 第3引数:最小行数(3) ※テンプレートの設定と合わせる
+					　var heightStyle = CommonService.getTableHeight(subGridOptions, 50, 3);
+					
+					// 2. 計算結果（例: {height: "300px"}）から数値（300）を取り出す
+					if (heightStyle && heightStyle.height) {
+					    var numericHeight = parseInt(heightStyle.height.replace('px', ''));
+					    
+					    // 3. 親グリッドの行（row）に「展開時の高さ」としてセットする
+					    row.expandedRowHeight = numericHeight;
+					}
+                                                       
+					// 4. 親グリッドに「行の高さが変わった」ことを通知して再描画
+					$timeout(function() {
+					    $scope.workflowListGridApi.core.notifyDataChange(uiGridConstants.dataChange.ROW);
+					});
+					// ▲▲▲ 26-01-16 ワークフロー詳細ペイン：行数の自動増減機能の追加 ここまで▲▲▲]]>.Value
+        Public workFlowListSubGridExpandable As New Dictionary(Of Boolean, String) From {
+        {False, "subGridOptions.data = resolveData.fileList;" & vbCrLf & vbTab & vbTab & vbTab & vbTab & vbTab & "var subGridData = {"},
+        {True, "subGridOptions.data = resolveData.fileList;" & vbCrLf & workFlowListSubGridStrings & vbCrLf & vbTab & vbTab & vbTab & vbTab & vbTab & "var subGridData = {"}
+    }
+        Public workFlowListsubGridValue_Expandable As New Dictionary(Of Boolean, String) From {
+        {False, ".sub-grid {" & vbCrLf & vbTab & "height: 150px;"},
+        {True, ".sub-grid {" & vbCrLf & vbTab & "height: auto;"}
+    }
+
+        '================属性変更ウィンドウ　最下段にカレンダーピッカーを表示させるとき、フレームにかぶらないように自動調整する================
+        Public AutoAdjustCalenderPosition As New Dictionary(Of Boolean, String) From {
+        {False, "orientation: attrs.placement"},
+        {True, "orientation: ""auto"""}
+    }
+
+        '================履歴ウィンドウ　ペイン更新時には常にスクロールバーを最上部へ移動させる================
+        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_false As String = <![CDATA[
+					if (!addFlg) {
+						// ログの表示切り替えの場合
+						$scope.$parent.detailAreaData.log = [];
+					}]]>.Value
+        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_true As String = <![CDATA[
+					if (!addFlg) {
+						// ログの表示切り替えの場合
+						$scope.$parent.detailAreaData.log = [];
+						$timeout(function() {
+							$('.pane-comment-body').scrollTop(0);
+						});
+					}]]>.Value
+
+        Public FileHistoryScroll_onTOP As New Dictionary(Of Boolean, String) From {
+        {False, FileHistoryScrtollAlwaysOnTop_false},
+        {True, FileHistoryScrtollAlwaysOnTop_true}
+    }
 
     End Class
 
@@ -194,13 +254,22 @@ Public Class TRIGGERS
             ' ファイルの内容を読み込む
             Dim content As String = System.IO.File.ReadAllText(filePath)
 
+            ' 【修正点】改行コードの正規化対策
+            ' Windowsのファイル(CRLF)に対して、OLDStringがLFのみで構成されている場合、ヒットしないため補正する
+            If content.Contains(vbCrLf) AndAlso Not OLDString.Contains(vbCrLf) AndAlso OLDString.Contains(vbLf) Then
+                OLDString = OLDString.Replace(vbLf, vbCrLf)
+                ' 必要であればNEWStringも合わせておく
+                NEWString = NEWString.Replace(vbLf, vbCrLf)
+            End If
+
             ' OLDString の出現回数をカウント
             Dim matchCount As Integer = (content.Length - content.Replace(OLDString, "").Length) \ OLDString.Length
 
-            ' FilnOnlyでないときは置換処理
+            ' FindOnlyでないときは置換処理
             If Not FindOnly Then
                 Dim newContent As String = content.Replace(OLDString, NEWString)
                 If matchCount > 0 Then
+                    ' 書き込み (エンコーディング指定がないとShift-JIS/UTF-8等の問題が出る場合があるため注意)
                     System.IO.File.WriteAllText(filePath, newContent)
                 End If
             End If

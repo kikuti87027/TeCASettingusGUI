@@ -88,6 +88,7 @@ Partial Class Form_TeCASettings
         TextBox_DWG = New TextBox()
         CheckBox_Pipeman = New CheckBox()
         GroupBox_KOKAI = New GroupBox()
+        CheckBox_EnableKokai = New CheckBox()
         CheckBox_PublicateWorkflowOK = New CheckBox()
         CheckBox_UnpublicCheckin = New CheckBox()
         CheckBox_UploadDefault = New CheckBox()
@@ -103,6 +104,10 @@ Partial Class Form_TeCASettings
         Label_ClientID = New Label()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
+        GroupBox_AttrChange = New GroupBox()
+        CheckBox_CalPickerAutoAdjust = New CheckBox()
+        GroupBox_workflowDesign = New GroupBox()
+        CheckBox_workflowListExpandable = New CheckBox()
         GroupBox_Thumbnail = New GroupBox()
         Label19 = New Label()
         ComboBox_ThumbnailRatio = New ComboBox()
@@ -110,12 +115,14 @@ Partial Class Form_TeCASettings
         Label18 = New Label()
         ComboBox_PreViewScale = New ComboBox()
         GroupBox_FileSelector = New GroupBox()
+        GroupBox1 = New GroupBox()
         Label17 = New Label()
         ComboBox_FileSelectLineNum = New ComboBox()
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
-        CheckBox_EnableKokai = New CheckBox()
+        GroupBox_FileHistory = New GroupBox()
+        CheckBox_FileHistroryScrollPosition = New CheckBox()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -130,11 +137,14 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
+        GroupBox_AttrChange.SuspendLayout()
+        GroupBox_workflowDesign.SuspendLayout()
         GroupBox_Thumbnail.SuspendLayout()
         GroupBox_PreViewWindow.SuspendLayout()
         GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
         TabPage2.SuspendLayout()
+        GroupBox_FileHistory.SuspendLayout()
         SuspendLayout()
         ' 
         ' TextBox_ClientID
@@ -282,7 +292,7 @@ Partial Class Form_TeCASettings
         ' 
         ' Button_Exec
         ' 
-        Button_Exec.Location = New Point(286, 492)
+        Button_Exec.Location = New Point(286, 547)
         Button_Exec.Name = "Button_Exec"
         Button_Exec.Size = New Size(99, 43)
         Button_Exec.TabIndex = 31
@@ -367,7 +377,7 @@ Partial Class Form_TeCASettings
         ' 
         ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox_ExecMode.FormattingEnabled = True
-        ComboBox_ExecMode.Location = New Point(167, 492)
+        ComboBox_ExecMode.Location = New Point(167, 547)
         ComboBox_ExecMode.Name = "ComboBox_ExecMode"
         ComboBox_ExecMode.Size = New Size(114, 23)
         ComboBox_ExecMode.TabIndex = 30
@@ -375,7 +385,7 @@ Partial Class Form_TeCASettings
         ' Label4
         ' 
         Label4.AutoSize = True
-        Label4.Location = New Point(104, 496)
+        Label4.Location = New Point(104, 551)
         Label4.Name = "Label4"
         Label4.Size = New Size(56, 15)
         Label4.TabIndex = 4
@@ -407,7 +417,7 @@ Partial Class Form_TeCASettings
         ' GroupBox_Progress
         ' 
         GroupBox_Progress.Controls.Add(ProgressBar)
-        GroupBox_Progress.Location = New Point(11, 437)
+        GroupBox_Progress.Location = New Point(11, 492)
         GroupBox_Progress.Name = "GroupBox_Progress"
         GroupBox_Progress.Size = New Size(376, 45)
         GroupBox_Progress.TabIndex = 16
@@ -722,7 +732,7 @@ Partial Class Form_TeCASettings
         ' CheckBox_Pipeman
         ' 
         CheckBox_Pipeman.AutoSize = True
-        CheckBox_Pipeman.Location = New Point(167, 518)
+        CheckBox_Pipeman.Location = New Point(167, 573)
         CheckBox_Pipeman.Name = "CheckBox_Pipeman"
         CheckBox_Pipeman.Size = New Size(101, 19)
         CheckBox_Pipeman.TabIndex = 32
@@ -741,6 +751,17 @@ Partial Class Form_TeCASettings
         GroupBox_KOKAI.TabIndex = 9
         GroupBox_KOKAI.TabStop = False
         GroupBox_KOKAI.Text = "公開の既定値"
+        ' 
+        ' CheckBox_EnableKokai
+        ' 
+        CheckBox_EnableKokai.AutoSize = True
+        CheckBox_EnableKokai.Location = New Point(12, 91)
+        CheckBox_EnableKokai.Name = "CheckBox_EnableKokai"
+        CheckBox_EnableKokai.Size = New Size(159, 19)
+        CheckBox_EnableKokai.TabIndex = 30
+        CheckBox_EnableKokai.Text = "公開機能を使用可能にする"
+        CheckBox_EnableKokai.TextImageRelation = TextImageRelation.TextBeforeImage
+        CheckBox_EnableKokai.UseVisualStyleBackColor = True
         ' 
         ' CheckBox_PublicateWorkflowOK
         ' 
@@ -774,7 +795,7 @@ Partial Class Form_TeCASettings
         ' 
         ' Label_notice
         ' 
-        Label_notice.Location = New Point(11, 412)
+        Label_notice.Location = New Point(11, 467)
         Label_notice.Name = "Label_notice"
         Label_notice.Size = New Size(376, 23)
         Label_notice.TabIndex = 13
@@ -791,7 +812,7 @@ Partial Class Form_TeCASettings
         TabControl1.Margin = New Padding(2)
         TabControl1.Name = "TabControl1"
         TabControl1.SelectedIndex = 0
-        TabControl1.Size = New Size(382, 328)
+        TabControl1.Size = New Size(382, 383)
         TabControl1.TabIndex = 33
         ' 
         ' TabPage1
@@ -807,7 +828,7 @@ Partial Class Form_TeCASettings
         TabPage1.Margin = New Padding(2)
         TabPage1.Name = "TabPage1"
         TabPage1.Padding = New Padding(2)
-        TabPage1.Size = New Size(374, 300)
+        TabPage1.Size = New Size(374, 355)
         TabPage1.TabIndex = 2
         TabPage1.Text = "システム情報・API"
         TabPage1.UseVisualStyleBackColor = True
@@ -886,31 +907,74 @@ Partial Class Form_TeCASettings
         TabPage3.Margin = New Padding(2)
         TabPage3.Name = "TabPage3"
         TabPage3.Padding = New Padding(2)
-        TabPage3.Size = New Size(374, 300)
+        TabPage3.Size = New Size(374, 355)
         TabPage3.TabIndex = 3
         TabPage3.Text = "操作"
         TabPage3.UseVisualStyleBackColor = True
         ' 
         ' TabPage4
         ' 
+        TabPage4.Controls.Add(GroupBox_FileHistory)
+        TabPage4.Controls.Add(GroupBox_AttrChange)
+        TabPage4.Controls.Add(GroupBox_workflowDesign)
         TabPage4.Controls.Add(GroupBox_Thumbnail)
         TabPage4.Controls.Add(GroupBox_PreViewWindow)
         TabPage4.Controls.Add(GroupBox_FileSelector)
         TabPage4.Location = New Point(4, 24)
         TabPage4.Name = "TabPage4"
         TabPage4.Padding = New Padding(3)
-        TabPage4.Size = New Size(374, 300)
+        TabPage4.Size = New Size(374, 355)
         TabPage4.TabIndex = 4
         TabPage4.Text = "画面デザイン"
         TabPage4.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox_AttrChange
+        ' 
+        GroupBox_AttrChange.Controls.Add(CheckBox_CalPickerAutoAdjust)
+        GroupBox_AttrChange.Location = New Point(11, 259)
+        GroupBox_AttrChange.Name = "GroupBox_AttrChange"
+        GroupBox_AttrChange.Size = New Size(351, 43)
+        GroupBox_AttrChange.TabIndex = 18
+        GroupBox_AttrChange.TabStop = False
+        GroupBox_AttrChange.Text = "属性変更"
+        ' 
+        ' CheckBox_CalPickerAutoAdjust
+        ' 
+        CheckBox_CalPickerAutoAdjust.AutoSize = True
+        CheckBox_CalPickerAutoAdjust.Location = New Point(6, 18)
+        CheckBox_CalPickerAutoAdjust.Name = "CheckBox_CalPickerAutoAdjust"
+        CheckBox_CalPickerAutoAdjust.Size = New Size(204, 19)
+        CheckBox_CalPickerAutoAdjust.TabIndex = 0
+        CheckBox_CalPickerAutoAdjust.Text = "カレンダーピッカー位置を自動調整する"
+        CheckBox_CalPickerAutoAdjust.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox_workflowDesign
+        ' 
+        GroupBox_workflowDesign.Controls.Add(CheckBox_workflowListExpandable)
+        GroupBox_workflowDesign.Location = New Point(11, 214)
+        GroupBox_workflowDesign.Name = "GroupBox_workflowDesign"
+        GroupBox_workflowDesign.Size = New Size(354, 41)
+        GroupBox_workflowDesign.TabIndex = 17
+        GroupBox_workflowDesign.TabStop = False
+        GroupBox_workflowDesign.Text = "ワークフロー申請ファイル"
+        ' 
+        ' CheckBox_workflowListExpandable
+        ' 
+        CheckBox_workflowListExpandable.AutoSize = True
+        CheckBox_workflowListExpandable.Location = New Point(8, 16)
+        CheckBox_workflowListExpandable.Name = "CheckBox_workflowListExpandable"
+        CheckBox_workflowListExpandable.Size = New Size(178, 19)
+        CheckBox_workflowListExpandable.TabIndex = 0
+        CheckBox_workflowListExpandable.Text = "展開リスト行数を3行以上にする"
+        CheckBox_workflowListExpandable.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_Thumbnail
         ' 
         GroupBox_Thumbnail.Controls.Add(Label19)
         GroupBox_Thumbnail.Controls.Add(ComboBox_ThumbnailRatio)
-        GroupBox_Thumbnail.Location = New Point(11, 194)
+        GroupBox_Thumbnail.Location = New Point(11, 163)
         GroupBox_Thumbnail.Name = "GroupBox_Thumbnail"
-        GroupBox_Thumbnail.Size = New Size(354, 53)
+        GroupBox_Thumbnail.Size = New Size(354, 47)
         GroupBox_Thumbnail.TabIndex = 16
         GroupBox_Thumbnail.TabStop = False
         GroupBox_Thumbnail.Text = "検索結果ウィンドウ"
@@ -937,9 +1001,9 @@ Partial Class Form_TeCASettings
         GroupBox_PreViewWindow.Controls.Add(Label18)
         GroupBox_PreViewWindow.Controls.Add(ComboBox_PreViewScale)
         GroupBox_PreViewWindow.Controls.Add(CheckBox_GrabTool)
-        GroupBox_PreViewWindow.Location = New Point(11, 15)
+        GroupBox_PreViewWindow.Location = New Point(11, 6)
         GroupBox_PreViewWindow.Name = "GroupBox_PreViewWindow"
-        GroupBox_PreViewWindow.Size = New Size(354, 79)
+        GroupBox_PreViewWindow.Size = New Size(354, 71)
         GroupBox_PreViewWindow.TabIndex = 15
         GroupBox_PreViewWindow.TabStop = False
         GroupBox_PreViewWindow.Text = "プレビューウィンドウ"
@@ -963,29 +1027,39 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_FileSelector
         ' 
+        GroupBox_FileSelector.Controls.Add(GroupBox1)
         GroupBox_FileSelector.Controls.Add(Label17)
         GroupBox_FileSelector.Controls.Add(ComboBox_FileSelectLineNum)
         GroupBox_FileSelector.Controls.Add(CheckBox_Wide)
-        GroupBox_FileSelector.Location = New Point(7, 100)
+        GroupBox_FileSelector.Location = New Point(7, 82)
         GroupBox_FileSelector.Name = "GroupBox_FileSelector"
-        GroupBox_FileSelector.Size = New Size(358, 88)
+        GroupBox_FileSelector.Size = New Size(358, 77)
         GroupBox_FileSelector.TabIndex = 14
         GroupBox_FileSelector.TabStop = False
         GroupBox_FileSelector.Text = "ファイル選択ポップアップ"
+        ' 
+        ' GroupBox1
+        ' 
+        GroupBox1.Location = New Point(6, 153)
+        GroupBox1.Name = "GroupBox1"
+        GroupBox1.Size = New Size(352, 41)
+        GroupBox1.TabIndex = 17
+        GroupBox1.TabStop = False
+        GroupBox1.Text = "ワークフロー"
         ' 
         ' Label17
         ' 
         Label17.AutoSize = True
         Label17.Location = New Point(7, 25)
         Label17.Name = "Label17"
-        Label17.Size = New Size(56, 15)
+        Label17.Size = New Size(132, 15)
         Label17.TabIndex = 14
-        Label17.Text = "リスト行数"
+        Label17.Text = "１ページあたりの最大行数"
         ' 
         ' ComboBox_FileSelectLineNum
         ' 
         ComboBox_FileSelectLineNum.FormattingEnabled = True
-        ComboBox_FileSelectLineNum.Location = New Point(69, 22)
+        ComboBox_FileSelectLineNum.Location = New Point(149, 22)
         ComboBox_FileSelectLineNum.Name = "ComboBox_FileSelectLineNum"
         ComboBox_FileSelectLineNum.Size = New Size(58, 23)
         ComboBox_FileSelectLineNum.TabIndex = 1
@@ -1008,7 +1082,7 @@ Partial Class Form_TeCASettings
         Tab_mail.Margin = New Padding(2)
         Tab_mail.Name = "Tab_mail"
         Tab_mail.Padding = New Padding(2)
-        Tab_mail.Size = New Size(374, 300)
+        Tab_mail.Size = New Size(374, 355)
         Tab_mail.TabIndex = 0
         Tab_mail.Text = "メール通知"
         Tab_mail.UseVisualStyleBackColor = True
@@ -1021,28 +1095,37 @@ Partial Class Form_TeCASettings
         TabPage2.Margin = New Padding(2)
         TabPage2.Name = "TabPage2"
         TabPage2.Padding = New Padding(2)
-        TabPage2.Size = New Size(374, 300)
+        TabPage2.Size = New Size(374, 355)
         TabPage2.TabIndex = 1
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
-        ' CheckBox_EnableKokai
+        ' GroupBox_FileHistory
         ' 
-        CheckBox_EnableKokai.AutoSize = True
-        CheckBox_EnableKokai.Location = New Point(12, 91)
-        CheckBox_EnableKokai.Name = "CheckBox_EnableKokai"
-        CheckBox_EnableKokai.Size = New Size(159, 19)
-        CheckBox_EnableKokai.TabIndex = 30
-        CheckBox_EnableKokai.Text = "公開機能を使用可能にする"
-        CheckBox_EnableKokai.TextImageRelation = TextImageRelation.TextBeforeImage
-        CheckBox_EnableKokai.UseVisualStyleBackColor = True
+        GroupBox_FileHistory.Controls.Add(CheckBox_FileHistroryScrollPosition)
+        GroupBox_FileHistory.Location = New Point(13, 309)
+        GroupBox_FileHistory.Name = "GroupBox_FileHistory"
+        GroupBox_FileHistory.Size = New Size(351, 40)
+        GroupBox_FileHistory.TabIndex = 19
+        GroupBox_FileHistory.TabStop = False
+        GroupBox_FileHistory.Text = "履歴ウィンドウ"
+        ' 
+        ' CheckBox_FileHistroryScrollPosition
+        ' 
+        CheckBox_FileHistroryScrollPosition.AutoSize = True
+        CheckBox_FileHistroryScrollPosition.Location = New Point(3, 18)
+        CheckBox_FileHistroryScrollPosition.Name = "CheckBox_FileHistroryScrollPosition"
+        CheckBox_FileHistroryScrollPosition.Size = New Size(186, 19)
+        CheckBox_FileHistroryScrollPosition.TabIndex = 0
+        CheckBox_FileHistroryScrollPosition.Text = "スクロールバーを最新版位置に置く"
+        CheckBox_FileHistroryScrollPosition.UseVisualStyleBackColor = True
         ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(407, 542)
+        ClientSize = New Size(407, 595)
         Controls.Add(TabControl1)
         Controls.Add(Label_notice)
         Controls.Add(CheckBox_Pipeman)
@@ -1058,7 +1141,7 @@ Partial Class Form_TeCASettings
         MdiChildrenMinimizedAnchorBottom = False
         MinimizeBox = False
         Name = "Form_TeCASettings"
-        Text = "TeCAシステム設定と再起動 Ver3.00"
+        Text = "図脳TeCA　システム設定ツール"
         GroupBox_ninsyo.ResumeLayout(False)
         GroupBox_ninsyo.PerformLayout()
         GroupBox_PDF.ResumeLayout(False)
@@ -1083,6 +1166,10 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
+        GroupBox_AttrChange.ResumeLayout(False)
+        GroupBox_AttrChange.PerformLayout()
+        GroupBox_workflowDesign.ResumeLayout(False)
+        GroupBox_workflowDesign.PerformLayout()
         GroupBox_Thumbnail.ResumeLayout(False)
         GroupBox_Thumbnail.PerformLayout()
         GroupBox_PreViewWindow.ResumeLayout(False)
@@ -1092,6 +1179,8 @@ Partial Class Form_TeCASettings
         Tab_mail.ResumeLayout(False)
         Tab_mail.PerformLayout()
         TabPage2.ResumeLayout(False)
+        GroupBox_FileHistory.ResumeLayout(False)
+        GroupBox_FileHistory.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -1191,4 +1280,11 @@ Partial Class Form_TeCASettings
     Friend WithEvents Label22 As Label
     Friend WithEvents Button_ChangePwd As Button
     Friend WithEvents CheckBox_EnableKokai As CheckBox
+    Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents GroupBox_workflowDesign As GroupBox
+    Friend WithEvents CheckBox_workflowListExpandable As CheckBox
+    Friend WithEvents GroupBox_AttrChange As GroupBox
+    Friend WithEvents CheckBox_CalPickerAutoAdjust As CheckBox
+    Friend WithEvents GroupBox_FileHistory As GroupBox
+    Friend WithEvents CheckBox_FileHistroryScrollPosition As CheckBox
 End Class

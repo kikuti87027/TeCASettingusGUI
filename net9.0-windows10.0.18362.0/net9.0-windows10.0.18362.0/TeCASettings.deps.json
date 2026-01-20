@@ -6,19 +6,19 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "TeCASettings/3.1.5.3": {
+      "TeCASettings/3.2.0.0": {
         "dependencies": {
           "Azure.Core": "1.50.0",
           "BCrypt.Net-Next": "4.0.3",
           "CXuesong.Shims.VisualBasic.Devices": "0.3.0",
-          "Microsoft.CodeAnalysis.NetAnalyzers": "10.0.100",
+          "Microsoft.CodeAnalysis.NetAnalyzers": "10.0.102",
           "Microsoft.NETCore.Platforms": "8.0.0-preview.7.23375.6",
-          "Npgsql": "9.0.4",
-          "NuGet.Versioning": "7.0.0",
-          "System.Management": "10.0.0",
-          "System.ServiceProcess.ServiceController": "10.0.0",
+          "Npgsql": "10.0.1",
+          "NuGet.Versioning": "7.0.1",
+          "System.Management": "10.0.2",
+          "System.ServiceProcess.ServiceController": "10.0.2",
           "log4net": "3.2.0",
-          "kikuchi": "1.68.0.0",
+          "kikuchi": "1.7.2.0",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.18362.57"
         },
         "runtime": {
@@ -85,49 +85,49 @@
           }
         }
       },
-      "Microsoft.CodeAnalysis.NetAnalyzers/10.0.100": {},
-      "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.2": {
+      "Microsoft.CodeAnalysis.NetAnalyzers/10.0.102": {},
+      "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.0": {
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1024.46610"
+          "lib/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52809"
           }
         }
       },
-      "Microsoft.Extensions.Logging.Abstractions/8.0.3": {
+      "Microsoft.Extensions.Logging.Abstractions/9.0.0": {
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0"
         },
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1325.6609"
+          "lib/net9.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52809"
           }
         }
       },
       "Microsoft.NETCore.Platforms/8.0.0-preview.7.23375.6": {},
-      "Npgsql/9.0.4": {
+      "Npgsql/10.0.1": {
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.0"
         },
         "runtime": {
-          "lib/net8.0/Npgsql.dll": {
-            "assemblyVersion": "9.0.4.0",
-            "fileVersion": "9.0.4.0"
+          "lib/net9.0/Npgsql.dll": {
+            "assemblyVersion": "10.0.1.0",
+            "fileVersion": "10.0.1.0"
           }
         }
       },
-      "NuGet.Versioning/7.0.0": {
+      "NuGet.Versioning/7.0.1": {
         "runtime": {
           "lib/net8.0/NuGet.Versioning.dll": {
-            "assemblyVersion": "7.0.0.0",
-            "fileVersion": "7.0.0.289"
+            "assemblyVersion": "7.0.1.0",
+            "fileVersion": "7.0.1.1"
           }
         }
       },
       "System.ClientModel/1.8.0": {
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.0",
           "System.Memory.Data": "8.0.1"
         },
         "runtime": {
@@ -137,11 +137,11 @@
           }
         }
       },
-      "System.CodeDom/10.0.0": {
+      "System.CodeDom/10.0.2": {
         "runtime": {
           "lib/net9.0/System.CodeDom.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "fileVersion": "10.0.225.61305"
           }
         }
       },
@@ -151,11 +151,11 @@
           "System.Security.Permissions": "4.5.0"
         }
       },
-      "System.Diagnostics.EventLog/10.0.0": {
+      "System.Diagnostics.EventLog/10.0.2": {
         "runtime": {
           "lib/net9.0/System.Diagnostics.EventLog.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "fileVersion": "10.0.225.61305"
           }
         },
         "runtimeTargets": {
@@ -169,26 +169,26 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "fileVersion": "10.0.225.61305"
           }
         }
       },
-      "System.Management/10.0.0": {
+      "System.Management/10.0.2": {
         "dependencies": {
-          "System.CodeDom": "10.0.0"
+          "System.CodeDom": "10.0.2"
         },
         "runtime": {
           "lib/net9.0/System.Management.dll": {
-            "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "assemblyVersion": "10.0.0.2",
+            "fileVersion": "10.0.225.61305"
           }
         },
         "runtimeTargets": {
           "runtimes/win/lib/net9.0/System.Management.dll": {
             "rid": "win",
             "assetType": "runtime",
-            "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "assemblyVersion": "10.0.0.2",
+            "fileVersion": "10.0.225.61305"
           }
         }
       },
@@ -217,30 +217,30 @@
           "Microsoft.NETCore.Platforms": "8.0.0-preview.7.23375.6"
         }
       },
-      "System.ServiceProcess.ServiceController/10.0.0": {
+      "System.ServiceProcess.ServiceController/10.0.2": {
         "dependencies": {
-          "System.Diagnostics.EventLog": "10.0.0"
+          "System.Diagnostics.EventLog": "10.0.2"
         },
         "runtime": {
           "lib/net9.0/System.ServiceProcess.ServiceController.dll": {
-            "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "assemblyVersion": "10.0.0.2",
+            "fileVersion": "10.0.225.61305"
           }
         },
         "runtimeTargets": {
           "runtimes/win/lib/net9.0/System.ServiceProcess.ServiceController.dll": {
             "rid": "win",
             "assetType": "runtime",
-            "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.25.52411"
+            "assemblyVersion": "10.0.0.2",
+            "fileVersion": "10.0.225.61305"
           }
         }
       },
-      "kikuchi/1.68.0.0": {
+      "kikuchi/1.7.2.0": {
         "runtime": {
           "kikuchi.dll": {
-            "assemblyVersion": "1.68.0.0",
-            "fileVersion": "1.68.0.0"
+            "assemblyVersion": "1.7.2.0",
+            "fileVersion": "1.7.2.0"
           }
         }
       },
@@ -263,7 +263,7 @@
     }
   },
   "libraries": {
-    "TeCASettings/3.1.5.3": {
+    "TeCASettings/3.2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -308,26 +308,26 @@
       "path": "microsoft.bcl.asyncinterfaces/8.0.0",
       "hashPath": "microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512"
     },
-    "Microsoft.CodeAnalysis.NetAnalyzers/10.0.100": {
+    "Microsoft.CodeAnalysis.NetAnalyzers/10.0.102": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uj9VuyvqylnNueJfU7u2PkI/hEMpZl8Wg9BXyI0eatNEldU5jDYPdwsM8aDL18+1oLovju25MiqOPaGRBnG72A==",
-      "path": "microsoft.codeanalysis.netanalyzers/10.0.100",
-      "hashPath": "microsoft.codeanalysis.netanalyzers.10.0.100.nupkg.sha512"
+      "sha512": "sha512-4toG7NN4bwoIt5KAUJd8vhJQt5vwaLTBWdDOSeyaAAQP1wXLIkVshsMtKMIrPGpm0w+pHFpX7ffWqdB6ZAinoQ==",
+      "path": "microsoft.codeanalysis.netanalyzers/10.0.102",
+      "hashPath": "microsoft.codeanalysis.netanalyzers.10.0.102.nupkg.sha512"
     },
-    "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.2": {
+    "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3iE7UF7MQkCv1cxzCahz+Y/guQbTqieyxyaWKhrRO91itI9cOKO76OHeQDahqG4MmW5umr3CcCvGmK92lWNlbg==",
-      "path": "microsoft.extensions.dependencyinjection.abstractions/8.0.2",
-      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512"
+      "sha512": "sha512-+6f2qv2a3dLwd5w6JanPIPs47CxRbnk+ZocMJUhv9NxP88VlOcJYZs9jY+MYSjxvady08bUZn6qgiNh7DadGgg==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/9.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.9.0.0.nupkg.sha512"
     },
-    "Microsoft.Extensions.Logging.Abstractions/8.0.3": {
+    "Microsoft.Extensions.Logging.Abstractions/9.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-dL0QGToTxggRLMYY4ZYX5AMwBb+byQBd/5dMiZE07Nv73o6I5Are3C7eQTh7K2+A4ct0PVISSr7TZANbiNb2yQ==",
-      "path": "microsoft.extensions.logging.abstractions/8.0.3",
-      "hashPath": "microsoft.extensions.logging.abstractions.8.0.3.nupkg.sha512"
+      "sha512": "sha512-g0UfujELzlLbHoVG8kPKVBaW470Ewi+jnptGS9KUi6jcb+k2StujtK3m26DFSGGwQ/+bVgZfsWqNzlP6YOejvw==",
+      "path": "microsoft.extensions.logging.abstractions/9.0.0",
+      "hashPath": "microsoft.extensions.logging.abstractions.9.0.0.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/8.0.0-preview.7.23375.6": {
       "type": "package",
@@ -336,19 +336,19 @@
       "path": "microsoft.netcore.platforms/8.0.0-preview.7.23375.6",
       "hashPath": "microsoft.netcore.platforms.8.0.0-preview.7.23375.6.nupkg.sha512"
     },
-    "Npgsql/9.0.4": {
+    "Npgsql/10.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-68BASXH0FAEuL/J4J0eRfYC8/3vzqQTmoW8zDzNf0JgaVxc7LZeEkS6jaG0ib3voFLxY5ZiCwJG+uQM+mzuu0Q==",
-      "path": "npgsql/9.0.4",
-      "hashPath": "npgsql.9.0.4.nupkg.sha512"
+      "sha512": "sha512-XyUcxEfqlFomhNTG/ZdGlec+uSOQArKz0Mzz8jYKP/Jj9GM2YabU5CVZtp0yiC4f9hRp+tRZTnHMatJeJ3rwgw==",
+      "path": "npgsql/10.0.1",
+      "hashPath": "npgsql.10.0.1.nupkg.sha512"
     },
-    "NuGet.Versioning/7.0.0": {
+    "NuGet.Versioning/7.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-vMEhpystjAmHzWARE09PjYMWOiGgM+f9rJYMcXGs8soz9/url4qmU9O9Y+hy22kPuqozCMoGcJt0JzKRZ1woZg==",
-      "path": "nuget.versioning/7.0.0",
-      "hashPath": "nuget.versioning.7.0.0.nupkg.sha512"
+      "sha512": "sha512-tu68LnZqiLM/VyLQzPRqedopMi/M+5/6JqwB2Xkd0AWXRpUWewkVv77asVB7wgjMPVzQFK2sBy7AuxV49UzuvQ==",
+      "path": "nuget.versioning/7.0.1",
+      "hashPath": "nuget.versioning.7.0.1.nupkg.sha512"
     },
     "System.ClientModel/1.8.0": {
       "type": "package",
@@ -357,12 +357,12 @@
       "path": "system.clientmodel/1.8.0",
       "hashPath": "system.clientmodel.1.8.0.nupkg.sha512"
     },
-    "System.CodeDom/10.0.0": {
+    "System.CodeDom/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-QWERdKi/tQAx+MbrPxTGcpchqMANnVXNiv2r2tILBBB38E74buD+fABSUhozZ1G9kjbadFB0m+HPFMkhJPeFvA==",
-      "path": "system.codedom/10.0.0",
-      "hashPath": "system.codedom.10.0.0.nupkg.sha512"
+      "sha512": "sha512-eih1MnL4tnSjHUhzae0dmpu50Sm0s54faHZc8yhzYfmubAubkBIIulYYN28fasD1m41mhl6Cenhs9/F0aLv3FA==",
+      "path": "system.codedom/10.0.2",
+      "hashPath": "system.codedom.10.0.2.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/4.5.0": {
       "type": "package",
@@ -371,19 +371,19 @@
       "path": "system.configuration.configurationmanager/4.5.0",
       "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
     },
-    "System.Diagnostics.EventLog/10.0.0": {
+    "System.Diagnostics.EventLog/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A==",
-      "path": "system.diagnostics.eventlog/10.0.0",
-      "hashPath": "system.diagnostics.eventlog.10.0.0.nupkg.sha512"
+      "sha512": "sha512-TJPpTLF5MFPobq09c9BQ5X8QuviQfsKvH0Jbm7MkGylGvfIdRqJQLZDPC5sMRFkk9aZhmgir1NJKekip2NxfaA==",
+      "path": "system.diagnostics.eventlog/10.0.2",
+      "hashPath": "system.diagnostics.eventlog.10.0.2.nupkg.sha512"
     },
-    "System.Management/10.0.0": {
+    "System.Management/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-LE3rDZoPzulou78Tsq+3ALhUs4vatQ03v2QWbYVIenVPneUH/+LTUmHyyl098OxIFLQI6sNkZs8YHbUnT/sm3A==",
-      "path": "system.management/10.0.0",
-      "hashPath": "system.management.10.0.0.nupkg.sha512"
+      "sha512": "sha512-eFftuy3i844lVKCb4lJvvjKfcvPVcW8KrAdSaIOcRL42/Fisj46hwUs8Bky+4avzMe5Snm5t7aSayOI1mybYXg==",
+      "path": "system.management/10.0.2",
+      "hashPath": "system.management.10.0.2.nupkg.sha512"
     },
     "System.Memory.Data/8.0.1": {
       "type": "package",
@@ -420,14 +420,14 @@
       "path": "system.security.principal.windows/4.5.0",
       "hashPath": "system.security.principal.windows.4.5.0.nupkg.sha512"
     },
-    "System.ServiceProcess.ServiceController/10.0.0": {
+    "System.ServiceProcess.ServiceController/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-PaFmFQXX/qL1vl0CfdJUMPMYT8TOEHlcdEiOZtd4LV2rcaS/WDQM4bpECcbRM4BrD+DWkWd/jtb6iPOqAX9TWA==",
-      "path": "system.serviceprocess.servicecontroller/10.0.0",
-      "hashPath": "system.serviceprocess.servicecontroller.10.0.0.nupkg.sha512"
+      "sha512": "sha512-DQgLDzErB8KZjORot7bUkcq3xhJ2MqpgJUy+jHCsrval0SmRrIkfmu4C0O97KKvPfejSfnV7Ne2LI3qnebxh8w==",
+      "path": "system.serviceprocess.servicecontroller/10.0.2",
+      "hashPath": "system.serviceprocess.servicecontroller.10.0.2.nupkg.sha512"
     },
-    "kikuchi/1.68.0.0": {
+    "kikuchi/1.7.2.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

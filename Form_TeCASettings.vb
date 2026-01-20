@@ -212,6 +212,31 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.SelectFileCSS_Width("JS2_Wide"), DIC.SelectFileCSS_Width("JS2_Normal"), SelectFileJS)
                 End If
 
+                '【main.service.js】ワークフロー詳細ペイン　案件の展開行数拡縮の更新
+                If CheckBox_workflowListExpandable.Checked Then
+                    ReplaceTextInFile(DIC.workFlowListExpandable(False), DIC.workFlowListExpandable(True), mainSVCjs_path)
+                    ReplaceTextInFile(DIC.workFlowListSubGridExpandable(False), DIC.workFlowListSubGridExpandable(True), mainSVCjs_path)
+                    ReplaceTextInFile(DIC.workFlowListsubGridValue_Expandable(False), DIC.workFlowListsubGridValue_Expandable(True), mainCSS_path)
+                Else
+                    ReplaceTextInFile(DIC.workFlowListExpandable(True), DIC.workFlowListExpandable(False), mainSVCjs_path)
+                    ReplaceTextInFile(DIC.workFlowListSubGridExpandable(True), DIC.workFlowListSubGridExpandable(False), mainSVCjs_path)
+                    ReplaceTextInFile(DIC.workFlowListsubGridValue_Expandable(True), DIC.workFlowListsubGridValue_Expandable(False), mainCSS_path)
+                End If
+
+                '【app.js】属性変更詳細ペイン　カレンダーコントロール位置の自動調整
+                If CheckBox_CalPickerAutoAdjust.Checked Then
+                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(False), DIC.AutoAdjustCalenderPosition(True), Scrollpath)
+                Else
+                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(True), DIC.AutoAdjustCalenderPosition(False), Scrollpath)
+                End If
+
+                '【main.service.js】履歴ペイン　画面更新時にスクロールバーを最上端にセットし直す
+                If CheckBox_FileHistroryScrollPosition.Checked Then
+                    ReplaceTextInFile(DIC.FileHistoryScroll_onTOP(False), DIC.FileHistoryScroll_onTOP(True), mainSVCjs_path)
+                Else
+                    ReplaceTextInFile(DIC.FileHistoryScroll_onTOP(True), DIC.FileHistoryScroll_onTOP(False), mainSVCjs_path)
+                End If
+
                 '【pdf.js】プレビュー表示拡大率コンボからの更新
                 If Not String.IsNullOrEmpty(pdfJS_CurrentViewScale) Then
                     Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, DIC.pdfJS(ComboBox_PreViewScale.SelectedItem))
@@ -474,7 +499,7 @@ Public Class Form_TeCASettings
 
                 Try
                     Dim htmlContents As String = HtmlLoader.LoadHtmlFromResource(resourceHTML)
-                    File.WriteAllText(mainHTMLpath, htmlContents, System.Text.Encoding.UTF8)
+                    File.WriteAllText(mainHTMLpath, htmlContents, New System.Text.UTF8Encoding(False))
                 Catch ex As Exception
                     MessageBox.Show($"公開機能の更新に失敗しました。{ex.Message}", "エラー")
                 End Try
@@ -550,6 +575,9 @@ Public Class Form_TeCASettings
         GroupBox_FileSelector.Enabled = ONorOFF
         GroupBox_PreViewWindow.Enabled = ONorOFF
         GroupBox_Thumbnail.Enabled = ONorOFF
+        GroupBox_workflowDesign.Enabled = ONorOFF
+        GroupBox_AttrChange.Enabled = ONorOFF
+        GroupBox_FileHistory.Enabled = ONorOFF
 
         'メール通知タブ
         GroupBox_MailServer.Enabled = ONorOFF
@@ -1027,6 +1055,28 @@ Public Class Form_TeCASettings
 
     Private Sub InitializeControls()
 
+        '▼▼▼履歴ペイン　画面更新時には必ずスクロールバーを最上端にする
+        If Misc.FindString(mainSVCjs_path, DIC.FileHistoryScroll_onTOP(False), True) Then
+            CheckBox_FileHistroryScrollPosition.Checked = False
+        Else
+            CheckBox_FileHistroryScrollPosition.Checked = True
+        End If
+
+        '▼▼▼属性変更詳細ペイン　カレンダピッカー自動位置調整
+        If Misc.FindString(Scrollpath, DIC.AutoAdjustCalenderPosition(False)) Then
+            CheckBox_CalPickerAutoAdjust.Checked = False
+        Else
+            CheckBox_CalPickerAutoAdjust.Checked = True
+        End If
+
+        '▼▼▼ワークフロー詳細ペイン  案件展開行数の拡張スイッチ
+        If Misc.FindString(mainSVCjs_path, DIC.workFlowListExpandable(False)) Then
+            CheckBox_workflowListExpandable.Checked = False
+        Else
+            CheckBox_workflowListExpandable.Checked = True
+        End If
+
+
         '▼▼▼ファイル選択モーダル  現在の状態をコントロールに格納する
         '　モーダル行数
         Dim SelectFileLinesNow As String = KeyValueParser.FindValue(SelectFileJS, "var DEFAULT_DISP_CNT")
@@ -1387,10 +1437,6 @@ Public Class Form_TeCASettings
 
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button_ChangePwd.Click
-        Dim frm As New Form_ChangePWD()
-        frm.Show()
-    End Sub
 End Class
 
 Public Class MyBase64str

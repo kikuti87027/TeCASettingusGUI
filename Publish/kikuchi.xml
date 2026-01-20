@@ -51,14 +51,6 @@ kikuchi
  <param name="expectedValue">右辺の文字列</param>
  <returns>存在する場合はTrue</returns>
 </member>
-<member name="M:kikuchi.Misc.FindString(System.String,System.String)">
- <summary>
- ファイル内に期待する文字列があるかを確認
- </summary>
- <param name="filePath">ファイルパス</param>
- <param name="key">検索対象の文字列</param>
- <returns>見つかればTrue,見つからないならFalse</returns>
-</member>
 <member name="M:kikuchi.Misc.ExchangeString(System.String,System.String,System.String,System.Boolean,System.String)">
  <summary>
  ファイル内文字列を痴漢
