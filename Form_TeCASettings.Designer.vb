@@ -104,6 +104,8 @@ Partial Class Form_TeCASettings
         Label_ClientID = New Label()
         TabPage3 = New TabPage()
         TabPage4 = New TabPage()
+        GroupBox_FileHistory = New GroupBox()
+        CheckBox_FileHistroryScrollPosition = New CheckBox()
         GroupBox_AttrChange = New GroupBox()
         CheckBox_CalPickerAutoAdjust = New CheckBox()
         GroupBox_workflowDesign = New GroupBox()
@@ -121,8 +123,6 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
-        GroupBox_FileHistory = New GroupBox()
-        CheckBox_FileHistroryScrollPosition = New CheckBox()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -137,6 +137,7 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.SuspendLayout()
         TabPage3.SuspendLayout()
         TabPage4.SuspendLayout()
+        GroupBox_FileHistory.SuspendLayout()
         GroupBox_AttrChange.SuspendLayout()
         GroupBox_workflowDesign.SuspendLayout()
         GroupBox_Thumbnail.SuspendLayout()
@@ -144,7 +145,6 @@ Partial Class Form_TeCASettings
         GroupBox_FileSelector.SuspendLayout()
         Tab_mail.SuspendLayout()
         TabPage2.SuspendLayout()
-        GroupBox_FileHistory.SuspendLayout()
         SuspendLayout()
         ' 
         ' TextBox_ClientID
@@ -928,6 +928,26 @@ Partial Class Form_TeCASettings
         TabPage4.Text = "画面デザイン"
         TabPage4.UseVisualStyleBackColor = True
         ' 
+        ' GroupBox_FileHistory
+        ' 
+        GroupBox_FileHistory.Controls.Add(CheckBox_FileHistroryScrollPosition)
+        GroupBox_FileHistory.Location = New Point(13, 309)
+        GroupBox_FileHistory.Name = "GroupBox_FileHistory"
+        GroupBox_FileHistory.Size = New Size(351, 40)
+        GroupBox_FileHistory.TabIndex = 19
+        GroupBox_FileHistory.TabStop = False
+        GroupBox_FileHistory.Text = "履歴ウィンドウ"
+        ' 
+        ' CheckBox_FileHistroryScrollPosition
+        ' 
+        CheckBox_FileHistroryScrollPosition.AutoSize = True
+        CheckBox_FileHistroryScrollPosition.Location = New Point(3, 18)
+        CheckBox_FileHistroryScrollPosition.Name = "CheckBox_FileHistroryScrollPosition"
+        CheckBox_FileHistroryScrollPosition.Size = New Size(186, 19)
+        CheckBox_FileHistroryScrollPosition.TabIndex = 0
+        CheckBox_FileHistroryScrollPosition.Text = "スクロールバーを最新版位置に置く"
+        CheckBox_FileHistroryScrollPosition.UseVisualStyleBackColor = True
+        ' 
         ' GroupBox_AttrChange
         ' 
         GroupBox_AttrChange.Controls.Add(CheckBox_CalPickerAutoAdjust)
@@ -943,9 +963,9 @@ Partial Class Form_TeCASettings
         CheckBox_CalPickerAutoAdjust.AutoSize = True
         CheckBox_CalPickerAutoAdjust.Location = New Point(6, 18)
         CheckBox_CalPickerAutoAdjust.Name = "CheckBox_CalPickerAutoAdjust"
-        CheckBox_CalPickerAutoAdjust.Size = New Size(204, 19)
+        CheckBox_CalPickerAutoAdjust.Size = New Size(224, 19)
         CheckBox_CalPickerAutoAdjust.TabIndex = 0
-        CheckBox_CalPickerAutoAdjust.Text = "カレンダーピッカー位置を自動調整する"
+        CheckBox_CalPickerAutoAdjust.Text = "下端にある選択肢の表示位置を調整する"
         CheckBox_CalPickerAutoAdjust.UseVisualStyleBackColor = True
         ' 
         ' GroupBox_workflowDesign
@@ -1100,26 +1120,6 @@ Partial Class Form_TeCASettings
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
-        ' GroupBox_FileHistory
-        ' 
-        GroupBox_FileHistory.Controls.Add(CheckBox_FileHistroryScrollPosition)
-        GroupBox_FileHistory.Location = New Point(13, 309)
-        GroupBox_FileHistory.Name = "GroupBox_FileHistory"
-        GroupBox_FileHistory.Size = New Size(351, 40)
-        GroupBox_FileHistory.TabIndex = 19
-        GroupBox_FileHistory.TabStop = False
-        GroupBox_FileHistory.Text = "履歴ウィンドウ"
-        ' 
-        ' CheckBox_FileHistroryScrollPosition
-        ' 
-        CheckBox_FileHistroryScrollPosition.AutoSize = True
-        CheckBox_FileHistroryScrollPosition.Location = New Point(3, 18)
-        CheckBox_FileHistroryScrollPosition.Name = "CheckBox_FileHistroryScrollPosition"
-        CheckBox_FileHistroryScrollPosition.Size = New Size(186, 19)
-        CheckBox_FileHistroryScrollPosition.TabIndex = 0
-        CheckBox_FileHistroryScrollPosition.Text = "スクロールバーを最新版位置に置く"
-        CheckBox_FileHistroryScrollPosition.UseVisualStyleBackColor = True
-        ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
@@ -1166,6 +1166,8 @@ Partial Class Form_TeCASettings
         GroupBox_SystemID.PerformLayout()
         TabPage3.ResumeLayout(False)
         TabPage4.ResumeLayout(False)
+        GroupBox_FileHistory.ResumeLayout(False)
+        GroupBox_FileHistory.PerformLayout()
         GroupBox_AttrChange.ResumeLayout(False)
         GroupBox_AttrChange.PerformLayout()
         GroupBox_workflowDesign.ResumeLayout(False)
@@ -1179,8 +1181,6 @@ Partial Class Form_TeCASettings
         Tab_mail.ResumeLayout(False)
         Tab_mail.PerformLayout()
         TabPage2.ResumeLayout(False)
-        GroupBox_FileHistory.ResumeLayout(False)
-        GroupBox_FileHistory.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub

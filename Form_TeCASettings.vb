@@ -223,12 +223,6 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.workFlowListsubGridValue_Expandable(True), DIC.workFlowListsubGridValue_Expandable(False), mainCSS_path)
                 End If
 
-                '【app.js】属性変更詳細ペイン　カレンダーコントロール位置の自動調整
-                If CheckBox_CalPickerAutoAdjust.Checked Then
-                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(False), DIC.AutoAdjustCalenderPosition(True), Scrollpath)
-                Else
-                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(True), DIC.AutoAdjustCalenderPosition(False), Scrollpath)
-                End If
 
                 '【main.service.js】履歴ペイン　画面更新時にスクロールバーを最上端にセットし直す
                 If CheckBox_FileHistroryScrollPosition.Checked Then
@@ -503,6 +497,19 @@ Public Class Form_TeCASettings
                 Catch ex As Exception
                     MessageBox.Show($"公開機能の更新に失敗しました。{ex.Message}", "エラー")
                 End Try
+
+                '【app.js】属性変更詳細ペイン　カレンダーピッカーとコンボ位置の自動調整
+                If CheckBox_CalPickerAutoAdjust.Checked Then
+                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(False), DIC.AutoAdjustCalenderPosition(True), Scrollpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(False), DIC.AutoAdjustComboPosition_html(True), mainHTMLpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(False), DIC.AutoAdjustComboPosition_js(True), mainJS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(False), DIC.AutoAdjustComboPosition_css(True), mainCSS_path)
+                Else
+                    ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(True), DIC.AutoAdjustCalenderPosition(False), Scrollpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(True), DIC.AutoAdjustComboPosition_html(False), mainHTMLpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(True), DIC.AutoAdjustComboPosition_js(False), mainJS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(True), DIC.AutoAdjustComboPosition_css(False), mainCSS_path)
+                End If
 
                 '【DB関連パラメータ】DLG入力値で更新する
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", connStrdb1)
@@ -1062,7 +1069,7 @@ Public Class Form_TeCASettings
             CheckBox_FileHistroryScrollPosition.Checked = True
         End If
 
-        '▼▼▼属性変更詳細ペイン　カレンダピッカー自動位置調整
+        '▼▼▼属性変更詳細ペイン　下端にあるカレンダピッカーとコンボの自動位置調整
         If Misc.FindString(Scrollpath, DIC.AutoAdjustCalenderPosition(False)) Then
             CheckBox_CalPickerAutoAdjust.Checked = False
         Else

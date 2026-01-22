@@ -28,6 +28,7 @@ Public Class TECA_sets
     Public Const mainHTMLpath As String = ClientWebPath & "\app\main\main.html"
     Public Const mainSVCjs_path As String = ClientWebPath & "\app\main\main.service.js"
     Public Const mainCSS_path As String = ClientWebPath & "\app\main\main.css"
+    Public Const mainJS_path As String = ClientWebPath & "\app\main\main.js"
     Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
@@ -222,9 +223,76 @@ Public Class TRIGGERS
     }
 
         '================属性変更ウィンドウ　最下段にカレンダーピッカーを表示させるとき、フレームにかぶらないように自動調整する================
+        ' カレンダーピッカー
         Public AutoAdjustCalenderPosition As New Dictionary(Of Boolean, String) From {
         {False, "orientation: attrs.placement"},
         {True, "orientation: ""auto"""}
+    }
+        'コンボ（main.js）
+        Public Shared ReadOnly AutoAdjustComboPosition_js_Before As String = <![CDATA[
+		});
+});
+]]>.Value
+        Public Shared ReadOnly AutoAdjustComboPosition_js_After As String = <![CDATA[
+		});
+}); /* コンボのドロップダウン位置自動調整指示 */
+
+app.directive('smartDropdownPosition', function($window, $timeout) {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs) {
+		var adjustPosition = function() {
+			var dropdownHeight = 200; 
+			var rect = element[0].getBoundingClientRect();
+			var windowHeight = $window.innerHeight;
+			if ((windowHeight - rect.bottom) < dropdownHeight) {
+				element.addClass('drop-up');
+			} else {
+				element.removeClass('drop-up');
+			}
+		};
+		element.on('click keyup focusin', function() {
+		$timeout(adjustPosition, 0);
+		});
+		}
+	};
+});
+]]>.Value
+        Public AutoAdjustComboPosition_js As New Dictionary(Of Boolean, String) From {
+        {False, AutoAdjustComboPosition_js_Before},
+        {True, AutoAdjustComboPosition_js_After}
+    }
+
+        'コンボ（main.css）
+        Public Shared ReadOnly AutoAdjustComboPosition_css_Before As String = <![CDATA[
+}
+
+/* ワークフロー構成 - 進行状況エリア */
+]]>.Value
+        Public Shared ReadOnly AutoAdjustComboPosition_css_After As String = <![CDATA[
+}
+.drop-up .autocomplete {
+	top: auto !important;
+	bottom: 100% !important;
+	margin-top: 0;
+	margin-bottom: 5px; /* 入力欄との間隔 */
+	border-radius: 4px 4px 0 0; /* 角丸の調整（任意） */
+	box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* 影の向き調整（任意） */
+}
+/* ワークフロー構成 - 進行状況エリア */
+]]>.Value
+        Public AutoAdjustComboPosition_css As New Dictionary(Of Boolean, String) From {
+        {False, AutoAdjustComboPosition_css_Before},
+        {True, AutoAdjustComboPosition_css_After}
+    }
+
+        'コンボ（main.html）
+        Public Shared ReadOnly AutoAdjustComboPosition_html_Before As String = <![CDATA[<tags-input id="{{$index}}" class="form-control form-control-zokusei form-control-tag" display-property="name" key-property="id" min-length="1" placeholder="add_attribute_value" replace-spaces-with-dashes="false"   on-tag-adding="onTagAdding($tag)" ng-model="zokusei.kbn" ng-disabled="!zokusei.henkoKaFlg">]]>.Value
+        Public Shared ReadOnly AutoAdjustComboPosition_html_After As String = <![CDATA[<tags-input smart-dropdown-position id="{{$index}}" class="form-control form-control-zokusei form-control-tag" display-property="name" key-property="id" min-length="1" placeholder="add_attribute_value" replace-spaces-with-dashes="false"   on-tag-adding="onTagAdding($tag)" ng-model="zokusei.kbn" ng-disabled="!zokusei.henkoKaFlg">]]>.Value
+
+        Public AutoAdjustComboPosition_html As New Dictionary(Of Boolean, String) From {
+        {False, AutoAdjustComboPosition_html_Before},
+        {True, AutoAdjustComboPosition_html_After}
     }
 
         '================履歴ウィンドウ　ペイン更新時には常にスクロールバーを最上部へ移動させる================
