@@ -88,6 +88,7 @@ Partial Class Form_TeCASettings
         TextBox_DWG = New TextBox()
         CheckBox_Pipeman = New CheckBox()
         GroupBox_KOKAI = New GroupBox()
+        CheckBox_PublicSymc = New CheckBox()
         CheckBox_EnableKokai = New CheckBox()
         CheckBox_PublicateWorkflowOK = New CheckBox()
         CheckBox_UnpublicCheckin = New CheckBox()
@@ -741,21 +742,33 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_KOKAI
         ' 
+        GroupBox_KOKAI.Controls.Add(CheckBox_PublicSymc)
         GroupBox_KOKAI.Controls.Add(CheckBox_EnableKokai)
         GroupBox_KOKAI.Controls.Add(CheckBox_PublicateWorkflowOK)
         GroupBox_KOKAI.Controls.Add(CheckBox_UnpublicCheckin)
         GroupBox_KOKAI.Controls.Add(CheckBox_UploadDefault)
         GroupBox_KOKAI.Location = New Point(5, 101)
         GroupBox_KOKAI.Name = "GroupBox_KOKAI"
-        GroupBox_KOKAI.Size = New Size(358, 117)
+        GroupBox_KOKAI.Size = New Size(358, 129)
         GroupBox_KOKAI.TabIndex = 9
         GroupBox_KOKAI.TabStop = False
         GroupBox_KOKAI.Text = "公開の既定値"
         ' 
+        ' CheckBox_PublicSymc
+        ' 
+        CheckBox_PublicSymc.AutoSize = True
+        CheckBox_PublicSymc.Location = New Point(12, 104)
+        CheckBox_PublicSymc.Name = "CheckBox_PublicSymc"
+        CheckBox_PublicSymc.Size = New Size(218, 19)
+        CheckBox_PublicSymc.TabIndex = 31
+        CheckBox_PublicSymc.Text = "フラグ属性で「公開スイッチと連動」を使う"
+        CheckBox_PublicSymc.TextAlign = ContentAlignment.TopLeft
+        CheckBox_PublicSymc.UseVisualStyleBackColor = True
+        ' 
         ' CheckBox_EnableKokai
         ' 
         CheckBox_EnableKokai.AutoSize = True
-        CheckBox_EnableKokai.Location = New Point(12, 91)
+        CheckBox_EnableKokai.Location = New Point(12, 15)
         CheckBox_EnableKokai.Name = "CheckBox_EnableKokai"
         CheckBox_EnableKokai.Size = New Size(159, 19)
         CheckBox_EnableKokai.TabIndex = 30
@@ -766,7 +779,7 @@ Partial Class Form_TeCASettings
         ' CheckBox_PublicateWorkflowOK
         ' 
         CheckBox_PublicateWorkflowOK.AutoSize = True
-        CheckBox_PublicateWorkflowOK.Location = New Point(12, 66)
+        CheckBox_PublicateWorkflowOK.Location = New Point(12, 36)
         CheckBox_PublicateWorkflowOK.Name = "CheckBox_PublicateWorkflowOK"
         CheckBox_PublicateWorkflowOK.Size = New Size(203, 19)
         CheckBox_PublicateWorkflowOK.TabIndex = 29
@@ -776,7 +789,7 @@ Partial Class Form_TeCASettings
         ' CheckBox_UnpublicCheckin
         ' 
         CheckBox_UnpublicCheckin.AutoSize = True
-        CheckBox_UnpublicCheckin.Location = New Point(12, 42)
+        CheckBox_UnpublicCheckin.Location = New Point(12, 80)
         CheckBox_UnpublicCheckin.Name = "CheckBox_UnpublicCheckin"
         CheckBox_UnpublicCheckin.Size = New Size(224, 19)
         CheckBox_UnpublicCheckin.TabIndex = 28
@@ -786,7 +799,7 @@ Partial Class Form_TeCASettings
         ' CheckBox_UploadDefault
         ' 
         CheckBox_UploadDefault.AutoSize = True
-        CheckBox_UploadDefault.Location = New Point(12, 18)
+        CheckBox_UploadDefault.Location = New Point(12, 58)
         CheckBox_UploadDefault.Name = "CheckBox_UploadDefault"
         CheckBox_UploadDefault.Size = New Size(175, 19)
         CheckBox_UploadDefault.TabIndex = 27
@@ -1287,4 +1300,5 @@ Partial Class Form_TeCASettings
     Friend WithEvents CheckBox_CalPickerAutoAdjust As CheckBox
     Friend WithEvents GroupBox_FileHistory As GroupBox
     Friend WithEvents CheckBox_FileHistroryScrollPosition As CheckBox
+    Friend WithEvents CheckBox_PublicSymc As CheckBox
 End Class

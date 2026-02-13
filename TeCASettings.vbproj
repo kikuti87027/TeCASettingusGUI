@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.2.1.0</Version>
+	<Version>3.3.0</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -25,6 +25,7 @@
     <FileVersion></FileVersion>
     <AssemblyVersion></AssemblyVersion>
     <NeutralLanguage>ja-JP</NeutralLanguage>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -99,12 +100,62 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="1.15.0.1Resources\**" />
+    <EmbeddedResource Remove="1.15.0.1Resources\**" />
+    <None Remove="1.15.0.1Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Icons\64.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="main.html\**\*" />
+    <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="main.html\main_1_12_0.html" />
+    <None Remove="main.html\main_1_12_0_公開削除.html" />
+    <None Remove="main.html\main_1_12_1.html" />
+    <None Remove="main.html\main_1_12_1_公開削除.html" />
+    <None Remove="main.html\main_1_13_0.html" />
+    <None Remove="main.html\main_1_13_0_公開削除.html" />
+    <None Remove="main.html\main_1_14_0.html" />
+    <None Remove="main.html\main_1_14_0_公開削除.html" />
+    <None Remove="main.html\main_1_15_0.html" />
+    <None Remove="main.html\main_1_15_0_公開削除.html" />
+    <None Remove="PubSymcResource\After_AttributeResource.class" />
+    <None Remove="PubSymcResource\After_AttributeServiceImpl.class" />
+    <None Remove="PubSymcResource\After_MZokusei.class" />
+    <None Remove="PubSymcResource\After_MZokuseiMapper.class" />
+    <None Remove="PubSymcResource\Before_AttributeResource.class" />
+    <None Remove="PubSymcResource\Before_AttributeServiceImpl.class" />
+    <None Remove="PubSymcResource\Before_MZokusei.class" />
+    <None Remove="PubSymcResource\Before_MZokuseiMapper.class" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="main.html\main_1_12_0.html" />
+    <EmbeddedResource Include="main.html\main_1_12_0_公開削除.html" />
+    <EmbeddedResource Include="main.html\main_1_12_1.html" />
+    <EmbeddedResource Include="main.html\main_1_12_1_公開削除.html" />
+    <EmbeddedResource Include="main.html\main_1_13_0.html" />
+    <EmbeddedResource Include="main.html\main_1_13_0_公開削除.html" />
+    <EmbeddedResource Include="main.html\main_1_14_0.html" />
+    <EmbeddedResource Include="main.html\main_1_14_0_公開削除.html" />
+    <EmbeddedResource Include="main.html\main_1_15_0.html" />
+    <EmbeddedResource Include="main.html\main_1_15_0_公開削除.html" />
+    <EmbeddedResource Include="PubSymcResource\After_AttributeResource.class" />
+    <EmbeddedResource Include="PubSymcResource\After_AttributeServiceImpl.class" />
+    <EmbeddedResource Include="PubSymcResource\After_MZokusei.class" />
+    <EmbeddedResource Include="PubSymcResource\After_MZokuseiMapper.class" />
+    <EmbeddedResource Include="PubSymcResource\Before_AttributeResource.class" />
+    <EmbeddedResource Include="PubSymcResource\Before_AttributeServiceImpl.class" />
+    <EmbeddedResource Include="PubSymcResource\Before_MZokusei.class" />
+    <EmbeddedResource Include="PubSymcResource\Before_MZokuseiMapper.class" />
+  </ItemGroup>
+
+
 
   <ItemGroup>
     <Import Include="kikuchi" />

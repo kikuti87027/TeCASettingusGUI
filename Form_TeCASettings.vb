@@ -13,7 +13,7 @@ Public Class Form_TeCASettings
     Dim DIC As New SwitchWords
     Dim pdfJS_CurrentViewScale As String　'現在のプレビュー表示拡大率（編集前の退避）
     Dim Thubnail_current As String　'現在のプレビューサムネイル解像度（編集前の退避）
-    Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow As Boolean
+    Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow, TRG_File_kokai_linkage_exists As Boolean
     Dim ProgressValue As Integer = 0
     Dim WebVersionStr As String = ""
 
@@ -222,7 +222,6 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.workFlowListSubGridExpandable(True), DIC.workFlowListSubGridExpandable(False), mainSVCjs_path)
                     ReplaceTextInFile(DIC.workFlowListsubGridValue_Expandable(True), DIC.workFlowListsubGridValue_Expandable(False), mainCSS_path)
                 End If
-
 
                 '【main.service.js】履歴ペイン　画面更新時にスクロールバーを最上端にセットし直す
                 If CheckBox_FileHistroryScrollPosition.Checked Then
@@ -482,13 +481,73 @@ Public Class Form_TeCASettings
                     Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), connStr)
                 End If
 
+                '■「公開スイッチと連動」を実装する（CheckBox_PublicSymc）
+                '連動トリガー設置の有無を確認
+                TRG_File_kokai_linkage_exists = TeCA.CheckTriggerExists("trg_file_kokai_linkage", "func_file_kokai_linkage", connStr)
+
+                'トリガー未設置でCheckBox:ONなら設置
+
+                'API-CLASSのファイル配置（Before/Afterの入れ替え。CheckBoxに連動するので、IF不要。）
+                PubFlugLinkage.DeployFiles(CheckBox_PublicSymc.Checked)
+
+                If Not TRG_File_kokai_linkage_exists AndAlso CheckBox_PublicSymc.Checked Then
+                    'DBの処置
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_MakeColumn"), connStr)  '連動カラムの設置(DB2.m_sokusei)
+                    Label_notice.Text = (TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerFunc"), connStr)) 'トリガー関数作成
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_Trigger"), connStr)      'トリガー設置
+
+                    'Web-Clientの処置
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_MZMapperXMLList
+                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_MZMapperXML) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_MZMapperXML}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
+                        End If
+                    Next
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_AttrSvcJS3List
+                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_AttrSVCJS) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_AttrSVCJS}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
+                        End If
+                    Next
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_DetailHTMLList
+                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_DetailHTML) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_DetailHTML}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
+                        End If
+                    Next
+
+                End If
+
+                'トリガー既設でCheckBox:OFFなら抹消（純正に戻す）
+                If TRG_File_kokai_linkage_exists AndAlso Not CheckBox_PublicSymc.Checked Then
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerDROP"), connStr)
+
+                    'Web-Clientの処置
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_MZMapperXMLList
+
+                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_MZMapperXML) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_MZMapperXML}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
+                        End If
+                    Next
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_AttrSvcJS3List
+                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_AttrSVCJS) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_AttrSVCJS}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
+                        End If
+                    Next
+                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_DetailHTMLList
+                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_DetailHTML) = 0 Then
+                            MessageBox.Show($"【{WebPublicSymc_DetailHTML}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
+                        End If
+                    Next
+                End If
+
+
                 '■公開機能を使用可能にする（CheckBox_EnableKokai）
                 Dim resourceHTML As String
 
                 If CheckBox_EnableKokai.Checked Then
                     resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}.html"
+                    ReplaceTextInFile(DIC.PublishDateControl(False), DIC.PublishDateControl(True), mainSVCjs_path)
                 Else
                     resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}_公開削除.html"
+                    ReplaceTextInFile(DIC.PublishDateControl(True), DIC.PublishDateControl(False), mainSVCjs_path)
                 End If
 
                 Try
@@ -620,31 +679,37 @@ Public Class Form_TeCASettings
         Select Case Me.ComboBox_ExecMode.SelectedItem
 
             Case "変更して再起動"
-                If ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID)) Then
-                    GroupBox_ninsyo.Text = "設定値を変更できます。"
-                    LockDialog(False, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
-                    LockDialog(True)  'UserModeでアイテムをEnable
-                    Button_Exec.Enabled = True
-                Else
-                    If ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor")) Then
+                Select Case True
+                    Case ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID))
+                        GroupBox_ninsyo.Text = "設定値を変更できます。"
+                        LockDialog(False, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
+                        LockDialog(True)  'UserModeでアイテムをEnable
+                        Button_Exec.Enabled = True
+
+                    Case ((TextBox_ClientID.Text = ClientID & ".deny") And (TextBox_SecretID.Text = SecretID))
+                        TabPage2.Text = "アップロード・公開"
+                        GroupBox_ninsyo.Text = "公開機能も設定値を変更できます。"
+                        LockDialog(True, False, True)  'AlloedModeでEnable
+
+                    Case ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor"))
                         GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
                         LockDialog(True, True)  '全アイテムをEnable
                         Button_Exec.Enabled = True
-                    Else
+
+                    Case Else
                         GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
                         LockDialog(False, True)  '全アイテムをDisable
                         Button_Exec.Enabled = False
                         Exit Sub
 
-                    End If
-                End If
+                End Select
 
             Case Else
-                '  LockDialog(False,True )  '全アイテムをDisable
+                    '  LockDialog(False,True )  '全アイテムをDisable
 
-        End Select
+            End Select
 
-        Select Case True
+            Select Case True
             Case Me.ComboBox_ExecMode.SelectedItem.ToString() Like "*再起動"
                 CheckBox_Pipeman.Enabled = True
             Case Else
@@ -1146,6 +1211,12 @@ Public Class Form_TeCASettings
             CheckBox_EnableKokai.Checked = False
         End If
 
+        '▼▼▼web/server/main/main.html　　公開フラグ連携機能有無をCheckBoxへ
+        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(WebPublicSymc_MZMapperXML, "指定された属性ID(JSONのキー)の値を、各行の公開フラグ(kokai_flg)と同期する") Then
+            CheckBox_PublicSymc.Checked = True
+        Else
+            CheckBox_PublicSymc.Checked = False
+        End If
 
         '▼▼▼サムネール解像度　現在の状態をコントロールに格納する
         Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"

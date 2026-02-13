@@ -14,6 +14,7 @@ Public Class TECA_sets
     Public Shared Tomcat_PATH As String = Misc.ExtractInstallPathFromPath(Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).ToString, "tomcat")
 
     Public Shared TeCAappPath As String = Tomcat_PATH & "\webapps\api#teca"
+    Public Shared NDMSroot As String = TeCAappPath & "\WEB-INF\\classes\jp\co\photron\ndms"
 
     Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
     Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
@@ -30,6 +31,16 @@ Public Class TECA_sets
     Public Const mainCSS_path As String = ClientWebPath & "\app\main\main.css"
     Public Const mainJS_path As String = ClientWebPath & "\app\main\main.js"
     Public Const preViewJS As String = ClientWebPath & "\components\angular-pdfjs-viewer\bower_components\pdf.js-viewer\pdf.js"
+
+    '公開フラグ連携関連パス
+    Public Const WebPublicSymc_AttrSVCJS As String = ClientWebPath & "\app\_admin\attribute\attribute.service.js"
+    Public Const WebPublicSymc_DetailHTML As String = ClientWebPath & "\app\_admin\attribute\detail.html"
+    Public Shared WebPublicSymc_MZMapperXML As String = NDMSroot & "\mapper\db2\MZokuseiMapper.xml"
+    Public Shared WebPublicSymc_MZMapperCLS As String = NDMSroot & "\mapper\db2\MZokuseiMapper.class"
+    Public Shared WebPublicSymc_attrRscCLS As String = NDMSroot & "\service\attribute\AttributeResource.class"
+    Public Shared WebPublicSymc_attrSvcImplCLS As String = NDMSroot & "\service\attribute\AttributeServiceImpl.class"
+    Public Shared WebPublicSymc_MZokuseiCLS As String = NDMSroot & "\model\MZokusei.class"
+
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
     Public Shared mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
@@ -133,7 +144,44 @@ Public Class TRIGGERS
                                  "    RETURN NEW; " &
                                  "END; " &
                                  "$$ LANGUAGE plpgsql; "},
-        {"KOKAI_OFF_TriggerDROP", "DROP FUNCTION update_t_file_info_kokai_flg() CASCADE;"}
+        {"KOKAI_OFF_TriggerDROP", "DROP FUNCTION update_t_file_info_kokai_flg() CASCADE;"},
+        {"PublicSync_MakeColumn", "DO $$" &
+                                   "BEGIN " &
+                                      "IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='m_zokusei' AND column_name='public_link_flg') THEN " &
+                                           "ALTER TABLE public.m_zokusei ADD COLUMN public_link_flg BOOLEAN DEFAULT FALSE;" &
+                                      "END IF;" &
+                                    "END $$;"},
+        {"PublicSync_TriggerFunc", "CREATE OR REPLACE FUNCTION public.func_file_kokai_linkage() " &
+                                   "RETURNS TRIGGER AS $$ " &
+                                   "DECLARE " &
+                                       "target_zokusei_id text; " &
+                                   "BEGIN " &
+                                      "IF (OLD.kokai_flg Is DISTINCT FROM New.kokai_flg) Then " &
+                                          "FOR target_zokusei_id IN " &
+                                             "SELECT id::text FROM Public.m_zokusei WHERE public_link_flg = True And data_type_kbn = 4 And del_flg = False " &
+                                          "LOOP " &
+                                              "IF (NEW.zokusei ? target_zokusei_id) THEN " &
+                                                  "NEW.zokusei := jsonb_set( " &
+                                                      "NEW.zokusei,  " &
+                                                      "ARRAY[target_zokusei_id], " &
+                                                      "CASE WHEN NEW.kokai_flg THEN 'true'::jsonb ELSE 'false'::jsonb END " &
+                                                   "); " &
+                                                "END IF; " &
+                                          "END LOOP; " &
+                                       "END IF; " &
+                                       "RETURN NEW; " &
+                                     "END; " &
+                                     "$$ LANGUAGE plpgsql; "},
+        {"PublicSync_Trigger", "CREATE TRIGGER trg_file_kokai_linkage BEFORE UPDATE OF kokai_flg ON public.t_file_info FOR EACH ROW EXECUTE FUNCTION public.func_file_kokai_linkage();"},
+        {"PublicSync_TriggerDROP", "DROP TRIGGER IF EXISTS trg_file_kokai_linkage ON public.t_file_info;" &
+                                   "DROP FUNCTION IF EXISTS public.func_file_kokai_linkage();" &
+                                    "DO $$ " &
+                                    "BEGIN " &
+                                    "  IF EXISTS(SELECT 1 FROM information_schema.columns " &
+                                    "         WHERE table_name ='m_zokusei' AND column_name='public_link_flg') THEN " &
+                                    "     ALTER TABLE Public.m_zokusei DROP COLUMN public_link_flg;" &
+                                    "  END IF;" &
+                                    "END $$;"}
          }
 
     '================編集内容を切り替える定数をDICで定義================
@@ -228,7 +276,7 @@ Public Class TRIGGERS
         {False, "orientation: attrs.placement"},
         {True, "orientation: ""auto"""}
     }
-        'コンボ（main.js）
+        '================属性変更ウィンドウ　最下段にコンボを表示させるとき、フレームにかぶらないように自動調整する（main.js）===============
         Public Shared ReadOnly AutoAdjustComboPosition_js_Before As String = <![CDATA[
 		});
 });
@@ -300,7 +348,7 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
 					if (!addFlg) {
 						// ログの表示切り替えの場合
 						$scope.$parent.detailAreaData.log = [];
-					}]]>.Value
+					]]>.Value
         Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_true As String = <![CDATA[
 					if (!addFlg) {
 						// ログの表示切り替えの場合
@@ -308,12 +356,41 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
 						$timeout(function() {
 							$('.pane-comment-body').scrollTop(0);
 						});
-					}]]>.Value
+					]]>.Value
 
         Public FileHistoryScroll_onTOP As New Dictionary(Of Boolean, String) From {
         {False, FileHistoryScrtollAlwaysOnTop_false},
         {True, FileHistoryScrtollAlwaysOnTop_true}
     }
+        '================属性変更　公開機能の使用/不使用に連動しWebコントーロール取得値を調整する（main.service.js[ mainSVCjs_path ])================
+        Public Shared ReadOnly PublishDateDisplayON As String = <![CDATA[
+			} else if ($('#kokaiTime').attr('class').split(" ").indexOf('ng-invalid') != -1) {
+				// 時間入力エリア内で invalid が発生している場合、書式エラー
+				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+				rtnErrorFlg = true;
+			]]>.Value
+
+        Public Shared ReadOnly PublishDateDisplayOFF As String = <![CDATA[
+			} else {
+				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
+				var kokaiTimeElement = $('#kokaiTime');
+				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
+				if (kokaiTimeElement.length > 0) {
+					var kokaiTimeClass = kokaiTimeElement.attr('class') || "";
+					if (kokaiTimeClass.split(" ").indexOf('ng-invalid') != -1) {
+						// 時間入力エリア内で invalid が発生している場合、書式エラー 
+						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+						rtnErrorFlg = true;
+					}
+				}
+				// --- 修正箇所ここまで ---
+			]]>.Value
+
+        Public PublishDateControl As New Dictionary(Of Boolean, String) From {
+        {False, PublishDateDisplayOFF},
+        {True, PublishDateDisplayON}
+    }
+
 
     End Class
 
@@ -583,4 +660,399 @@ Public Class HtmlLoader
             End Using
         End Using
     End Function
+End Class
+
+
+''' <summary>
+''' 公開フラグ連動機能の定数をまとめたクラス
+''' </summary>
+Public Class PubFlugLinkage
+
+    '================属性設定：【表示スイッチと連動】の追加 MZokuseiMapper.xml(12箇所）================
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_OFF As String = <![CDATA[
+    <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
+  </resultMap>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_ON As String = <![CDATA[
+    <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
+    <result column="public_link_flg" jdbcType="BIT" property="publicLinkFlg" />
+  </resultMap>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_OFF As String = <![CDATA[
+    update_timestamp
+  </sql>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_ON As String = <![CDATA[
+    update_timestamp
+    ,public_link_flg
+  </sql>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_OFF As String = <![CDATA[
+        update_timestamp,
+      </if>
+    </trim>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_ON As String = <![CDATA[
+        update_timestamp,
+      </if>
+      <if test="publicLinkFlg != null">
+        public_link_flg,
+      </if>
+    </trim>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_OFF As String = <![CDATA[
+        #{updateTimestamp,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_ON As String = <![CDATA[
+        #{updateTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publicLinkFlg != null">
+        #{publicLinkFlg,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_OFF As String = <![CDATA[
+  <select id="select" resultMap="ExtendResultMap" parameterType="map" >
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_ON As String = <![CDATA[
+  <select id="select" resultMap="ExtendResultMap" parameterType="map" >
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,zokusei.public_link_flg, ]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML6_OFF As String = <![CDATA[
+  <select id="selectById" resultMap="ExtendResultMap" parameterType="map" >
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML6_ON As String = <![CDATA[
+  <select id="selectById" resultMap="ExtendResultMap" parameterType="map" >
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,zokusei.public_link_flg, ]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML7_OFF As String = <![CDATA[
+    <result column="update_user_name" property="updateUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 属性更新 -->]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML7_ON As String = <![CDATA[
+    <result column="update_user_name" property="updateUserName" jdbcType="VARCHAR" />
+    <result column="public_link_flg" property="publicLinkFlg" jdbcType="BIT" />
+ </resultMap>
+  <!-- 属性更新 -->]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML8_OFF As String = <![CDATA[
+        update_timestamp = #{updateTimestamp,jdbcType=TIMESTAMP},
+    </set>
+    where
+          id = #{record.id,jdbcType=INTEGER]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML8_ON As String = <![CDATA[
+        update_timestamp = #{updateTimestamp,jdbcType=TIMESTAMP},
+        public_link_flg = #{record.publicLinkFlg,jdbcType=BIT},
+    </set>
+    where
+          id = #{record.id,jdbcType=INTEGER]]>.Value
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML9_OFF As String = <![CDATA[
+  <select id="selectAllHierarchical" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML9_ON As String = <![CDATA[
+  <select id="selectAllHierarchical" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,zokusei.public_link_flg,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML10_OFF As String = <![CDATA[
+  <select id="selectHierarchicalById" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML10_ON As String = <![CDATA[
+  <select id="selectHierarchicalById" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,zokusei.public_link_flg,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML11_OFF As String = <![CDATA[
+  <select id="selectByIdNotCheckState" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML11_ON As String = <![CDATA[
+  <select id="selectByIdNotCheckState" resultMap="HierarchicalResultMap" parameterType="map">
+    SELECT
+      zokusei.id,
+      zokusei.kaisha_id,
+      COALESCE(zokusei.name[${@jp.co.photron.ndms.common.LangThreadLocal@get()}], zokusei.name[1]) AS name,
+      zokusei.hissu_flg, zokusei.unique_flg, zokusei.data_type_kbn,
+      zokusei.char_num, zokusei.string_check_kbn,
+      zokusei.string_check_naiyo, zokusei.num_val_format, zokusei.num_val_prefix, zokusei.num_val_suffix,
+      zokusei.num_val_min, zokusei.num_val_max, zokusei.sentakushi_data_shutokusaki_kbn,
+      zokusei.hyoji_jun_ichiran, zokusei.hyoji_jun_dtl, zokusei.hyoji_jun_kensaku, zokusei.hyoji_jun_smart_device,
+      zokusei.invalid_flg,
+      zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,zokusei.public_link_flg,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML12_OFF As String = <![CDATA[
+  </select>
+</mapper>]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML12_ON As String = <![CDATA[
+  </select>
+  <update id="syncAllFileZokuseiValue" parameterType="java.lang.Integer">
+    /* 指定された属性ID(JSONのキー)の値を、各行の公開フラグ(kokai_flg)と同期する */ 
+    UPDATE public.t_file_info
+    SET zokusei = zokusei || 
+      jsonb_build_object(
+        #{id}::text, 
+        CASE WHEN kokai_flg::text = '1' OR kokai_flg::text = 'true' THEN true ELSE false END
+      )
+  </update>
+</mapper>]]>.Value
+
+    Public Shared ZokuseiSync_MZMapperXMLList As New List(Of (OFFval As String, ONval As String)) From {
+            (ZokuseiSync_MZMapperXML1_OFF, ZokuseiSync_MZMapperXML1_ON),
+            (ZokuseiSync_MZMapperXML2_OFF, ZokuseiSync_MZMapperXML2_ON),
+            (ZokuseiSync_MZMapperXML3_OFF, ZokuseiSync_MZMapperXML3_ON),
+            (ZokuseiSync_MZMapperXML4_OFF, ZokuseiSync_MZMapperXML4_ON),
+            (ZokuseiSync_MZMapperXML5_OFF, ZokuseiSync_MZMapperXML5_ON),
+            (ZokuseiSync_MZMapperXML6_OFF, ZokuseiSync_MZMapperXML6_ON),
+            (ZokuseiSync_MZMapperXML7_OFF, ZokuseiSync_MZMapperXML7_ON),
+            (ZokuseiSync_MZMapperXML8_OFF, ZokuseiSync_MZMapperXML8_ON),
+            (ZokuseiSync_MZMapperXML9_OFF, ZokuseiSync_MZMapperXML9_ON),
+            (ZokuseiSync_MZMapperXML10_OFF, ZokuseiSync_MZMapperXML10_ON),
+            (ZokuseiSync_MZMapperXML11_OFF, ZokuseiSync_MZMapperXML11_ON),
+            (ZokuseiSync_MZMapperXML12_OFF, ZokuseiSync_MZMapperXML12_ON)
+        }
+
+
+    '================属性設定：【表示スイッチと連動】の追加 detail.html(3箇所）================
+
+    Public Shared ReadOnly ZokuseiSync_DetailHTML1_OFF As String = <![CDATA[
+			<label class="col-sm-2 control-label">{{'unique'|translate}}</label>
+			<div class="col-sm-8">
+				<input type="checkbox" data-toggle="toggle" ng-text="'unique_on-off'|translate" ng-model="data.uniqueFlg" ng-disabled="data.id" togglebtn></input>
+			</div>
+		</div>
+		<div class="form-group">]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_DetailHTML1_ON As String = <![CDATA[
+			<label class="col-sm-2 control-label">{{'unique'|translate}}</label>
+			<div class="col-sm-8">
+				<input type="checkbox" data-toggle="toggle" ng-text="'unique_on-off'|translate" ng-model="data.uniqueFlg" ng-disabled="data.id" togglebtn></input>
+			</div>
+		</div>
+		<div class="form-group" ng-show="data.dataTypeKbn == Const.ATTR_DATATYPE_FLAG">
+			<label class="col-sm-2 control-label">公開スイッチと連動</label>
+			<div class="col-sm-8">
+				<input type="checkbox" 
+					data-toggle="toggle" 
+					ng-model="data.publicLinkFlg" 
+					togglebtn>
+			</div>
+		</div>
+		<div class="form-group">]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_DetailHTML2_OFF As String = <![CDATA[
+			</div>
+			<div class="btn-group footer-right-info" ng-show="data.updateUserName">]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_DetailHTML2_ON As String = <![CDATA[
+			</div>
+            <!--
+			<div class="btn-group footer-right-info" ng-show="data.updateUserName">]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_DetailHTML3_OFF As String = <![CDATA[
+			</div>
+		</div>
+	</div>
+</form>]]>.Value
+    Public Shared ReadOnly ZokuseiSync_DetailHTML3_ON As String = <![CDATA[
+			</div>
+-->
+		</div>
+	</div>
+</form>]]>.Value
+
+    Public Shared ZokuseiSync_DetailHTMLList As New List(Of (OFFval As String, ONval As String)) From {
+            (ZokuseiSync_DetailHTML1_OFF, ZokuseiSync_DetailHTML1_ON),
+            (ZokuseiSync_DetailHTML2_OFF, ZokuseiSync_DetailHTML2_ON),
+            (ZokuseiSync_DetailHTML3_OFF, ZokuseiSync_DetailHTML3_ON)
+        }
+
+    '================属性設定：【表示スイッチと連動】の追加 attribute.service.js(3箇所）================
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS1_OFF As String = <![CDATA[
+		$scope.data.uniqueFlg = Const.ATTR_UNIQUE_FLG_OFF;
+		$scope.data.dataTypeKbn = Const.ATTR_DATATYPE_TEXT;]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS1_ON As String = <![CDATA[
+		$scope.data.uniqueFlg = Const.ATTR_UNIQUE_FLG_OFF;
+		$scope.data.publicLinkFlg = false; // ★追加：デフォルトは「しない(false)」
+		$scope.data.dataTypeKbn = Const.ATTR_DATATYPE_TEXT;]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS2_OFF As String = <![CDATA[
+						dataTypeKbn: $scope.data.dataTypeKbn,
+						stringCheckKbn: null,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS2_ON As String = <![CDATA[
+						dataTypeKbn: $scope.data.dataTypeKbn,
+						publicLinkFlg: $scope.data.publicLinkFlg, //「公開連動フラグ」の初期値はnull
+						stringCheckKbn: null,]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS3_OFF As String = <![CDATA[
+						// フラグ
+						// ※特になし]]>.Value
+
+    Public Shared ReadOnly ZokuseiSync_AttrSvcJS3_ON As String = <![CDATA[
+						// フラグ
+						data.publicLinkFlg = $scope.data.publicLinkFlg;]]>.Value
+
+    Public Shared ZokuseiSync_AttrSvcJS3List As New List(Of (OFFval As String, ONval As String)) From {
+            (ZokuseiSync_AttrSvcJS1_OFF, ZokuseiSync_AttrSvcJS1_ON),
+            (ZokuseiSync_AttrSvcJS2_OFF, ZokuseiSync_AttrSvcJS2_ON),
+            (ZokuseiSync_AttrSvcJS3_OFF, ZokuseiSync_AttrSvcJS3_ON)
+        }
+
+    ' (リソース内のファイル名, 出力先のパス)
+    Public Shared ReadOnly FileList As New List(Of (FileName As String, DestPath As String)) From {
+        ("After_AttributeResource.class", Path.GetDirectoryName(TECA_sets.WebPublicSymc_attrRscCLS)),
+        ("After_AttributeServiceImpl.class", Path.GetDirectoryName(TECA_sets.WebPublicSymc_attrSvcImplCLS)),
+        ("After_MZokusei.class", Path.GetDirectoryName(TECA_sets.WebPublicSymc_MZokuseiCLS)),
+        ("After_MZokuseiMapper.class", Path.GetDirectoryName(TECA_sets.WebPublicSymc_MZMapperCLS))
+    }
+
+    ''' <summary>
+    ''' チェックボックスの状態に応じてファイルをデプロイします。
+    ''' 保存時に "After_" または "Before_" を削除して本来のファイル名に戻します。
+    ''' </summary>
+    Public Shared Sub DeployFiles(ByVal isAfter As Boolean)
+        Dim subFolder As String = If(isAfter, "After", "Before")
+        Dim prefixToRemove As String = If(isAfter, "After_", "Before_")
+
+        Dim currentAssembly As Assembly = Assembly.GetExecutingAssembly()
+        Dim rootNamespace As String = "TeCASettings"
+
+        For Each fileInfo In FileList
+            ' 1. リソース内の実際のファイル名を特定
+            ' Before展開時はリスト内の "After_" を "Before_" に読み替えてリソースを探す
+            Dim actualResourceFileName As String = fileInfo.FileName
+            If Not isAfter Then
+                actualResourceFileName = actualResourceFileName.Replace("After_", "Before_")
+            End If
+
+            ' 2. 埋め込みリソースのフルパスを構築
+            Dim resourcePath As String = $"{rootNamespace}.{actualResourceFileName}"
+
+            ' 3. 出力時のクリーンなファイル名を生成 (接頭辞をカット)
+            Dim cleanFileName As String = actualResourceFileName.Replace(prefixToRemove, "")
+
+            ' 4. 出力先フルパスの構築
+            Dim finalDestPath As String = Path.Combine(fileInfo.DestPath, cleanFileName)
+
+            ' リソースをストリームとして取得
+            Using resStream As Stream = currentAssembly.GetManifestResourceStream(resourcePath)
+                If resStream IsNot Nothing Then
+                    ' 出力先フォルダの作成
+                    Dim targetDir As String = Path.GetDirectoryName(finalDestPath)
+                    If Not Directory.Exists(targetDir) Then Directory.CreateDirectory(targetDir)
+
+                    ' ファイルの書き出し
+                    Using fileStream As New FileStream(finalDestPath, FileMode.Create, FileAccess.Write)
+                        resStream.CopyTo(fileStream)
+                    End Using
+                    Debug.WriteLine($"Success: {cleanFileName} を {subFolder} から展開しました。")
+                Else
+                    MessageBox.Show($"Error: リソースが見つかりません" & vbCrLf & $"ファイル名[{resourcePath}] ")
+                End If
+            End Using
+        Next
+    End Sub
+
+
 End Class
