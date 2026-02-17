@@ -6,6 +6,7 @@ Imports System.Text.RegularExpressions
 Imports NuGet.Versioning
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
+Imports Windows.Devices.Geolocation
 
 Public Class Form_TeCASettings
     Dim CurrentPassword As String  '旧パスワード保管用
@@ -482,80 +483,72 @@ Public Class Form_TeCASettings
                 End If
 
                 '■「公開スイッチと連動」を実装する（CheckBox_PublicSymc）
-                '連動トリガー設置の有無を確認
+
+                '----【ＤＢ】連動トリガー設置状況を確認
                 TRG_File_kokai_linkage_exists = TeCA.CheckTriggerExists("trg_file_kokai_linkage", "func_file_kokai_linkage", connStr)
 
-                'トリガー未設置でCheckBox:ONなら設置
+                Dim isEnable As Boolean = CheckBox_PublicSymc.Checked
 
-                'API-CLASSのファイル配置（Before/Afterの入れ替え。CheckBoxに連動するので、IF不要。）
-                PubFlugLinkage.DeployFiles(CheckBox_PublicSymc.Checked)
-
-                If Not TRG_File_kokai_linkage_exists AndAlso CheckBox_PublicSymc.Checked Then
-                    'DBの処置
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_MakeColumn"), connStr)  '連動カラムの設置(DB2.m_sokusei)
-                    Label_notice.Text = (TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerFunc"), connStr)) 'トリガー関数作成
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_Trigger"), connStr)      'トリガー設置
-
-                    'Web-Clientの処置
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_MZMapperXMLList
-                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_MZMapperXML) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_MZMapperXML}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
-                        End If
-                    Next
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_AttrSvcJS3List
-                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_AttrSVCJS) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_AttrSVCJS}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
-                        End If
-                    Next
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_DetailHTMLList
-                        If ReplaceTextInFile(PublicLinkage.OFFval, PublicLinkage.ONval, WebPublicSymc_DetailHTML) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_DetailHTML}】" & vbCrLf & $"OFF：{PublicLinkage.OFFval}" & vbCrLf & $"-> ON:  {PublicLinkage.ONval}")
-                        End If
-                    Next
-
+                '----【ＤＢ】実装/解除
+                If Not TRG_File_kokai_linkage_exists AndAlso isEnable Then
+                    ' DB実装 (OFF -> ON)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_MakeColumn"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerFunc"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_Trigger"), connStr)
+                ElseIf TRG_File_kokai_linkage_exists AndAlso Not isEnable Then
+                    ' DB解除 (ON -> OFF)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerDROP"), connStr)
                 End If
 
-                'トリガー既設でCheckBox:OFFなら抹消（純正に戻す）
-                If TRG_File_kokai_linkage_exists AndAlso Not CheckBox_PublicSymc.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerDROP"), connStr)
+                '----【ＷＥＢ】実装/解除
+                If TRG_File_kokai_linkage_exists <> isEnable Then
+                    Try
+                        ' .Cast(Of Object)().ToList() を付与して、型を IEnumerable(Of Object) に適合させる
+                        ' これにより、UpdateWebFile の入り口でのキャストエラーを回避します
 
-                    'Web-Clientの処置
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_MZMapperXMLList
+                        PubFlugLinkage.UpdateWebFile(WebPublicSymc_MZMapperXML,
+                                     PubFlugLinkage.ZokuseiSync_MZMapperXMLList.Cast(Of Object)().ToList(),
+                                     isEnable, "MZMapperXML")
 
-                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_MZMapperXML) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_MZMapperXML}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
-                        End If
-                    Next
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_AttrSvcJS3List
-                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_AttrSVCJS) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_AttrSVCJS}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
-                        End If
-                    Next
-                    For Each PublicLinkage In PubFlugLinkage.ZokuseiSync_DetailHTMLList
-                        If ReplaceTextInFile(PublicLinkage.ONval, PublicLinkage.OFFval, WebPublicSymc_DetailHTML) = 0 Then
-                            MessageBox.Show($"【{WebPublicSymc_DetailHTML}】" & vbCrLf & $"ON：{PublicLinkage.ONval}" & vbCrLf & $"-> OFF:  {PublicLinkage.OFFval}")
-                        End If
-                    Next
+                        PubFlugLinkage.UpdateWebFile(WebPublicSymc_AttrSVCJS,
+                                     PubFlugLinkage.ZokuseiSync_AttrSvcJS3List.Cast(Of Object)().ToList(),
+                                     isEnable, "AttrSVCJS")
+
+                        PubFlugLinkage.UpdateWebFile(WebPublicSymc_DetailHTML,
+                                     PubFlugLinkage.ZokuseiSync_DetailHTMLList.Cast(Of Object)().ToList(),
+                                     isEnable, "dtlH")
+
+                    Catch ex As Exception
+                        ' 失敗時はメッセージを表示して中断
+                        MessageBox.Show(ex.Message, "公開連動設定エラー")
+                        Exit Sub
+                    End Try
+                End If
+
+                '----【ＡＰＩ】実装／解除
+                PubFlugLinkage.DeployFiles(CheckBox_PublicSymc.Checked)
+
+                Dim rawWebValue As Object = KeyValueParser.FindValue(webVerPath, "VERSION")
+                Dim webStr As String = If(rawWebValue IsNot Nothing, rawWebValue.ToString().Replace("'", "").Trim(), "")
+                Dim rawApiValue As Object = KeyValueParser.FindValue(APIVerPath, "Implementation-Version")
+                Dim apiStr As String = If(rawApiValue IsNot Nothing, rawApiValue.ToString().Trim(), "")
+
+                Dim webVersion = NuGetVersion.Parse(webStr)
+                Dim APIVersion = NuGetVersion.Parse(apiStr)
+
+                If isEnable Then
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.2", webVerPath, APIVerPath, connStrdb1)
+                Else
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.1", webVerPath, APIVerPath, connStrdb1)
                 End If
 
 
                 '■公開機能を使用可能にする（CheckBox_EnableKokai）
-                Dim resourceHTML As String
+                Dim isKokaiEnable As Boolean = CheckBox_EnableKokai.Checked
 
-                If CheckBox_EnableKokai.Checked Then
-                    resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}.html"
-                    ReplaceTextInFile(DIC.PublishDateControl(False), DIC.PublishDateControl(True), mainSVCjs_path)
-                Else
-                    resourceHTML = $"main_{WebVersionStr.Replace(".", "_")}_公開削除.html"
-                    ReplaceTextInFile(DIC.PublishDateControl(True), DIC.PublishDateControl(False), mainSVCjs_path)
-                End If
-
-                Try
-                    Dim htmlContents As String = HtmlLoader.LoadHtmlFromResource(resourceHTML)
-                    File.WriteAllText(mainHTMLpath, htmlContents, New System.Text.UTF8Encoding(False))
-                Catch ex As Exception
-                    MessageBox.Show($"公開機能の更新に失敗しました。{ex.Message}", "エラー")
-                End Try
+                PubFlugLinkage.UpdateWebFile(mainHTMLpath,
+                                     PubFlugLinkage.KOKAI_MainHTML_List.Cast(Of Object)().ToList(),
+                                     isKokaiEnable, "MZMapperXML")
 
                 '【app.js】属性変更詳細ペイン　カレンダーピッカーとコンボ位置の自動調整
                 If CheckBox_CalPickerAutoAdjust.Checked Then
@@ -1203,6 +1196,7 @@ Public Class Form_TeCASettings
 
         '▼▼▼web/server/main/main.html　　公開機能の有無をCheckBoxへ
         Dim webVersion = NuGetVersion.Parse(KeyValueParser.FindValue(webVerPath, "VERSION"))
+
         WebVersionStr = webVersion.ToString
 
         If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(mainHTMLpath, "<!-- 【公開日時】 -->") Then

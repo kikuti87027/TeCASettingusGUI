@@ -114,16 +114,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="main.html\main_1_12_0.html" />
-    <None Remove="main.html\main_1_12_0_公開削除.html" />
-    <None Remove="main.html\main_1_12_1.html" />
-    <None Remove="main.html\main_1_12_1_公開削除.html" />
-    <None Remove="main.html\main_1_13_0.html" />
-    <None Remove="main.html\main_1_13_0_公開削除.html" />
-    <None Remove="main.html\main_1_14_0.html" />
-    <None Remove="main.html\main_1_14_0_公開削除.html" />
-    <None Remove="main.html\main_1_15_0.html" />
-    <None Remove="main.html\main_1_15_0_公開削除.html" />
     <None Remove="PubSymcResource\After_AttributeResource.class" />
     <None Remove="PubSymcResource\After_AttributeServiceImpl.class" />
     <None Remove="PubSymcResource\After_MZokusei.class" />
@@ -135,16 +125,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="main.html\main_1_12_0.html" />
-    <EmbeddedResource Include="main.html\main_1_12_0_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_12_1.html" />
-    <EmbeddedResource Include="main.html\main_1_12_1_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_13_0.html" />
-    <EmbeddedResource Include="main.html\main_1_13_0_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_14_0.html" />
-    <EmbeddedResource Include="main.html\main_1_14_0_公開削除.html" />
-    <EmbeddedResource Include="main.html\main_1_15_0.html" />
-    <EmbeddedResource Include="main.html\main_1_15_0_公開削除.html" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeResource.class" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeServiceImpl.class" />
     <EmbeddedResource Include="PubSymcResource\After_MZokusei.class" />

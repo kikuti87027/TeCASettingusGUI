@@ -1,7 +1,10 @@
 ﻿Imports System.IO
-Imports System.Text
-Imports BCrypt.Net
 Imports System.Reflection
+Imports System.Text
+Imports System.Text.RegularExpressions
+Imports BCrypt.Net
+Imports NpgsqlTypes
+Imports NuGet.Versioning
 
 Public Class TECA_sets
 
@@ -20,6 +23,7 @@ Public Class TECA_sets
     Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
     Public Const ClientWebPath As String = WEB_PATH & "\web\client"
     Public Const webVerPath As String = WEB_PATH & "\web\server\api\common\const.js"
+    Public Shared APIVerPath As String = TeCAappPath & "\META-INF\MANIFEST.MF"
 
     Public Const SelectFileJS As String = ClientWebPath & "\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = ClientWebPath & "\app\select-file\select-file.html"
@@ -1007,6 +1011,77 @@ Public Class PubFlugLinkage
         ("After_MZokuseiMapper.class", Path.GetDirectoryName(TECA_sets.WebPublicSymc_MZMapperCLS))
     }
 
+    '================【main.html】公開機能を使用する/しない================
+    Public Shared ReadOnly MainHTML_OFF As String = <![CDATA[【公開】 -->
+										<div class="form-group" ng-show="detailAreaData.displayKokaiFlg">
+											<label class="col-sm-3 control-label">{{'kokai'|translate}}</label>
+											<div class="col-sm-9 checkbox data-toggle-text" ng-class="{'disabled': !isEditMode()}">
+												<input type="checkbox" data-toggle="toggle" ng-text="'on-off'|translate" ng-model="detailAreaData.kokaiFlg" ng-change="changeKokaiFlg()" ng-disabled="!isEditMode()" togglebtn></input>
+											</div>
+										</di]]>.Value
+
+    Public Shared ReadOnly MainHTML_ON As String = <![CDATA[【公開】 -->
+										<div class="form-group" ng-show="detailAreaData.displayKokaiFlg">
+											<label class="col-sm-3 control-label">{{'kokai'|translate}}</label>
+											<div class="col-sm-9 checkbox data-toggle-text" ng-class="{'disabled': !isEditMode()}">
+												<input type="checkbox" data-toggle="toggle" ng-text="'on-off'|translate" ng-model="detailAreaData.kokaiFlg" ng-change="changeKokaiFlg()" ng-disabled="!isEditMode()" togglebtn></input>
+											</div>
+										</div>
+										<!-- 【公開日時】 -->
+										<div class="form-group" ng-class="{'has-error': detailAreaData.kokaiTimestampError}" ng-if="detailAreaData.displayKokaiFlg">
+											<!-- (入力エリア) -->
+											<label class="col-sm-3 control-label" ng-class="{'kokai-timestamp kokai-timestamp-label': isEditMode()}">{{'kokai_timestamp'|translate}}</label>
+											<!-- ※属性編集時 -->
+											<div ng-if="isEditMode()" class="col-sm-9 input-group">
+												<input type="text" class="form-control kokai-timestamp kokai-timestamp-date" ng-model="detailAreaData.kokaiTimestamp.date" datepicker></input>
+												<uib-timepicker id="kokaiTime" class="pull-left kokai-timestamp kokai-timestamp-time" ng-model="detailAreaData.kokaiTimestamp.time" show-meridian="false" show-spinners="true"></uib-timepicker>
+												<button type="button" class="btn btn-primary btn-icon kokai-timestamp kokai-timestamp-button" ng-click="onClearKokaiTimestamp()" ng-title="'timestamp_clear'|translate" tooltip>
+													<span class="ls ls-icon-eraser"></span>
+												</button>
+											</div>
+											<!-- ※通常時：単純にテキスト表示だけ行う -->
+											<span ng-if="!isEditMode()" class="col-sm-9">
+												<input type="text" class="form-control form-control-zokusei" ng-model="detailAreaData.kokaiTimestamp.dispTimestamp" disabled></input>
+											</span>
+										</div>
+										<div class="form-group has-error" ng-show="detailAreaData.kokaiTimestampError">
+											<!-- (エラー表示エリア) -->
+											<div class="col-sm-offset-3 col-sm-9">
+												<p class="help-block">
+													<span class="glyphicon glyphicon-exclamation-sign"></span>{{detailAreaData.kokaiTimestampError}}
+												</p>
+											</div>
+										</div>
+										<!-- 【公開前アクセス可能者】 -->
+										<div class="form-group" ng-class="{'has-error': detailAreaData.kokaimaeAccessKaUserError}" ng-if="detailAreaData.displayKokaiFlg">
+											<!-- (入力エリア) -->
+											<label class="col-sm-3 control-label">{{'kokaimae_access_kanosha'|translate}}</label>
+											<!-- ※属性編集時 -->
+											<div ng-if="isEditMode()" class="col-sm-9">
+												<tags-input class="form-control form-control-zokusei form-control-tag" display-property="name" key-property="id" min-length="1" placeholder="add_attribute_value" replace-spaces-with-dashes="false" on-tag-adding="onTagAdding($tag)" ng-model="detailAreaData.kokaimaeAccessKaUser.data">
+													<auto-complete source="loadMaster($query, userMaster)" load-on-focus="true" load-on-empty="true" min-length="0" max-results-to-show="{{Const.MAX_RESULTS_TO_SHOW}}" template="app/common/autoCompleteTemplate.html"></auto-complete>
+												</tags-input>
+											</div>
+											<!-- ※通常時：単純にテキスト表示だけ行う -->
+											<span ng-if="!isEditMode()" class="col-sm-9">
+												<input type="text" class="form-control form-control-zokusei" ng-model="detailAreaData.kokaimaeAccessKaUser.name" disabled></input>
+											</span>
+										</div>
+										<div class="form-group has-error" ng-show="detailAreaData.kokaimaeAccessKaUserError">
+											<!-- (エラー表示エリア) -->
+											<div class="col-sm-offset-3 col-sm-9">
+												<p class="help-block">
+													<span class="glyphicon glyphicon-exclamation-sign"></span>{{detailAreaData.kokaimaeAccessKaUserError}}
+												</p>
+											</div>
+										</di]]>.Value
+
+    Public Shared KOKAI_MainHTML_List As New List(Of (OFFval As String, ONval As String)) From {
+            (MainHTML_OFF, MainHTML_ON)
+        }
+
+
+
     ''' <summary>
     ''' チェックボックスの状態に応じてファイルをデプロイします。
     ''' 保存時に "After_" または "Before_" を削除して本来のファイル名に戻します。
@@ -1054,5 +1129,126 @@ Public Class PubFlugLinkage
         Next
     End Sub
 
+    ''' <summary>
+    ''' ファイルのテキスト置換をまとめて行う補助メソッド
+    ''' タプルのフィールドとクラスのプロパティ両方に対応しキャストエラーを防ぐ
+    ''' </summary>
+    Public Shared Sub UpdateWebFile(filePath As String, linkageList As IEnumerable(Of Object), isEnabling As Boolean, fileLabel As String)
 
+        Dim tempFile As String = Path.Combine(Path.GetTempPath(), "WEBeditFile.tmp")
+
+        Try
+            ' 元ファイルから作業用テンポラリへコピー
+            File.Copy(filePath, tempFile, True)
+
+            ' リストに基づいて置換処理をループ
+            For Each item In linkageList
+                If item Is Nothing Then Continue For
+
+                Dim offValStr As String = ""
+                Dim onValStr As String = ""
+
+                ' --- 名前付きタプルの実体である ValueTuple(Of String, String) として扱う ---
+                ' 実行時には OFFval -> Item1, ONval -> Item2 になっているため、これらを直接指定します
+                If TypeOf item Is ValueTuple(Of String, String) Then
+                    Dim vt = DirectCast(item, ValueTuple(Of String, String))
+                    offValStr = vt.Item1 ' これが OFFval の中身
+                    onValStr = vt.Item2  ' これが ONval の中身
+                Else
+                    ' 匿名型 (New With { .OFFval = ... }) 等で渡された場合の予備処理
+                    Try
+                        offValStr = CallByName(item, "OFFval", CallType.Get).ToString()
+                        onValStr = CallByName(item, "ONval", CallType.Get).ToString()
+                    Catch
+                        Continue For
+                    End Try
+                End If
+
+                ' 置換元と置換後の文字列を決定
+                Dim fromVal As String = If(isEnabling, offValStr, onValStr)
+                Dim toVal As String = If(isEnabling, onValStr, offValStr)
+
+                ' 置換実行 (1回以上マッチすることを期待)
+                If TRIGGERS.ReplaceTextInFile(fromVal, toVal, tempFile) <= 0 Then
+                    Throw New Exception($"Web構成ファイル（{fileLabel}）の更新に失敗しました。対象の文字列がファイル内に見つかりません。")
+                End If
+            Next
+
+            ' すべての置換が完了したら本番ファイルへ書き戻し
+            File.Copy(tempFile, filePath, True)
+
+        Catch ex As Exception
+            Throw New Exception($"{fileLabel} の更新中にエラーが発生しました: {ex.Message}")
+        Finally
+            ' テンポラリファイルの削除
+            If File.Exists(tempFile) Then File.Delete(tempFile)
+        End Try
+    End Sub
+
+    Public Shared Function UpdateVersionAll(newVersion As String, webVerPath As String, APIVerPath As String, connectionString As String) As Boolean
+        Try
+            ' 1. バージョン形式のバリデーション (NuGet.Versioning 7.0.1)
+            Dim validatedVer As String = NuGetVersion.Parse(newVersion).ToNormalizedString()
+
+            ' 2. ファイルの存在確認
+            If Not File.Exists(webVerPath) OrElse Not File.Exists(APIVerPath) Then Return False
+
+            ' 3. ファイル内容の読み込み
+            Dim jsContent As String = File.ReadAllText(webVerPath, New UTF8Encoding(False))
+            Dim mfContent As String = File.ReadAllText(APIVerPath, New UTF8Encoding(False))
+
+            ' 4. 置換パターンの定義（キー名が消えないよう固定文字で組み立てる）
+            ' const.js 用: VERSION: '1.15.0.1' の値を置換
+            Dim jsSearchPattern As String = "VERSION:\s*'[^']+"
+            Dim jsReplaceValue As String = "VERSION: '" & validatedVer
+
+            ' MANIFEST.MF 用: Implementation-Version: 1.15.0.1 を置換
+            Dim mfSearchPattern As String = "Implementation-Version:\s*.+"
+            Dim mfReplaceValue As String = "Implementation-Version: " & validatedVer
+
+            ' 5. 置換対象が存在するかチェック
+            If Not Regex.IsMatch(jsContent, jsSearchPattern) OrElse Not Regex.IsMatch(mfContent, mfSearchPattern) Then
+                Return False
+            End If
+
+            ' 6. データベースとファイルの更新実行
+            Using conn As New NpgsqlConnection(connectionString)
+                conn.Open()
+                Using transaction As NpgsqlTransaction = conn.BeginTransaction()
+                    Try
+                        ' --- A. データベースの更新 ---
+                        Dim sql As String = "UPDATE t_system_info_kyotsu SET info_val = @val WHERE info_key = 'DB_VERSION';"
+                        Using cmd As New NpgsqlCommand(sql, conn, transaction)
+                            ' info_val は text 型のため明示的に指定
+                            cmd.Parameters.Add("@val", NpgsqlDbType.Text).Value = validatedVer
+                            cmd.ExecuteNonQuery()
+                        End Using
+
+                        ' --- B. ファイルの内容更新（メモリ上） ---
+                        ' $1 を使わず、キー部分を含めた固定文字列で置換
+                        Dim updatedJs As String = Regex.Replace(jsContent, jsSearchPattern, jsReplaceValue)
+                        Dim updatedMf As String = Regex.Replace(mfContent, mfSearchPattern, mfReplaceValue)
+
+                        ' --- C. ファイルの書き出し (BOMなしUTF-8) ---
+                        Dim utf8NoBom As New UTF8Encoding(False)
+                        File.WriteAllText(webVerPath, updatedJs, utf8NoBom)
+                        File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
+
+                        ' 全て成功すればコミット
+                        transaction.Commit()
+                        Return True
+
+                    Catch ex As Exception
+                        ' 失敗時はロールバック
+                        transaction.Rollback()
+                        Return False
+                    End Try
+                End Using
+            End Using
+
+        Catch ex As Exception
+            ' バージョン形式不正や接続エラーなど
+            Return False
+        End Try
+    End Function
 End Class
