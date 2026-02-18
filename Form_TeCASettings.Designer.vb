@@ -770,9 +770,9 @@ Partial Class Form_TeCASettings
         CheckBox_EnableKokai.AutoSize = True
         CheckBox_EnableKokai.Location = New Point(12, 15)
         CheckBox_EnableKokai.Name = "CheckBox_EnableKokai"
-        CheckBox_EnableKokai.Size = New Size(159, 19)
+        CheckBox_EnableKokai.Size = New Size(263, 19)
         CheckBox_EnableKokai.TabIndex = 30
-        CheckBox_EnableKokai.Text = "公開機能を使用可能にする"
+        CheckBox_EnableKokai.Text = "公開日時、公開前閲覧者機能を使用可能にする"
         CheckBox_EnableKokai.TextImageRelation = TextImageRelation.TextBeforeImage
         CheckBox_EnableKokai.UseVisualStyleBackColor = True
         ' 

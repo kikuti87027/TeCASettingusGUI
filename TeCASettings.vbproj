@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.3.0</Version>
+	<Version>3.3.1</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>

@@ -31,9 +31,19 @@ Public Class Form_ChangePWD
         Dim rows As DataRow() = Dt_m_user.Select("login_id='" & ComboBox_UserID.Text.Replace("'", "''") & "'")
 
         If rows.Length > 0 AndAlso Not IsDBNull(rows(0)("password_valid_kigen")) Then
-            DateTimePicker_kigen.Value = CDate(rows(0)("password_valid_kigen"))
+            Dim rawValue = rows(0)("password_valid_kigen")
+
+            ' DateOnly型の場合と、それ以外（DateTime型など）で処理を分ける
+            If TypeOf rawValue Is DateOnly Then
+                ' DateOnly を DateTime(Date) に変換
+                Dim dOnly As DateOnly = DirectCast(rawValue, DateOnly)
+                DateTimePicker_kigen.Value = New Date(dOnly.Year, dOnly.Month, dOnly.Day)
+            Else
+                ' 従来通りのキャスト
+                DateTimePicker_kigen.Value = CDate(rawValue)
+            End If
         Else
-            ' 値が無い場合、適切な処理（例: 今日の日付にする等）
+            ' 値が無い場合、今日の今日の日付にする
             DateTimePicker_kigen.Value = DateTime.Today
         End If
     End Sub

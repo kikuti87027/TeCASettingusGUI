@@ -241,6 +241,20 @@ Public Class TRIGGERS
                 {"prodductionJS", TECA_sets.IDpath},
                 {"testJS", TECA_sets.ServerWebPath & "\test.js"}
     }
+        Public ClientIDkeys As New Dictionary(Of String, String) From {
+                {"beansXML", "<property name=""clientId"" value=""KEYWORD"" />"},
+                {"developmentJS", "clientId: 'KEYWORD',"},
+                {"prodductionJS", "clientId: 'KEYWORD',"},
+                {"testJS", "clientId: 'KEYWORD',"}
+    }
+        Public SecretIDkeys As New Dictionary(Of String, String) From {
+                {"beansXML", "<property name=""clientSecret"" value=""KEYWORD"" />"},
+                {"developmentJS", "clientSecret: 'KEYWORD',"},
+                {"prodductionJS", "clientSecret: 'KEYWORD',"},
+                {"testJS", "clientSecret: 'KEYWORD',"}
+    }
+
+
         '================ワークフロー詳細ペイン関連の編集(3か所）を切り替える定数をDICで定義================
         Public workFlowListExpandable As New Dictionary(Of Boolean, String) From {
         {False, "expandableRowTemplate: '<div class=""sub-grid"" ui-grid=""row.entity.subGridOptions"" ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-auto-resize ui-grid-pinning></div>',"},
@@ -348,52 +362,58 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
     }
 
         '================履歴ウィンドウ　ペイン更新時には常にスクロールバーを最上部へ移動させる================
-        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_false As String = <![CDATA[
-					if (!addFlg) {
+        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_false As String = <![CDATA[					if (!addFlg) {
 						// ログの表示切り替えの場合
 						$scope.$parent.detailAreaData.log = [];
-					]]>.Value
-        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_true As String = <![CDATA[
-					if (!addFlg) {
+					}
+					// ログを追加]]>.Value
+        Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_true As String = <![CDATA[					if (!addFlg) {
 						// ログの表示切り替えの場合
 						$scope.$parent.detailAreaData.log = [];
 						$timeout(function() {
 							$('.pane-comment-body').scrollTop(0);
 						});
-					]]>.Value
+					}
+					// ログを追加]]>.Value
 
         Public FileHistoryScroll_onTOP As New Dictionary(Of Boolean, String) From {
         {False, FileHistoryScrtollAlwaysOnTop_false},
         {True, FileHistoryScrtollAlwaysOnTop_true}
     }
-        '================属性変更　公開機能の使用/不使用に連動しWebコントーロール取得値を調整する（main.service.js[ mainSVCjs_path ])================
-        Public Shared ReadOnly PublishDateDisplayON As String = <![CDATA[
-			} else if ($('#kokaiTime').attr('class').split(" ").indexOf('ng-invalid') != -1) {
-				// 時間入力エリア内で invalid が発生している場合、書式エラー
-				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
-				rtnErrorFlg = true;
-			]]>.Value
+        Public Shared Sub UpdateClientAndSecretIds(targetClientId As String, targetSecretId As String)
 
-        Public Shared ReadOnly PublishDateDisplayOFF As String = <![CDATA[
-			} else {
-				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
-				var kokaiTimeElement = $('#kokaiTime');
-				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
-				if (kokaiTimeElement.length > 0) {
-					var kokaiTimeClass = kokaiTimeElement.attr('class') || "";
-					if (kokaiTimeClass.split(" ").indexOf('ng-invalid') != -1) {
-						// 時間入力エリア内で invalid が発生している場合、書式エラー 
-						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
-						rtnErrorFlg = true;
-					}
-				}
-				// --- 修正箇所ここまで ---
-			]]>.Value
+            Dim DIC As New SwitchWords
 
-        Public PublishDateControl As New Dictionary(Of Boolean, String) From {
-        {False, PublishDateDisplayOFF},
-        {True, PublishDateDisplayON}
-    }
+            ' 辞書のキー（beansXML, developmentJSなど）ごとにループ処理
+            For Each entry In DIC.ClientIDPATH
+                Dim key As String = entry.Key
+                Dim filePath As String = entry.Value
+
+                ' ファイルが存在するか確認
+                If File.Exists(filePath) Then
+                    Try
+                        ' ファイルの全内容を読み込む
+                        Dim fileContent As String = File.ReadAllText(filePath)
+
+                        ' ClientIDの置換文字列を作成
+                        Dim searchClientIdTag As String = DIC.ClientIDkeys(key).Replace("KEYWORD", targetClientId)
+                        Dim changedClientIdTag As String = DIC.ClientIDkeys(key).Replace("KEYWORD", Form_TeCASettings.TextBoxClientID.Text.ToString)
+
+                        ' SecretIDの置換文字列を作成
+                        Dim searchSecretIdTag As String = DIC.SecretIDkeys(key).Replace("KEYWORD", targetSecretId)
+                        Dim changedSecretIdTag As String = DIC.SecretIDkeys(key).Replace("KEYWORD", Form_TeCASettings.TextBoxSecretID.Text.ToString)
+
+                        Misc.ExchangeString(filePath, searchClientIdTag, changedClientIdTag)
+                        Misc.ExchangeString(filePath, searchSecretIdTag, changedSecretIdTag)
+
+                    Catch ex As Exception
+                        Console.WriteLine($"Error processing {filePath}: {ex.Message}")
+                    End Try
+                Else
+                    Console.WriteLine($"File not found: {filePath}")
+                End If
+            Next
+        End Sub
 
 
     End Class
@@ -673,54 +693,45 @@ End Class
 Public Class PubFlugLinkage
 
     '================属性設定：【表示スイッチと連動】の追加 MZokuseiMapper.xml(12箇所）================
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_OFF As String = <![CDATA[
-    <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
-  </resultMap>]]>.Value
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_OFF As String = <![CDATA[result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
+  </resultMap]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_ON As String = <![CDATA[
-    <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML1_ON As String = <![CDATA[result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
     <result column="public_link_flg" jdbcType="BIT" property="publicLinkFlg" />
-  </resultMap>]]>.Value
+  </resultMap]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_OFF As String = <![CDATA[
-    update_timestamp
-  </sql>]]>.Value
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_OFF As String = <![CDATA[update_timestamp
+  </sql]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_ON As String = <![CDATA[
-    update_timestamp
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML2_ON As String = <![CDATA[update_timestamp
     ,public_link_flg
-  </sql>]]>.Value
+  </sql]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_OFF As String = <![CDATA[
-        update_timestamp,
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_OFF As String = <![CDATA[update_timestamp,
       </if>
-    </trim>]]>.Value
+    </trim]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_ON As String = <![CDATA[
-        update_timestamp,
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML3_ON As String = <![CDATA[update_timestamp,
       </if>
       <if test="publicLinkFlg != null">
         public_link_flg,
       </if>
-    </trim>]]>.Value
+    </trim]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_OFF As String = <![CDATA[
-        #{updateTimestamp,jdbcType=TIMESTAMP},
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_OFF As String = <![CDATA[#{updateTimestamp,jdbcType=TIMESTAMP},
       </if>
     </trim>
-  </insert>]]>.Value
+  </insert]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_ON As String = <![CDATA[
-        #{updateTimestamp,jdbcType=TIMESTAMP},
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML4_ON As String = <![CDATA[#{updateTimestamp,jdbcType=TIMESTAMP},
       </if>
       <if test="publicLinkFlg != null">
         #{publicLinkFlg,jdbcType=BIT},
       </if>
     </trim>
-  </insert>]]>.Value
+  </insert]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_OFF As String = <![CDATA[
-  <select id="select" resultMap="ExtendResultMap" parameterType="map" >
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_OFF As String = <![CDATA[select id="select" resultMap="ExtendResultMap" parameterType="map" >
     SELECT
       zokusei.id,
       zokusei.kaisha_id,
@@ -733,8 +744,7 @@ Public Class PubFlugLinkage
       zokusei.invalid_flg,
       zokusei.del_flg, zokusei.create_user_id, zokusei.create_timestamp, zokusei.update_user_id, zokusei.update_timestamp,]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_ON As String = <![CDATA[
-  <select id="select" resultMap="ExtendResultMap" parameterType="map" >
+    Public Shared ReadOnly ZokuseiSync_MZMapperXML5_ON As String = <![CDATA[select id="select" resultMap="ExtendResultMap" parameterType="map" >
     SELECT
       zokusei.id,
       zokusei.kaisha_id,
@@ -942,14 +952,12 @@ Public Class PubFlugLinkage
 		</div>
 		<div class="form-group">]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_DetailHTML2_OFF As String = <![CDATA[
-			</div>
-			<div class="btn-group footer-right-info" ng-show="data.updateUserName">]]>.Value
+    Public Shared ReadOnly ZokuseiSync_DetailHTML2_OFF As String = <![CDATA[/div>
+			<div class="btn-group footer-right-info" ng-show="data.updateUserName]]>.Value
 
-    Public Shared ReadOnly ZokuseiSync_DetailHTML2_ON As String = <![CDATA[
-			</div>
+    Public Shared ReadOnly ZokuseiSync_DetailHTML2_ON As String = <![CDATA[/div>
             <!--
-			<div class="btn-group footer-right-info" ng-show="data.updateUserName">]]>.Value
+			<div class="btn-group footer-right-info" ng-show="data.updateUserName]]>.Value
 
     Public Shared ReadOnly ZokuseiSync_DetailHTML3_OFF As String = <![CDATA[
 			</div>
@@ -1018,7 +1026,8 @@ Public Class PubFlugLinkage
 											<div class="col-sm-9 checkbox data-toggle-text" ng-class="{'disabled': !isEditMode()}">
 												<input type="checkbox" data-toggle="toggle" ng-text="'on-off'|translate" ng-model="detailAreaData.kokaiFlg" ng-change="changeKokaiFlg()" ng-disabled="!isEditMode()" togglebtn></input>
 											</div>
-										</di]]>.Value
+										</div>
+										<!-- 【ファイルID】]]>.Value
 
     Public Shared ReadOnly MainHTML_ON As String = <![CDATA[【公開】 -->
 										<div class="form-group" ng-show="detailAreaData.displayKokaiFlg">
@@ -1074,12 +1083,36 @@ Public Class PubFlugLinkage
 													<span class="glyphicon glyphicon-exclamation-sign"></span>{{detailAreaData.kokaimaeAccessKaUserError}}
 												</p>
 											</div>
-										</di]]>.Value
+										</div>
+										<!-- 【ファイルID】]]>.Value
 
     Public Shared KOKAI_MainHTML_List As New List(Of (OFFval As String, ONval As String)) From {
             (MainHTML_OFF, MainHTML_ON)
         }
 
+    '================属性変更　公開機能の使用/不使用に連動しWebコントーロール取得値を調整する（main.service.js[ mainSVCjs_path ])================
+    Public Shared ReadOnly PublishDateDisplayON As String = <![CDATA[else if ($('#kokaiTime').attr('class').split(" ").indexOf('ng-invalid') != -1) {
+				// 時間入力エリア内で invalid が発生している場合、書式エラー
+				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+				rtnErrorFlg = true;]]>.Value
+
+    Public Shared ReadOnly PublishDateDisplayOFF As String = <![CDATA[else {
+				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
+				var kokaiTimeElement = $('#kokaiTime');
+				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
+				if (kokaiTimeElement.length > 0) {
+					var kokaiTimeClass = kokaiTimeElement.attr('class') || "";
+					if (kokaiTimeClass.split(" ").indexOf('ng-invalid') != -1) {
+						// 時間入力エリア内で invalid が発生している場合、書式エラー 
+						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+						rtnErrorFlg = true;
+					}
+				}
+				// --- 修正箇所ここまで ---]]>.Value
+
+    Public Shared PublishDateControl As New List(Of (OFFval As String, ONval As String)) From {
+        (PublishDateDisplayOFF, PublishDateDisplayON)
+    }
 
 
     ''' <summary>
@@ -1170,7 +1203,7 @@ Public Class PubFlugLinkage
 
                 ' 置換実行 (1回以上マッチすることを期待)
                 If TRIGGERS.ReplaceTextInFile(fromVal, toVal, tempFile) <= 0 Then
-                    Throw New Exception($"Web構成ファイル（{fileLabel}）の更新に失敗しました。対象の文字列がファイル内に見つかりません。")
+                    Throw New Exception($"Web構成ファイル（{fileLabel}）の更新に失敗しました。対象の文字列（{fromVal}）がファイル内に見つかりません。")
                 End If
             Next
 
@@ -1251,4 +1284,6 @@ Public Class PubFlugLinkage
             Return False
         End Try
     End Function
+
+
 End Class

@@ -274,16 +274,7 @@ Public Class Form_TeCASettings
                 End If
 
                 '【ClientID/SecretID】の更新
-                Dim exchangeResult As Integer = 0
-                For Each IDs As KeyValuePair(Of String, String) In DIC.ClientIDPATH
-                    exchangeResult += Misc.ExchangeString(IDs.Value, ClientID, Me.TextBoxClientID.Text.ToString)
-                    exchangeResult += Misc.ExchangeString(IDs.Value, SecretID, Me.TextBoxSecretID.Text.ToString)
-                Next
-                If exchangeResult < 8 Then
-                    MessageBox.Show("ClientID/SecretIDの更新に失敗しました。")
-                    GroupBox_Progress.Visible = False
-                    Exit Sub
-                End If
+                SwitchWords.UpdateClientAndSecretIds(ClientID, SecretID)
 
                 '【apache/httpd.conf】AH000558エラーをこっそり直す
                 If Misc.FindString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default")) Then
@@ -501,7 +492,9 @@ Public Class Form_TeCASettings
                 End If
 
                 '----【ＷＥＢ】実装/解除
-                If TRG_File_kokai_linkage_exists <> isEnable Then
+                Dim isBehindKokaiRendo As Boolean = Misc.FindString(WebPublicSymc_MZMapperXML, PubFlugLinkage.ZokuseiSync_MZMapperXMLList(0).OFFval, True)
+
+                If isBehindKokaiRendo = isEnable Then
                     Try
                         ' .Cast(Of Object)().ToList() を付与して、型を IEnumerable(Of Object) に適合させる
                         ' これにより、UpdateWebFile の入り口でのキャストエラーを回避します
@@ -544,11 +537,24 @@ Public Class Form_TeCASettings
 
 
                 '■公開機能を使用可能にする（CheckBox_EnableKokai）
-                Dim isKokaiEnable As Boolean = CheckBox_EnableKokai.Checked
 
-                PubFlugLinkage.UpdateWebFile(mainHTMLpath,
+                '公開を使うかどうかに関わらず、main.service.jsは強制書き換え
+                If Misc.FindString(mainSVCjs_path, PubFlugLinkage.PublishDateControl(0).ONval, True) Then
+                    PubFlugLinkage.UpdateWebFile(mainSVCjs_path,
+                                     PubFlugLinkage.PublishDateControl.Cast(Of Object)().ToList(),
+                                     False, "mainSvcJS.BUG")
+                End If
+
+                Dim isKokaiEnable As Boolean = CheckBox_EnableKokai.Checked
+                Dim isBehindKokai As Boolean = Misc.FindString(mainHTMLpath, PubFlugLinkage.KOKAI_MainHTML_List(0).OFFval, True)
+
+                If isKokaiEnable = isBehindKokai Then
+                    PubFlugLinkage.UpdateWebFile(mainHTMLpath,
                                      PubFlugLinkage.KOKAI_MainHTML_List.Cast(Of Object)().ToList(),
-                                     isKokaiEnable, "MZMapperXML")
+                                     isKokaiEnable, "mainHTML")
+
+
+                End If
 
                 '【app.js】属性変更詳細ペイン　カレンダーピッカーとコンボ位置の自動調整
                 If CheckBox_CalPickerAutoAdjust.Checked Then
@@ -575,7 +581,7 @@ Public Class Form_TeCASettings
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", connStr)
 
                 'PipeMan実行
-                If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
+                If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
                     TeCA.SvcCtrls("PG_REBOOT", True)
                 Else
                     TeCA.SvcCtrls("PG_REBOOT")
@@ -698,11 +704,11 @@ Public Class Form_TeCASettings
                 End Select
 
             Case Else
-                    '  LockDialog(False,True )  '全アイテムをDisable
+                '  LockDialog(False,True )  '全アイテムをDisable
 
-            End Select
+        End Select
 
-            Select Case True
+        Select Case True
             Case Me.ComboBox_ExecMode.SelectedItem.ToString() Like "*再起動"
                 CheckBox_Pipeman.Enabled = True
             Case Else
@@ -1509,6 +1515,13 @@ Public Class Form_TeCASettings
 
     End Sub
 
+    Private Sub Button_ChangePwd_Click(sender As Object, e As EventArgs) Handles Button_ChangePwd.Click
+        Form_ChangePWD.Show()
+    End Sub
+
+    Private Sub Form_TeCASettings_Click(sender As Object, e As EventArgs) Handles Me.Click
+
+    End Sub
 End Class
 
 Public Class MyBase64str
