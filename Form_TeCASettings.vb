@@ -44,7 +44,7 @@ Public Class Form_TeCASettings
         'ダイアログコントロールを全部非表示
         '--------------------------------------
         '全アイテムをDisable
-        LockDialog(False, True)
+        LockDialog(False, True, True)
         Button_Exec.Enabled = False
         GroupBox_MailServer.Enabled = False
         GroupBox_APIparams.Enabled = False
@@ -52,6 +52,8 @@ Public Class Form_TeCASettings
         CheckBox_Pipeman.Enabled = False
         CheckBox_Pipeman.Checked = True
         ComboBox_ExecMode.Enabled = False
+        GroupBox_KOKAI.Enabled = False
+        GroupBox_KOKAI.Visible = True
 
 
         GroupBox_ninsyo.Text = "設定値を変更するにはClientIDとSecretIDを入力して下さい"
@@ -76,7 +78,7 @@ Public Class Form_TeCASettings
         '認証未入力は抜ける
         If ((TextBox_ClientID.Text = "") Or (TextBox_SecretID.Text = "")) Then
             GroupBox_ninsyo.Text = "ClientIDとSecretIDが未入力です。"
-            LockDialog(False, True)  '全アイテムをDisable
+            LockDialog(False, True, True)  '全アイテムをDisable
             Exit Sub
         End If
 
@@ -88,31 +90,32 @@ Public Class Form_TeCASettings
             Case TextBox_ClientID.Text = ClientID AndAlso TextBox_SecretID.Text = SecretID
                 ' NormalUserMode
                 GroupBox_ninsyo.Text = "設定値を変更できます。"
-                TabPage2.Text = "アップロード"
-                LockDialog(True)  '制限付きでアイテムをEnable
-
+                TabPage2.Text = "アップロード・公開"
+                'LockDialog(True)  '制限付きでアイテムをEnable
+                LockDialog(True, False, True)
+#If debug Then
             Case TextBox_ClientID.Text = ClientID & AllowedPWD AndAlso TextBox_SecretID.Text = SecretID
                 ' AllowedUserMode
                 TabPage2.Text = "アップロード・公開"
                 GroupBox_ninsyo.Text = "公開機能も設定値を変更できます。"
                 LockDialog(True, False, True)  'AlloedModeでEnable
-
+#End If
             Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisor"
                 ' SupervisorMode
                 GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
                 TabPage2.Text = "アップロード・公開"
-                LockDialog(True, True)  '全アイテムをEnable
+                LockDialog(True, True, True)  '全アイテムをEnable
 
             Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisors"
                 ' SupervisorMode
                 GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
                 TabPage2.Text = "アップロード・公開"
-                LockDialog(True, True)  '全アイテムをEnable
+                LockDialog(True, True, True)  '全アイテムをEnable
 
 
             Case Else
                 GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
-                TabPage2.Text = "アップロード"
+                TabPage2.Text = "アップロード・公開"
                 Button_Exec.Enabled = False
 
                 Exit Sub
@@ -681,7 +684,7 @@ Public Class Form_TeCASettings
                 Select Case True
                     Case ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID))
                         GroupBox_ninsyo.Text = "設定値を変更できます。"
-                        LockDialog(False, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
+                        LockDialog(False, True, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
                         LockDialog(True)  'UserModeでアイテムをEnable
                         Button_Exec.Enabled = True
 
@@ -697,7 +700,7 @@ Public Class Form_TeCASettings
 
                     Case Else
                         GroupBox_ninsyo.Text = "ClientID、SecretIDが間違っています。"
-                        LockDialog(False, True)  '全アイテムをDisable
+                        LockDialog(False, True, True)  '全アイテムをDisable
                         Button_Exec.Enabled = False
                         Exit Sub
 
@@ -1119,7 +1122,7 @@ Public Class Form_TeCASettings
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
         Me.Button_DWG.Text = "取出"
-        Me.TabPage2.Text = "アップロード"
+        Me.TabPage2.Text = "アップロード・公開"
 
 
     End Sub
@@ -1519,9 +1522,6 @@ Public Class Form_TeCASettings
         Form_ChangePWD.Show()
     End Sub
 
-    Private Sub Form_TeCASettings_Click(sender As Object, e As EventArgs) Handles Me.Click
-
-    End Sub
 End Class
 
 Public Class MyBase64str
