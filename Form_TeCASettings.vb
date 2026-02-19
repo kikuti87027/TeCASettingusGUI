@@ -91,15 +91,8 @@ Public Class Form_TeCASettings
                 ' NormalUserMode
                 GroupBox_ninsyo.Text = "設定値を変更できます。"
                 TabPage2.Text = "アップロード・公開"
-                'LockDialog(True)  '制限付きでアイテムをEnable
                 LockDialog(True, False, True)
-#If debug Then
-            Case TextBox_ClientID.Text = ClientID & AllowedPWD AndAlso TextBox_SecretID.Text = SecretID
-                ' AllowedUserMode
-                TabPage2.Text = "アップロード・公開"
-                GroupBox_ninsyo.Text = "公開機能も設定値を変更できます。"
-                LockDialog(True, False, True)  'AlloedModeでEnable
-#End If
+
             Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisor"
                 ' SupervisorMode
                 GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
@@ -660,7 +653,6 @@ Public Class Form_TeCASettings
             GroupBox_KOKAI.Visible = ONorOFF
         End If
 
-
         If SupervisorMode Then
             TextBox_Domain.Enabled = ONorOFF
             TextBox_MaxUsers.Enabled = ONorOFF
@@ -685,7 +677,7 @@ Public Class Form_TeCASettings
                     Case ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID))
                         GroupBox_ninsyo.Text = "設定値を変更できます。"
                         LockDialog(False, True, True)  'SuperVisorModeのみ制御可のアイテムも含めた全部をDisable
-                        LockDialog(True)  'UserModeでアイテムをEnable
+                        LockDialog(True,, True)  'UserModeでアイテムをEnable
                         Button_Exec.Enabled = True
 
                     Case ((TextBox_ClientID.Text = ClientID & ".deny") And (TextBox_SecretID.Text = SecretID))
@@ -695,7 +687,7 @@ Public Class Form_TeCASettings
 
                     Case ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor"))
                         GroupBox_ninsyo.Text = "★★Supervisor Mode★★"
-                        LockDialog(True, True)  '全アイテムをEnable
+                        LockDialog(True, True, True)  '全アイテムをEnable
                         Button_Exec.Enabled = True
 
                     Case Else
