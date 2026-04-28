@@ -73,7 +73,11 @@ Public Class Form_TeCASettings
     End Sub
 
     Private Sub Button_Nunsyo_Click(sender As Object, e As EventArgs) Handles Button_Nunsyo.Click
-
+        'ADMINでない場合は終了　　　　
+        If Misc.IsAdimin = False Then
+            MessageBox.Show("LocalAdmin権限のアカウントでご利用ください")
+            Exit Sub
+        End If
 
         '認証未入力は抜ける
         If ((TextBox_ClientID.Text = "") Or (TextBox_SecretID.Text = "")) Then
