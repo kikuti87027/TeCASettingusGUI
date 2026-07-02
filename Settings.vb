@@ -254,7 +254,6 @@ Public Class TRIGGERS
                 {"testJS", "clientSecret: 'KEYWORD',"}
     }
 
-
         '================ワークフロー詳細ペイン関連の編集(3か所）を切り替える定数をDICで定義================
         Public workFlowListExpandable As New Dictionary(Of Boolean, String) From {
         {False, "expandableRowTemplate: '<div class=""sub-grid"" ui-grid=""row.entity.subGridOptions"" ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-auto-resize ui-grid-pinning></div>',"},
@@ -451,6 +450,15 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
             Return -1
         End Try
     End Function
+
+End Class
+
+Public Class JNLPprint
+
+    Public Shared JNLPprint_printPvwSvcJS As String = TECA_sets.ClientWebPath & "\app\print-preview\print-preview.service.js"
+    Public Shared ReadOnly JNJPprint_FileList As New List(Of (FileName As String, DestPath As String)) From {
+        ("After_print-preview.service.js", Path.GetDirectoryName(JNLPprint_printPvwSvcJS))
+    }
 
 End Class
 
@@ -1119,14 +1127,20 @@ Public Class PubFlugLinkage
     ''' チェックボックスの状態に応じてファイルをデプロイします。
     ''' 保存時に "After_" または "Before_" を削除して本来のファイル名に戻します。
     ''' </summary>
-    Public Shared Sub DeployFiles(ByVal isAfter As Boolean)
+    Public Shared Sub DeployFiles(ByVal isAfter As Boolean, Optional ByVal targetFileList As List(Of (FileName As String, DestPath As String)) = Nothing)
+
+        ' 第2引数が省略（無指定）された場合は、デフォルトの FileList を使用する
+        If targetFileList Is Nothing Then
+            targetFileList = FileList
+        End If
+
         Dim subFolder As String = If(isAfter, "After", "Before")
         Dim prefixToRemove As String = If(isAfter, "After_", "Before_")
 
         Dim currentAssembly As Assembly = Assembly.GetExecutingAssembly()
         Dim rootNamespace As String = "TeCASettings"
 
-        For Each fileInfo In FileList
+        For Each fileInfo In targetFileList
             ' 1. リソース内の実際のファイル名を特定
             ' Before展開時はリスト内の "After_" を "Before_" に読み替えてリソースを探す
             Dim actualResourceFileName As String = fileInfo.FileName

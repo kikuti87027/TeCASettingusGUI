@@ -124,6 +124,8 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
+        ComboBox_PrintMode = New ComboBox()
+        Label23 = New Label()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -427,6 +429,8 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_General
         ' 
+        GroupBox_General.Controls.Add(ComboBox_PrintMode)
+        GroupBox_General.Controls.Add(Label23)
         GroupBox_General.Controls.Add(ComboBox_LoginTimeout)
         GroupBox_General.Controls.Add(Label16)
         GroupBox_General.Controls.Add(ComboBox_vScroll)
@@ -435,7 +439,7 @@ Partial Class Form_TeCASettings
         GroupBox_General.Controls.Add(Label1)
         GroupBox_General.Location = New Point(5, 131)
         GroupBox_General.Name = "GroupBox_General"
-        GroupBox_General.Size = New Size(358, 103)
+        GroupBox_General.Size = New Size(358, 138)
         GroupBox_General.TabIndex = 9
         GroupBox_General.TabStop = False
         GroupBox_General.Text = "全般"
@@ -706,7 +710,7 @@ Partial Class Form_TeCASettings
         ' 
         GroupBox_DWG.Controls.Add(Button_DWG)
         GroupBox_DWG.Controls.Add(TextBox_DWG)
-        GroupBox_DWG.Location = New Point(5, 240)
+        GroupBox_DWG.Location = New Point(5, 275)
         GroupBox_DWG.Name = "GroupBox_DWG"
         GroupBox_DWG.Size = New Size(358, 49)
         GroupBox_DWG.TabIndex = 25
@@ -1133,6 +1137,24 @@ Partial Class Form_TeCASettings
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
+        ' ComboBox_PrintMode
+        ' 
+        ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox_PrintMode.FormattingEnabled = True
+        ComboBox_PrintMode.Location = New Point(246, 102)
+        ComboBox_PrintMode.Name = "ComboBox_PrintMode"
+        ComboBox_PrintMode.Size = New Size(99, 23)
+        ComboBox_PrintMode.TabIndex = 12
+        ' 
+        ' Label23
+        ' 
+        Label23.AutoSize = True
+        Label23.Location = New Point(166, 107)
+        Label23.Name = "Label23"
+        Label23.Size = New Size(56, 15)
+        Label23.TabIndex = 13
+        Label23.Text = "印刷モード"
+        ' 
         ' Form_TeCASettings
         ' 
         AllowDrop = True
@@ -1301,4 +1323,6 @@ Partial Class Form_TeCASettings
     Friend WithEvents GroupBox_FileHistory As GroupBox
     Friend WithEvents CheckBox_FileHistroryScrollPosition As CheckBox
     Friend WithEvents CheckBox_PublicSymc As CheckBox
+    Friend WithEvents ComboBox_PrintMode As ComboBox
+    Friend WithEvents Label23 As Label
 End Class

@@ -569,6 +569,13 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(True), DIC.AutoAdjustComboPosition_css(False), mainCSS_path)
                 End If
 
+                '【print-preview.service.js】
+                '　　JNLP印刷とダイレクト印刷を切り替える。
+                '　　デフォはJNLP,Afterは「直接」
+                '　　うめ込みリソース「PrintModeResources」から上書きコピーしている
+
+                PubFlugLinkage.DeployFiles(ComboBox_PrintMode.SelectedItem.ToString = "直接", JNLPprint.JNJPprint_FileList)
+
                 '【DB関連パラメータ】DLG入力値で更新する
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", connStrdb1)
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", connStrdb1)
@@ -1065,6 +1072,7 @@ Public Class Form_TeCASettings
         Me.ComboBox_FileSelectLineNum.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_ThumbnailRatio.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
 
         '各コンボに初期データを追加
         With Me.ComboBox_LOG_LEVEL
@@ -1113,6 +1121,11 @@ Public Class Form_TeCASettings
         With ComboBox_RasterConvert
             .Items.Add("CAD")
             .Items.Add("EX")
+        End With
+
+        With ComboBox_PrintMode
+            .Items.Add("JNLP")
+            .Items.Add("直接")
         End With
 
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
@@ -1230,6 +1243,13 @@ Public Class Form_TeCASettings
                 Me.ComboBox_ThumbnailRatio.SelectedIndex = 1
             End If
         Next
+
+        '▼▼▼print-preview.service.jsの1行目に「クライアント印刷ドライバ対応」の存在可否でコンボを選択する
+        If Misc.FindString(JNLPprint.JNLPprint_printPvwSvcJS, "クライアント印刷ドライバ対応") Then
+            ComboBox_PrintMode.SelectedItem = "直接"
+        Else
+            ComboBox_PrintMode.SelectedItem = "JNLP"
+        End If
 
         '--------------------------------------
         '【app.js】のvScroll値をComboBoxに格納

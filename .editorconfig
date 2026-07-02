@@ -1,0 +1,10 @@
+﻿[*.vb]
+
+# WFO0003: サポートされていない高 DPI 構成
+dotnet_diagnostic.WFO0003.severity = none
+
+# WFO1000: プロパティ コンテンツのコード シリアル化構成がありません
+dotnet_diagnostic.WFO1000.severity = none
+
+# WFO2001: Task is being passed to InvokeAsync without a cancellation token
+dotnet_diagnostic.WFO2001.severity = none
