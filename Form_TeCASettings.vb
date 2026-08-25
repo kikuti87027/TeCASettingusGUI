@@ -24,7 +24,6 @@ Public Class Form_TeCASettings
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-
         Me.Text = "図脳TeCA　システム設定ツール Ver." + versionString.ToString
 
         'TeCAサーバーかどうか確認
@@ -529,12 +528,6 @@ Public Class Form_TeCASettings
                 Dim webVersion = NuGetVersion.Parse(webStr)
                 Dim APIVersion = NuGetVersion.Parse(apiStr)
 
-                If isEnable Then
-                    PubFlugLinkage.UpdateVersionAll("1.15.0.2", webVerPath, APIVerPath, connStrdb1)
-                Else
-                    PubFlugLinkage.UpdateVersionAll("1.15.0.1", webVerPath, APIVerPath, connStrdb1)
-                End If
-
 
                 '■公開機能を使用可能にする（CheckBox_EnableKokai）
 
@@ -552,8 +545,6 @@ Public Class Form_TeCASettings
                     PubFlugLinkage.UpdateWebFile(mainHTMLpath,
                                      PubFlugLinkage.KOKAI_MainHTML_List.Cast(Of Object)().ToList(),
                                      isKokaiEnable, "mainHTML")
-
-
                 End If
 
                 '【app.js】属性変更詳細ペイン　カレンダーピッカーとコンボ位置の自動調整
@@ -586,6 +577,47 @@ Public Class Form_TeCASettings
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + ComboBox_LOG_LEVEL.SelectedItem.ToString + "' WHERE info_key='LOG_LEVEL' ", connStrdb1)
                 Label_notice.Text = TeCA.UpdateDB("UPDATE m_option SET umu_flg='" + CheckBox_メール通知.Checked.ToString + "' WHERE id=2 ", connStrdb1)
                 Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", connStr)
+
+                '【アプリ連携(JNLP/直接)】
+                '　　JNLPアプリ連携とダイレクトアプリ連携を切り替える。
+                '　　デフォはJNLP,Afterは「直接」
+                '　　対象ファイルが他機能と競合しない以下５つ　--->　埋込リソース「PubSymcResource」から全ファイル交換
+                '    　index.html,
+                '    　main.detail.controller.js,
+                '    　check-out.html,
+                '    　check-out.service.js,
+                '    　check-out.controller.js
+
+                PubFlugLinkage.DeployFiles(ComboBox_appLinkJNLP.SelectedItem.ToString = "直接", appLinkJNLP.FileList)
+
+                ' 　 他機能と競合する以下２つ　--->　文字列差し替え
+                ' 　　 main.html,
+                ' 　　 main-service.js
+                ' 　　 
+                If ComboBox_appLinkJNLP.SelectedItem.ToString = "直接" Then
+                    ReplaceTextInFile(appLinkJNLP.mainHTML(False), appLinkJNLP.mainHTML(True), TECA_sets.ClientWebPath & "\app\main\main.html")
+                    ReplaceTextInFile(appLinkJNLP.mainServiceJS1(False), appLinkJNLP.mainServiceJS1(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(appLinkJNLP.mainServiceJS2(False), appLinkJNLP.mainServiceJS2(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    PubFlugLinkage.GetFileFromRSC("guide-modal.html", TECA_sets.ClientWebPath & "\app\guide-modal\")
+                    PubFlugLinkage.GetFileFromRSC("guide-modal.controller.js", TECA_sets.ClientWebPath & "\app\guide-modal\")
+                Else
+                    ReplaceTextInFile(appLinkJNLP.mainHTML(True), appLinkJNLP.mainHTML(False), TECA_sets.ClientWebPath & "\app\main\main.html")
+                    ReplaceTextInFile(appLinkJNLP.mainServiceJS1(True), appLinkJNLP.mainServiceJS1(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(appLinkJNLP.mainServiceJS2(True), appLinkJNLP.mainServiceJS2(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    If Directory.Exists(TECA_sets.ClientWebPath & "\app\guide-modal\") Then
+                        Try
+                            Directory.Delete(TECA_sets.ClientWebPath & "\app\guide-modal\", True)
+                        Catch ex As Exception
+                            Console.WriteLine("JNLPモードに不要なフォルダの削除中にエラーが発生しました: " & ex.Message)
+                        End Try
+                    End If
+                End If
+
+                '【APIバグフィクス】
+                '　　Classファイルなど、ファイル交換でバグ修正対応を行ったものを埋込リソースから展開し、バージョン表記も変更する
+                BugFixes.DeployFixFiles()
+
+
 
                 'PipeMan実行
                 If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
@@ -1073,6 +1105,7 @@ Public Class Form_TeCASettings
         Me.ComboBox_ThumbnailRatio.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_RasterConvert.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
+        Me.ComboBox_appLinkJNLP.DropDownStyle = ComboBoxStyle.DropDownList
 
         '各コンボに初期データを追加
         With Me.ComboBox_LOG_LEVEL
@@ -1127,6 +1160,12 @@ Public Class Form_TeCASettings
             .Items.Add("JNLP")
             .Items.Add("直接")
         End With
+
+        With ComboBox_appLinkJNLP
+            .Items.Add("JNLP")
+            .Items.Add("直接")
+        End With
+
 
         Me.ComboBox_ExecMode.SelectedItem = "変更せず再起動"
         Me.TextBox_DWG.Text = "ここが空白なら「取出」、ファイルドラッグで「更新」"
@@ -1249,6 +1288,13 @@ Public Class Form_TeCASettings
             ComboBox_PrintMode.SelectedItem = "直接"
         Else
             ComboBox_PrintMode.SelectedItem = "JNLP"
+        End If
+
+        '▼▼▼guide-modalフォルダの有無で「LNLPアプリ連携」のJNLP/直接の判定とコンボを選択
+        If Directory.Exists(appLinkJNLP.GuideModalpath) Then
+            ComboBox_appLinkJNLP.SelectedItem = "直接"
+        Else
+            ComboBox_appLinkJNLP.SelectedItem = "JNLP"
         End If
 
         '--------------------------------------

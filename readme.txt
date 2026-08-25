@@ -93,15 +93,26 @@
         ＝＝＝＝＝＝＝＝1.15.0　Master Release＝＝＝＝＝＝＝＝
 
 26-02-19　Ver3.3.2【1.15.0.2】
-							・【kikuchi.dll/isLive修正】
+				【変更】	・kikuchi.dll/isLive修正
 								生存サービスのチェックを厳密に行うように修正
 
 26-04-28　Ver3.3.2.1【1.15.0.2】
-							・【NuGetパッケージ更新】
+				【変更】	・NuGetパッケージ更新
 
 26-07-01　Ver3.3.3.0【1.15.0.2】
-							・【印刷モード追加】
+				【追加】	・【操作】-【印刷モード】
 								リソース「PrintModeResources」追加。
 								このコンボでprint-previewの印刷モードを選択可能にした。
-							・【NuGetパッケージ更新】
+				【変更】	・NuGetパッケージ更新
+
+26-08-24　Ver3.4.0.0【Web1.15.0.3 / API1.15.0.3 / DB1.15.0.2】
+				【追加】	・【操作】-【アプリ連携】
+									アプリ連携JNLPを抹消する目的で、組込リソース「PrintModeResources」に差替ファイル群を配置。
+									このコンボでアプリ連携におけるJNLPと直接リンクを選択可能とした。
+							・【Settings.VB】-【BugFixes.FixList】
+							　　　	FixListに差し替えたいclassファイルと適用後の各バージョンなどを列記すれば、更新して再起動時に自動更新する。
+				【変更】	・今回よりSigning証明書をSectigo版に変更
+				【BugFixes】・サイズ変更印刷時のPDFスタンプがズレるバグを修正（ZUNO_TECA-370)
+
+        ＝＝＝＝＝＝＝＝1.15.3　Master Release＝＝＝＝＝＝＝＝
 

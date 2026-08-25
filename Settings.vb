@@ -50,6 +50,9 @@ Public Class TECA_sets
     Public Shared mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
     Public Shared pdfconvpropPath As String = TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
 
+    'アプリ連携関連パス
+    Public Const appLink_server As String = WEB_PATH & "\server\api"
+
     'ID,SecretIDを取得
     Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
     Public Shared ReadOnly SecretID = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
@@ -454,10 +457,150 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
 End Class
 
 Public Class JNLPprint
-
     Public Shared JNLPprint_printPvwSvcJS As String = TECA_sets.ClientWebPath & "\app\print-preview\print-preview.service.js"
     Public Shared ReadOnly JNJPprint_FileList As New List(Of (FileName As String, DestPath As String)) From {
         ("After_print-preview.service.js", Path.GetDirectoryName(JNLPprint_printPvwSvcJS))
+    }
+
+End Class
+
+Public Class appLinkJNLP
+
+    Public Shared ReadOnly GuideModalpath As String = TECA_sets.ClientWebPath & "\app\guide-modal"
+
+    ' (リソース内のファイル名, 出力先のパス)
+    Public Shared ReadOnly FileList As New List(Of (FileName As String, DestPath As String)) From {
+        ("After_index.html", Path.GetDirectoryName(TECA_sets.ClientWebPath & "\index.html")),
+        ("After_main.detail.controller.js", Path.GetDirectoryName(TECA_sets.appLink_server & "\main\main.detail.controller.js")),
+        ("After_check-out.html", Path.GetDirectoryName(TECA_sets.ClientWebPath & "\app\check-out\check-out.html")),
+        ("After_check-out.service.js", Path.GetDirectoryName(TECA_sets.ClientWebPath & "\app\check-out\check-out.service.js")),
+        ("After_check-out.controller.js", Path.GetDirectoryName(TECA_sets.ServerWebPath & "\api\check-out\check-out.controller.js"))
+    }
+
+    Public Shared mainHTML As New Dictionary(Of Boolean, String) From {
+        {False, "						</pdfjs-viewer>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>"},
+        {True, "						</pdfjs-viewer>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<a ng-href=""{{jnlp}}"" id=""jnlp"" style=""display: none;""></a>"}
+    }
+
+    Public Shared mainServiceJS1 As New Dictionary(Of Boolean, String) From {
+        {False, "			} else if ($('#kokaiTime').attr('class').split("" "").indexOf('ng-invalid') != -1) {
+				// 時間入力エリア内で invalid が発生している場合、書式エラー
+				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
+				rtnErrorFlg = true;
+"},
+        {True, "			} else {
+				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
+				var kokaiTimeElement = $('#kokaiTime');
+				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
+				if (kokaiTimeElement.length > 0) {
+					var kokaiTimeClass = kokaiTimeElement.attr('class') || """";
+					if (kokaiTimeClass.split("" "").indexOf('ng-invalid') != -1) {
+						// 時間入力エリア内で invalid が発生している場合、書式エラー 
+						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
+						rtnErrorFlg = true;
+					}
+				}
+				// --- 修正箇所ここまで ---
+"}
+    }
+
+    Public Shared mainServiceJS2 As New Dictionary(Of Boolean, String) From {
+        {False, "						// 詳細情報の取得
+						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,
+							function(resolveData) {
+								// 成功処理
+								if (!CommonService.isError(resolveData)) {
+									$scope.jnlp = CommonService.getJnlpFile(resolveData.fileName, Const.JWS_START_MODE_EXEC);
+									$timeout(function() {
+										$('#jnlp')[0].click();
+									}, 500);
+									// システム操作ログ登録（成功）
+									CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 失敗処理
+									CommonService.errorProcess($scope, resolveData, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								}
+							},
+							function(rejectData, state) {
+								// 失敗処理
+								if (state != 'cancel') {
+									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 一時保存ファイルの削除
+									var param = { 'filename': rejectData.fileName };
+									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
+								}
+							}
+"},
+        {True, "						// 詳細情報の取得
+						CommonService.httpPost(ACTION_APP_LINK, param,
+							function(resolveData) {
+								// 成功処理
+								
+								// 【共通関数のJSONパースバグを回避するため、自前で安全にダウンロードを発火】
+								var blob = new Blob([resolveData], { type: ""application/octet-stream"" });
+								var fileName = $scope.$parent.detailAreaData.fileName;
+								
+								if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+									// 古いIE / 互換モード用
+									window.navigator.msSaveOrOpenBlob(blob, fileName);
+								} else {
+									// モダンブラウザ（Chrome, Firefox, Edge）用
+									var fileURL = URL.createObjectURL(blob);
+									var anchor = document.createElement('a');
+									anchor.href = fileURL;
+									anchor.download = fileName; // これでファイル名を固定
+									document.body.appendChild(anchor);
+									anchor.click();
+									document.body.removeChild(anchor);
+									URL.revokeObjectURL(fileURL); // メモリ解放
+								}
+
+								// 役目を終えた空のタブを閉じる
+								if (win != null) {
+									win.close();
+								}
+
+								// ガイド表示判定（「次回から表示しない」が未チェックなら表示）
+								var skipGuide = StorageService.getData('skipAppLaunchGuide');
+								if (!skipGuide) {
+									var template = ""app/guide-modal/guide-modal.html"";
+									var controller = ""GuideModalController"";
+									CommonService.openModal($scope, template, controller);
+								}
+								
+								// システム操作ログ登録（成功）
+								CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+							},
+							function(rejectData, state) {
+								// 失敗処理
+								if (state != 'cancel') {
+									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 一時保存ファイルの削除
+									var param = { 'filename': rejectData.fileName };
+									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
+								}
+								// 失敗した場合も開いたウィンドウを閉じる
+								if (win != null) {
+									win.close();
+								}
+							},
+							{responseType: 'arraybuffer'}
+"}
     }
 
 End Class
@@ -1232,72 +1375,183 @@ Public Class PubFlugLinkage
         End Try
     End Sub
 
-    Public Shared Function UpdateVersionAll(newVersion As String, webVerPath As String, APIVerPath As String, connectionString As String) As Boolean
+    Public Shared Function UpdateVersionAll(newVersion As String,
+                                        Optional webVerPath As String = Nothing,
+                                        Optional APIVerPath As String = Nothing,
+                                        Optional connectionStringDB As String = Nothing,
+                                        Optional connectionStringPRODUCT As String = Nothing) As Boolean
         Try
-            ' 1. バージョン形式のバリデーション (NuGet.Versioning 7.0.1)
+            ' 1. バージョン形式のバリデーション
             Dim validatedVer As String = NuGetVersion.Parse(newVersion).ToNormalizedString()
 
-            ' 2. ファイルの存在確認
-            If Not File.Exists(webVerPath) OrElse Not File.Exists(APIVerPath) Then Return False
+            ' 2. ファイルの事前存在確認
+            If Not String.IsNullOrEmpty(webVerPath) AndAlso Not File.Exists(webVerPath) Then Return False
+            If Not String.IsNullOrEmpty(APIVerPath) AndAlso Not File.Exists(APIVerPath) Then Return False
 
-            ' 3. ファイル内容の読み込み
-            Dim jsContent As String = File.ReadAllText(webVerPath, New UTF8Encoding(False))
-            Dim mfContent As String = File.ReadAllText(APIVerPath, New UTF8Encoding(False))
-
-            ' 4. 置換パターンの定義（キー名が消えないよう固定文字で組み立てる）
-            ' const.js 用: VERSION: '1.15.0.1' の値を置換
-            Dim jsSearchPattern As String = "VERSION:\s*'[^']+"
-            Dim jsReplaceValue As String = "VERSION: '" & validatedVer
-
-            ' MANIFEST.MF 用: Implementation-Version: 1.15.0.1 を置換
-            Dim mfSearchPattern As String = "Implementation-Version:\s*.+"
-            Dim mfReplaceValue As String = "Implementation-Version: " & validatedVer
-
-            ' 5. 置換対象が存在するかチェック
-            If Not Regex.IsMatch(jsContent, jsSearchPattern) OrElse Not Regex.IsMatch(mfContent, mfSearchPattern) Then
-                Return False
+            ' 3. ファイル内容の置換準備（メモリ上）
+            Dim updatedJs As String = Nothing
+            If Not String.IsNullOrEmpty(webVerPath) Then
+                Dim jsContent As String = File.ReadAllText(webVerPath, New UTF8Encoding(False))
+                Dim jsSearchPattern As String = "VERSION:\s*'[^']+"
+                If Not Regex.IsMatch(jsContent, jsSearchPattern) Then Return False
+                updatedJs = Regex.Replace(jsContent, jsSearchPattern, "VERSION: '" & validatedVer)
             End If
 
-            ' 6. データベースとファイルの更新実行
-            Using conn As New NpgsqlConnection(connectionString)
-                conn.Open()
-                Using transaction As NpgsqlTransaction = conn.BeginTransaction()
-                    Try
-                        ' --- A. データベースの更新 ---
-                        Dim sql As String = "UPDATE t_system_info_kyotsu SET info_val = @val WHERE info_key = 'DB_VERSION';"
-                        Using cmd As New NpgsqlCommand(sql, conn, transaction)
-                            ' info_val は text 型のため明示的に指定
-                            cmd.Parameters.Add("@val", NpgsqlDbType.Text).Value = validatedVer
-                            cmd.ExecuteNonQuery()
-                        End Using
+            Dim updatedMf As String = Nothing
+            If Not String.IsNullOrEmpty(APIVerPath) Then
+                Dim mfContent As String = File.ReadAllText(APIVerPath, New UTF8Encoding(False))
+                Dim mfSearchPattern As String = "Implementation-Version:\s*.+"
+                If Not Regex.IsMatch(mfContent, mfSearchPattern) Then Return False
+                updatedMf = Regex.Replace(mfContent, mfSearchPattern, "Implementation-Version: " & validatedVer)
+            End If
 
-                        ' --- B. ファイルの内容更新（メモリ上） ---
-                        ' $1 を使わず、キー部分を含めた固定文字列で置換
-                        Dim updatedJs As String = Regex.Replace(jsContent, jsSearchPattern, jsReplaceValue)
-                        Dim updatedMf As String = Regex.Replace(mfContent, mfSearchPattern, mfReplaceValue)
+            ' 4. DB更新用の接続文字列の決定（どちらか一方があればその接続文字列を使用）
+            Dim connStr As String = If(Not String.IsNullOrEmpty(connectionStringDB), connectionStringDB, connectionStringPRODUCT)
 
-                        ' --- C. ファイルの書き出し (BOMなしUTF-8) ---
-                        Dim utf8NoBom As New UTF8Encoding(False)
-                        File.WriteAllText(webVerPath, updatedJs, utf8NoBom)
-                        File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
+            ' DB更新の実行（どちらの接続文字列も指定がない場合はファイル書き出しのみ）
+            If Not String.IsNullOrEmpty(connStr) Then
+                Using conn As New NpgsqlConnection(connStr)
+                    conn.Open()
+                    Using transaction As NpgsqlTransaction = conn.BeginTransaction()
+                        Try
+                            ' A-1. connectionStringDB が渡されている場合は DB_VERSION を更新
+                            If Not String.IsNullOrEmpty(connectionStringDB) Then
+                                Dim sqlDb As String = "UPDATE t_system_info_kyotsu SET info_val = @val WHERE info_key = 'DB_VERSION';"
+                                Using cmd As New NpgsqlCommand(sqlDb, conn, transaction)
+                                    cmd.Parameters.Add("@val", NpgsqlDbType.Text).Value = validatedVer
+                                    cmd.ExecuteNonQuery()
+                                End Using
+                            End If
 
-                        ' 全て成功すればコミット
-                        transaction.Commit()
-                        Return True
+                            ' A-2. connectionStringPRODUCT が渡されている場合は PRODUCT_VERSION を更新
+                            If Not String.IsNullOrEmpty(connectionStringPRODUCT) Then
+                                Dim sqlProduct As String = "UPDATE t_system_info_kyotsu SET info_val = @val WHERE info_key = 'PRODUCT_VERSION';"
+                                Using cmd As New NpgsqlCommand(sqlProduct, conn, transaction)
+                                    cmd.Parameters.Add("@val", NpgsqlDbType.Text).Value = validatedVer
+                                    cmd.ExecuteNonQuery()
+                                End Using
+                            End If
 
-                    Catch ex As Exception
-                        ' 失敗時はロールバック
-                        transaction.Rollback()
-                        Return False
-                    End Try
+                            ' B. ファイルの書き出し
+                            Dim utf8NoBom As New UTF8Encoding(False)
+                            If updatedJs IsNot Nothing Then File.WriteAllText(webVerPath, updatedJs, utf8NoBom)
+                            If updatedMf IsNot Nothing Then File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
+
+                            transaction.Commit()
+                            Return True
+
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            Return False
+                        End Try
+                    End Using
                 End Using
-            End Using
+            Else
+                ' DB接続指定がない場合のファイル書き出し
+                Dim utf8NoBom As New UTF8Encoding(False)
+                If updatedJs IsNot Nothing Then File.WriteAllText(webVerPath, updatedJs, utf8NoBom)
+                If updatedMf IsNot Nothing Then File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
+                Return True
+            End If
 
         Catch ex As Exception
-            ' バージョン形式不正や接続エラーなど
             Return False
         End Try
     End Function
 
+
+    ''' <summary>
+    ''' 埋め込みリソースからファイルを取り出し、指定したフォルダまたはファイルパスに配置します。
+    ''' （親フォルダが存在しない場合は自動で作成します）
+    ''' </summary>
+    ''' <param name="resourceName">埋め込みリソースのファイル名（例: "After_index.html"）</param>
+    ''' <param name="destPath">配置先のフォルダパス、または出力先のフルパス</param>
+    ''' <returns>成功した場合は True、失敗した場合は False</returns>
+    Public Shared Function GetFileFromRSC(ByVal resourceName As String, ByVal destPath As String) As Boolean
+        Try
+            Dim targetFolderPath As String
+            Dim outputPath As String
+
+            ' 1. destPath が「フォルダ」か「ファイルパス（拡張子あり）」かを判定
+            If Directory.Exists(destPath) OrElse String.IsNullOrEmpty(Path.GetExtension(destPath)) Then
+                ' フォルダパスとみなす（元のファイル名を使用）
+                targetFolderPath = destPath
+                outputPath = Path.Combine(destPath, resourceName)
+            Else
+                ' フルパスのファイル名とみなす（指定されたファイル名に変更して保存）
+                targetFolderPath = Path.GetDirectoryName(destPath)
+                outputPath = destPath
+            End If
+
+            ' 2. 配置先フォルダが存在しない場合は作成
+            If Not String.IsNullOrEmpty(targetFolderPath) AndAlso Not Directory.Exists(targetFolderPath) Then
+                Directory.CreateDirectory(targetFolderPath)
+            End If
+
+            ' 3. 埋め込みリソースの検索
+            Dim asm As Assembly = Assembly.GetExecutingAssembly()
+            Dim manifestResourceNames As String() = asm.GetManifestResourceNames()
+
+            ' 完全修飾名（プロジェクト名.フォルダ名.ファイル名）を考慮して検索
+            Dim targetResourceName As String = manifestResourceNames.FirstOrDefault(
+            Function(r) r.EndsWith("." & resourceName, StringComparison.OrdinalIgnoreCase) OrElse
+                        r.Equals(resourceName, StringComparison.OrdinalIgnoreCase)
+        )
+
+            If String.IsNullOrEmpty(targetResourceName) Then
+                Return False
+            End If
+
+            ' 4. リソースの読み込みとファイル書き出し
+            Using stream As Stream = asm.GetManifestResourceStream(targetResourceName)
+                If stream Is Nothing Then Return False
+
+                Using fileStream As New FileStream(outputPath, FileMode.Create, FileAccess.Write)
+                    stream.CopyTo(fileStream)
+                End Using
+            End Using
+
+            Return True
+
+        Catch ex As Exception
+            Return False
+        End Try
+    End Function
+End Class
+
+Public Class BugFixes
+
+    ' (リソース内のファイル名, 出力先のパス, 摘要後のバージョン)
+    Public Shared ReadOnly FixList As New List(Of (FileName As String, DestPath As String, DeployVersionWEB As String, DeployVersionAPI As String, DeployVersionDB As String, MainVersion As String)) From {
+        ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3")
+    }
+
+    ''' <summary>
+    ''' FixList に定義されたすべての修正ファイルを埋め込みリソースから取り出し、
+    ''' 指定された DestPath（フルパス）へ上書き配置します。
+    ''' </summary>
+    ''' <returns>すべての配置が成功した場合は True、1つでも失敗した場合は False</returns>
+    Public Shared Function DeployFixFiles() As Boolean
+        Dim allSuccess As Boolean = True
+
+        For Each item In FixList
+            ' リソースファイル名と出力先のフルパスを渡して配置
+            Dim isSuccess As Boolean = PubFlugLinkage.GetFileFromRSC(item.FileName, item.DestPath)
+
+            ' バージョンの更新も実施
+            PubFlugLinkage.UpdateVersionAll(item.DeployVersionWEB, TECA_sets.webVerPath)
+            PubFlugLinkage.UpdateVersionAll(item.DeployVersionAPI,, TECA_sets.APIVerPath)
+            PubFlugLinkage.UpdateVersionAll(item.DeployVersionDB,,, TECA_sets.connStrdb1)
+            PubFlugLinkage.UpdateVersionAll(item.MainVersion,,,, TECA_sets.connStrdb1)
+
+            If Not isSuccess Then
+                allSuccess = False
+                ' 必要に応じて失敗時のログ出力をここに記述
+                ' Debug.WriteLine($"配置失敗: {item.FileName} -> {item.DestPath}")
+            End If
+        Next
+
+        Return allSuccess
+    End Function
 
 End Class

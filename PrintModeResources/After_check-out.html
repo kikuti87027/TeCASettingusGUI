@@ -1,0 +1,59 @@
+<div class="modal-header">
+	{{'check_out'|translate}}
+</div>
+
+<!-- チェックアウト -->
+<div class="modal-body">
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label class="col-xs-12">{{'check_out_access'|translate}}</label>
+		</div>
+		<div class="col-xs-4">
+			<div class="form-group">
+				<label class="col-xs-7 control-label">{{'etsuran'|translate}}</label>
+				<div class="col-xs-5 data-toggle-text">
+					<input type="checkbox" data-size="small" data-toggle="toggle" ng-text="'kano-fukano'|translate" ng-model="checkoutInfo.etsuran" togglebtn>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-7 control-label">{{'download'|translate}}</label>
+				<div class="col-xs-5 data-toggle-text">
+					<input type="checkbox" data-size="small" data-toggle="toggle" ng-text="'kano-fukano'|translate" ng-model="checkoutInfo.download" togglebtn>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-8">
+			<div class="form-group" ng-class="{'has-error': check.comment}">
+				<div class="col-xs-12">
+					<textarea class="form-control" style="margin-top: 0px; margin-left: 10px;" 
+						placeholder="{{'textarea_comment'|translate}}" ng-model="checkoutInfo.comment"></textarea>
+				</div>
+			</div>
+			<div class="form-group has-error" ng-show="check.comment">
+				<div class="col-xs-12">
+					<p class="help-block">
+						<span class="glyphicon glyphicon-exclamation-sign"></span>{{check.comment}}
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-xs-12">
+				<div ui-grid="gridOptions" ui-grid-pinning ui-grid-auto-resize ui-grid-resize-columns ng-style="getTableHeight(gridOptions, 10)"></div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="modal-footer">
+	<div class="btn-group pull-right">
+		<button type="button" class="btn btn-primary btn-icon" ng-click="cancel()" ng-title="'cancel'|translate" tooltip>
+			<span class="glyphicon glyphicon-remove"></span>
+		</button>
+	</div>
+	<div class="btn-group pull-right">
+		<button type="button" class="btn btn-danger btn-icon btn-icon-large" ng-click="ok()" ng-disabled="checkDisabled()" ng-title="'ok'|translate" tooltip>
+			<span class="glyphicon glyphicon-ok"></span>
+		</button>
+	</div>
+</div>

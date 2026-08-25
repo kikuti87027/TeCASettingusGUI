@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.3.3.0</Version>
+	<Version>3.4.0</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -115,25 +115,51 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
+    <None Remove="PrintModeResources\After_check-out.controller.js" />
+    <None Remove="PrintModeResources\After_check-out.html" />
+    <None Remove="PrintModeResources\After_check-out.service.js" />
+    <None Remove="PrintModeResources\Before_check-out.controller.js" />
+    <None Remove="PrintModeResources\Before_check-out.html" />
+    <None Remove="PrintModeResources\Before_check-out.service.js" />
     <None Remove="PubSymcResource\After_AttributeResource.class" />
     <None Remove="PubSymcResource\After_AttributeServiceImpl.class" />
+    <None Remove="PubSymcResource\After_index.html" />
+    <None Remove="PubSymcResource\after_main.detail.controller.js" />
     <None Remove="PubSymcResource\After_MZokusei.class" />
     <None Remove="PubSymcResource\After_MZokuseiMapper.class" />
     <None Remove="PubSymcResource\Before_AttributeResource.class" />
     <None Remove="PubSymcResource\Before_AttributeServiceImpl.class" />
+    <None Remove="PubSymcResource\Before_index.html" />
+    <None Remove="PubSymcResource\Before_main.detail.controller.js" />
     <None Remove="PubSymcResource\Before_MZokusei.class" />
     <None Remove="PubSymcResource\Before_MZokuseiMapper.class" />
+    <None Remove="PubSymcResource\guide-modal.controller.js" />
+    <None Remove="PubSymcResource\guide-modal.html" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
+    <EmbeddedResource Include="PrintModeResources\After_check-out.controller.js" />
+    <EmbeddedResource Include="PrintModeResources\After_check-out.html" />
+    <EmbeddedResource Include="PrintModeResources\After_check-out.service.js" />
+    <EmbeddedResource Include="PrintModeResources\Before_check-out.controller.js" />
+    <EmbeddedResource Include="PrintModeResources\Before_check-out.html" />
+    <EmbeddedResource Include="PrintModeResources\Before_check-out.service.js" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeResource.class" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeServiceImpl.class" />
+    <EmbeddedResource Include="PrintModeResources\After_index.html" />
+    <EmbeddedResource Include="PrintModeResources\After_main.detail.controller.js" />
     <EmbeddedResource Include="PubSymcResource\After_MZokusei.class" />
     <EmbeddedResource Include="PubSymcResource\After_MZokuseiMapper.class" />
     <EmbeddedResource Include="PubSymcResource\Before_AttributeResource.class" />
     <EmbeddedResource Include="PubSymcResource\Before_AttributeServiceImpl.class" />
+    <EmbeddedResource Include="PrintModeResources\Before_index.html" />
+    <EmbeddedResource Include="PrintModeResources\Before_main.detail.controller.js" />
     <EmbeddedResource Include="PubSymcResource\Before_MZokusei.class" />
     <EmbeddedResource Include="PubSymcResource\Before_MZokuseiMapper.class" />
+    <EmbeddedResource Include="PrintModeResources\guide-modal.controller.js" />
+    <EmbeddedResource Include="PrintModeResources\guide-modal.html" />
   </ItemGroup>
 
 
@@ -147,19 +173,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Core" Version="1.60.0" />
+    <PackageReference Include="Azure.Core" Version="1.62.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="CXuesong.Shims.VisualBasic.Devices" Version="0.3.0" />
-    <PackageReference Include="log4net" Version="3.3.2" />
+    <PackageReference Include="log4net" Version="3.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.3.26207.106">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
-    <PackageReference Include="NuGet.Versioning" Version="7.6.0" />
-    <PackageReference Include="System.Management" Version="10.0.9" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.9" />
+    <PackageReference Include="NuGet.Versioning" Version="7.9.0" />
+    <PackageReference Include="System.Management" Version="10.0.11" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.11" />
   </ItemGroup>
 
   <ItemGroup>

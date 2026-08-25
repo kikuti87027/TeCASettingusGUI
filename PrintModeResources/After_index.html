@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<title>図脳TeCA</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="components/angular-pdfjs-viewer/bower_components/pdf.js-viewer/viewer.css">
+		<link rel="stylesheet" href="components/LigatureSymbols/ligature-symbols.css">
+		<link rel="stylesheet" href="components/jquery-layout/layout-default-latest.css" /> <!-- これより後に bootstrap.css を読み込むこと！ -->
+		<link rel="stylesheet" href="components/jquery-ui/themes/smoothness/jquery-ui.css" />
+		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="components/bootstrap-toggle-master/css/bootstrap-toggle.min.css" />
+		<link rel="stylesheet" href="components/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" />
+		<link rel="stylesheet" href="components/ng-tags-input/build/ng-tags-input.css" />
+		<link rel="stylesheet" href="components/ng-tags-input/build/ng-tags-input.bootstrap.css" />
+		<link rel="stylesheet" href="components/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="components/icomoon/style.css" />
+		<link rel="stylesheet" href="components/angular-ui-layout/src/ui-layout.css" />
+		<link rel="stylesheet" href="components/angular-ui-grid/ui-grid.css" />
+		<link rel="stylesheet" href="components/angular-bootstrap-nav-tree-master/dist/abn_tree.css" />
+		<link rel="stylesheet" href="components/font-awesome-animation/dist/font-awesome-animation.css" />
+		<link rel="stylesheet" href="components/bootstrap-colorpickersliders-master/dist/bootstrap.colorpickersliders.css" />
+		<link rel="stylesheet" href="components/ng-sortable/dist/ng-sortable.min.css">
+		<link rel="stylesheet" href="components/ng-sortable/dist/ng-sortable.style.min.css">
+		<link rel="stylesheet" href="components/ng-sortable/board.css">
+		<link rel="stylesheet" href="components/ng-sortable/app.css">
+		<link rel="stylesheet" href="components/ng-sortable/scrollableContainer.css">
+		<link rel="stylesheet" href="components/angular-ui-tree/angular-ui-tree.min.css">
+		<link rel="stylesheet" href="components/jasny-bootstrap/css/jasny-bootstrap.min.css">
+		<link rel="stylesheet" href="components/angular-ivh-treeview-master/dist/ivh-treeview.min.css">
+		<link rel="stylesheet" href="components/angular-ivh-treeview-master/dist/ivh-treeview-theme-basic.css">
+		<link rel="stylesheet" href="components/rangeslider.js-2.3.0/rangeslider.css">
+
+		<!-- 一般画面 -->
+		<link rel="stylesheet" href="app/app.css" />
+		<link rel="stylesheet" href="app/header/header.css" />
+		<link rel="stylesheet" href="app/login/login.css" />
+		<link rel="stylesheet" href="app/main/main.css" />
+		<link rel="stylesheet" href="app/upload/upload.css" />
+		<link rel="stylesheet" href="app/import/import.css" />
+		<link rel="stylesheet" href="app/pdf/pdf.css" />
+		<link rel="stylesheet" href="app/workflow-shinsei/workflow-shinsei.css" />
+		<link rel="stylesheet" href="app/kekka/kekka.css" />
+		<link rel="stylesheet" href="app/preview/preview.css" />
+		<link rel="stylesheet" href="app/print-preview/print-preview.css" />
+		<!-- 一般画面(モーダル) -->
+		<link rel="stylesheet" href="app/main-modal/main-modal.css" />
+		<link rel="stylesheet" href="app/change-password/change-password.css" />
+		<link rel="stylesheet" href="app/upload-select-file/upload-select-file.css" />
+		<link rel="stylesheet" href="app/upload-modal/upload-modal.css" />
+		<link rel="stylesheet" href="app/select-file/select-file.css" />
+		<link rel="stylesheet" href="app/kensaku-csv-torikomi/kensaku-csv-torikomi.css" />
+		<link rel="stylesheet" href="app/kensaku-joken-name-change/kensaku-joken-name-change.css" />
+		<link rel="stylesheet" href="app/kensaku-joken-name-input/kensaku-joken-name-input.css" />
+		<link rel="stylesheet" href="app/zokusei/zokusei.css" />
+		<link rel="stylesheet" href="app/zokusei-input/zokusei-input.css" />
+		<link rel="stylesheet" href="app/check-in/check-in.css" />
+		<link rel="stylesheet" href="app/check-in-modal/check-in-modal.css" />
+		<link rel="stylesheet" href="app/check-out/check-out.css" />
+		<link rel="stylesheet" href="app/check-out-kaijo/check-out-kaijo.css" />
+		<link rel="stylesheet" href="app/pdf-security/pdf-security.css" />
+		<link rel="stylesheet" href="app/pdf-masking/pdf-masking.css" />
+		<link rel="stylesheet" href="app/workflow-shinsei-modal/workflow-shinsei-modal.css" />
+		<link rel="stylesheet" href="app/workflow-shinseikbn-select/workflow-shinseikbn-select.css" />
+		<link rel="stylesheet" href="app/password-input-list-modal/password-input-list-modal.css" />
+		<link rel="stylesheet" href="app/password-input-modal/password-input-modal.css" />
+		<link rel="stylesheet" href="app/comment-modal/comment-modal.css" />
+		<link rel="stylesheet" href="app/version/version.css" />
+		<link rel="stylesheet" href="app/comment-kakunin/comment-kakunin.css" />
+		<!-- 管理者画面 -->
+		<link rel="stylesheet" href="app/_admin/menu/menu.css" />
+		<link rel="stylesheet" href="app/_admin/condition/condition.css" />
+		<link rel="stylesheet" href="app/_admin/menu/menu.css" />
+		<link rel="stylesheet" href="app/_admin/user/style.css" />
+		<link rel="stylesheet" href="app/_admin/group/style.css" />
+		<link rel="stylesheet" href="app/_admin/attribute/style.css" />
+		<link rel="stylesheet" href="app/_admin/attribute-board/style.css" />
+		<link rel="stylesheet" href="app/_admin/attribute-select-board/style.css" />
+		<link rel="stylesheet" href="app/_admin/tree/style.css" />
+		<link rel="stylesheet" href="app/_admin/tree-board/style.css" />
+		<link rel="stylesheet" href="app/_admin/workflow/style.css" />
+		<link rel="stylesheet" href="app/_admin/access-limit/style.css" />
+		<link rel="stylesheet" href="app/_admin/function-limit/style.css" />
+		<link rel="stylesheet" href="app/_admin/common-mark/style.css" />
+		<link rel="stylesheet" href="app/_admin/mark-date/mark-date.css" />
+		<link rel="stylesheet" href="app/_admin/mark-position/style.css" />
+		<link rel="stylesheet" href="app/_admin/auto-mark-print/style.css" />
+		<link rel="stylesheet" href="app/_admin/mail-template/style.css" />
+		<link rel="stylesheet" href="app/_admin/ad-cooperation/style.css" />
+		<link rel="stylesheet" href="app/_admin/operation-log/style.css" />
+		<link rel="stylesheet" href="app/_admin/document-type/style.css" />
+		<link rel="stylesheet" href="app/_admin/file-completely-delete/style.css" />
+		<link rel="stylesheet" href="app/_admin/system-info/style.css" />
+		<!-- 管理者画面(モーダル) -->
+		<link rel="stylesheet" href="app/_admin/modal/modal.css" />
+		<link rel="stylesheet" href="app/_admin/select-user/select-user.css" />
+		<!-- オプション機能 -->
+		<!-- オプション機能 - 構成図面情報CSV取込 -->
+		<link rel="stylesheet" href="app/_option/composition-drawing-csv-import/operation-log-detail-composition-drawing/operation-log-detail-composition-drawing.css" />
+		<link rel="stylesheet" href="app/_option/composition-drawing-csv-import/import-composition-drawing/import-composition-drawing.css" />
+		<!-- オプション機能 - 図脳ファイルからの属性情報取得 -->
+		<link rel="stylesheet" href="app/_option/zuno-file-attribute/upload-zuno-file-attribute-modal/upload-zuno-file-attribute-modal.css" />
+		<!-- オプション機能 - ファイル(PDF)比較 -->
+		<link rel="stylesheet" href="app/_option/file-comparison/file-compare/file-compare.css" />
+
+		<link rel="resource" type="application/l10n" href="components/angular-pdfjs-viewer/bower_components/pdf.js-viewer/locale/locale.properties">
+	</head>
+
+	<body id="mainBody" ng-app="app">
+		<div ng-controller="AppController" ng-class="::{ios: isiOS()}">
+			<div class="container-fluid">
+				<div ng-include="'app/header/header.html'" ng-controller="HeaderController"></div>
+				<div ng-view></div>
+				<div class="footer">&copy; 2016 PHOTRON LIMITED.</div>
+			</div>
+		</div>
+		<div id="printContainer"></div>
+		<script src="components/jquery/dist/jquery.min.js"></script>
+		<script src="components/jquery-layout/jquery.layout.js"></script>
+		<script src="components/jquery-layout/jquery-ui-latest.js"></script>
+		<script src="components/jquery-layout/jquery.layout-latest.js"></script>
+		<script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="components/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>
+		<script src="components/angular/angular.min.js"></script>
+		<script src="components/angular-ui-slider/src/slider.js"></script>
+		<script src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+		<script src="components/angular-route/angular-route.min.js"></script>
+		<script src="components/angular-translate/angular-translate.min.js"></script>
+		<script src="components/angular-translate/angular-translate-storage-cookie.min.js"></script>
+		<script src="components/angular-translate/angular-translate-storage-local.min.js"></script>
+		<script src="components/angular-translate/angular-translate-loader-static-files.min.js"></script>
+		<script src="components/angular-translate/angular-translate-handler-log.min.js"></script>
+		<script src="components/angular-ui-grid/ui-grid.min.js"></script>
+		<script src="components/angular-ui-layout/src/ui-layout.js"></script>
+		<script src="components/ng-tags-input/build/ng-tags-input.min.js"></script>
+		<script src="components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+		<script src="components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ja.min.js"></script>
+		<script src="components/angular-bootstrap-nav-tree-master/dist/abn_tree_directive.js"></script>
+		<script src="components/angular-bootstrap-contextMenu-master/contextMenu.js"></script>
+		<script src="components/ng-file-upload/dist/ng-file-upload.min.js"></script>
+		<script src="components/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
+		<script src="components/bootstrap-colorpickersliders-master/dist/bootstrap.colorpickersliders.min.js"></script>
+		<script src="components/bootstrap-colorpickersliders-master/dist/bootstrap.colorpickersliders.nocielch.min.js"></script>
+		<script src="components/TinyColor-master/dist/tinycolor-min.js"></script>
+		<script src="components/raphael/raphael.min.js"></script>
+		<script src="components/angular-animate/angular-animate.min.js"></script>
+		<script src="components/angular-touch/angular-touch.min.js"></script>
+		<script src="components/ng-sortable/dist/ng-sortable.min.js"></script>
+		<script src="components/angular-ui-sortable/sortable.min.js"></script>
+		<script src="components/angular-ui-tree/angular-ui-tree.min.js"></script>
+		<script src="components/jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
+		<script src="components/angular-caret/caret.js"></script>
+		<script src="components/angular-ivh-treeview-master/dist/ivh-treeview.min.js"></script>
+		<script src="components/PapaParse-4.1.2/papaparse.min.js"></script>
+		<script src="components/ngStorage-master/ngStorage.min.js"></script>
+		<script src="components/socket.io-client-master/socket.io.js"></script>
+		<script src="components/jquery.inview-master/jquery.inview.min.js"></script>
+		<script src="components/js-spark-md5-master/spark-md5.min.js"></script>
+		<script src="components/angular-pdfjs-viewer/dist/angular-pdfjs-viewer.js"></script>
+		<script src="components/angular-pdfjs-viewer/bower_components/pdf.js-viewer/pdf.js"></script>
+		<script src="components/webL10n/l10n.js"></script>
+		<script src="components/rangeslider.js-2.3.0/rangeslider.min.js"></script>
+
+		<!-- 一般画面 -->
+		<script src="app/app.js"></script>
+		<script src="app/app.service.js"></script>
+
+		<script src="app/common/storage.service.js"></script>
+
+		<script src="app/header/header.js"></script>
+		<script src="app/header/header.controller.js"></script>
+		<script src="app/header/header.service.js"></script>
+
+		<script src="app/login/login.js"></script>
+		<script src="app/login/login.controller.js"></script>
+		<script src="app/login/login.service.js"></script>
+
+		<script src="app/main/main.js"></script>
+		<script src="app/main/main.controller.js"></script>
+		<script src="app/main/main.service.js"></script>
+		<script src="app/main/zokusei-search.service.js"></script>
+
+		<script src="app/upload/upload.js"></script>
+		<script src="app/upload/upload.controller.js"></script>
+		<script src="app/upload/upload.service.js"></script>
+
+		<script src="app/import/import.js"></script>
+		<script src="app/import/import.controller.js"></script>
+		<script src="app/import/import.service.js"></script>
+
+		<script src="app/pdf/pdf.js"></script>
+		<script src="app/pdf/pdf.controller.js"></script>
+		<script src="app/pdf/pdf.service.js"></script>
+
+		<script src="app/workflow-shinsei/workflow-shinsei.js"></script>
+		<script src="app/workflow-shinsei/workflow-shinsei.controller.js"></script>
+		<script src="app/workflow-shinsei/workflow-shinsei.service.js"></script>
+
+		<script src="app/kekka/kekka.js"></script>
+		<script src="app/kekka/kekka.controller.js"></script>
+		<script src="app/kekka/kekka.service.js"></script>
+
+		<script src="app/preview/preview.js"></script>
+		<script src="app/preview/preview.controller.js"></script>
+		<script src="app/preview/preview.service.js"></script>
+
+		<script src="app/print-preview/print-preview.js"></script>
+		<script src="app/print-preview/print-preview.controller.js"></script>
+		<script src="app/print-preview/print-preview.service.js"></script>
+
+		<!-- 一般画面(モーダル) -->
+		<script src="app/message/message.js"></script>
+		<script src="app/message/message.controller.js"></script>
+		<script src="app/message/message.service.js"></script>
+
+		<script src="app/http/http.js"></script>
+		<script src="app/http/http.controller.js"></script>
+		<script src="app/http/http.service.js"></script>
+
+		<script src="app/main-modal/main-modal.js"></script>
+		<script src="app/main-modal/main-modal.controller.js"></script>
+		<script src="app/main-modal/main-modal.service.js"></script>
+
+		<script src="app/zokusei/zokusei.js"></script>
+		<script src="app/zokusei/zokusei.controller.js"></script>
+		<script src="app/zokusei/zokusei.service.js"></script>
+
+		<script src="app/zokusei-input/zokusei-input.js"></script>
+		<script src="app/zokusei-input/zokusei-input.controller.js"></script>
+		<script src="app/zokusei-input/zokusei-input.service.js"></script>
+
+		<script src="app/change-document-type/change-document-type.js"></script>
+		<script src="app/change-document-type/change-document-type.controller.js"></script>
+		<script src="app/change-document-type/change-document-type.service.js"></script>
+		
+		<script src="app/change-password/change-password.js"></script>
+		<script src="app/change-password/change-password.controller.js"></script>
+		<script src="app/change-password/change-password.service.js"></script>
+
+		<script src="app/check-in/check-in.js"></script>
+		<script src="app/check-in/check-in.controller.js"></script>
+		<script src="app/check-in/check-in.service.js"></script>
+
+		<script src="app/check-in-modal/check-in-modal.js"></script>
+		<script src="app/check-in-modal/check-in-modal.controller.js"></script>
+		<script src="app/check-in-modal/check-in-modal.service.js"></script>
+
+		<script src="app/check-out/check-out.js"></script>
+		<script src="app/check-out/check-out.controller.js"></script>
+		<script src="app/check-out/check-out.service.js"></script>
+
+		<script src="app/guide-modal/guide-modal.controller.js"></script> 
+
+		<script src="app/check-out-kaijo/check-out-kaijo.js"></script>
+		<script src="app/check-out-kaijo/check-out-kaijo.controller.js"></script>
+		<script src="app/check-out-kaijo/check-out-kaijo.service.js"></script>
+
+		<script src="app/pdf-security/pdf-security.js"></script>
+		<script src="app/pdf-security/pdf-security.controller.js"></script>
+		<script src="app/pdf-security/pdf-security.service.js"></script>
+
+		<script src="app/pdf-masking/pdf-masking.js"></script>
+		<script src="app/pdf-masking/pdf-masking.controller.js"></script>
+		<script src="app/pdf-masking/pdf-masking.service.js"></script>
+
+		<script src="app/select-file/select-file.js"></script>
+		<script src="app/select-file/select-file.controller.js"></script>
+		<script src="app/select-file/select-file.service.js"></script>
+
+		<script src="app/upload-select-file/upload-select-file.js"></script>
+		<script src="app/upload-select-file/upload-select-file.controller.js"></script>
+		<script src="app/upload-select-file/upload-select-file.service.js"></script>
+
+		<script src="app/upload-modal/upload-modal.js"></script>
+		<script src="app/upload-modal/upload-modal.controller.js"></script>
+		<script src="app/upload-modal/upload-modal.service.js"></script>
+
+		<script src="app/kensaku-csv-torikomi/kensaku-csv-torikomi.js"></script>
+		<script src="app/kensaku-csv-torikomi/kensaku-csv-torikomi.controller.js"></script>
+		<script src="app/kensaku-csv-torikomi/kensaku-csv-torikomi.service.js"></script>
+
+		<script src="app/kensaku-joken-name-change/kensaku-joken-name-change.js"></script>
+		<script src="app/kensaku-joken-name-change/kensaku-joken-name-change.controller.js"></script>
+		<script src="app/kensaku-joken-name-change/kensaku-joken-name-change.service.js"></script>
+
+		<script src="app/kensaku-joken-name-input/kensaku-joken-name-input.js"></script>
+		<script src="app/kensaku-joken-name-input/kensaku-joken-name-input.controller.js"></script>
+		<script src="app/kensaku-joken-name-input/kensaku-joken-name-input.service.js"></script>
+
+		<script src="app/workflow-shinsei-modal/workflow-shinsei-modal.js"></script>
+		<script src="app/workflow-shinsei-modal/workflow-shinsei-modal.controller.js"></script>
+		<script src="app/workflow-shinsei-modal/workflow-shinsei-modal.service.js"></script>
+
+		<script src="app/workflow-shinseikbn-select/workflow-shinseikbn-select.js"></script>
+		<script src="app/workflow-shinseikbn-select/workflow-shinseikbn-select.controller.js"></script>
+		<script src="app/workflow-shinseikbn-select/workflow-shinseikbn-select.service.js"></script>
+
+		<script src="app/password-input-list-modal/password-input-list-modal.js"></script>
+		<script src="app/password-input-list-modal/password-input-list-modal.controller.js"></script>
+		<script src="app/password-input-list-modal/password-input-list-modal.service.js"></script>
+
+		<script src="app/password-input-modal/password-input-modal.js"></script>
+		<script src="app/password-input-modal/password-input-modal.controller.js"></script>
+		<script src="app/password-input-modal/password-input-modal.service.js"></script>
+
+		<script src="app/comment-modal/comment-modal.js"></script>
+		<script src="app/comment-modal/comment-modal.controller.js"></script>
+		<script src="app/comment-modal/comment-modal.service.js"></script>
+
+		<script src="app/version/version.js"></script>
+		<script src="app/version/version.controller.js"></script>
+		<script src="app/version/version.service.js"></script>
+
+		<script src="app/comment-kakunin/comment-kakunin.js"></script>
+		<script src="app/comment-kakunin/comment-kakunin.controller.js"></script>
+		<script src="app/comment-kakunin/comment-kakunin.service.js"></script>
+
+		<!-- 管理者画面 -->
+		<script src="app/_admin/condition/condition.js"></script>
+		<script src="app/_admin/condition/condition.controller.js"></script>
+		<script src="app/_admin/condition/condition.service.js"></script>
+
+		<script src="app/_admin/menu/menu.js"></script>
+		<script src="app/_admin/menu/menu.controller.js"></script>
+		<script src="app/_admin/menu/menu.service.js"></script>
+
+		<script src="app/_admin/user/user.js"></script>
+		<script src="app/_admin/user/list.controller.js"></script>
+		<script src="app/_admin/user/detail.controller.js"></script>
+		<script src="app/_admin/user/user-upload.controller.js"></script>
+		<script src="app/_admin/user/import.controller.js"></script>
+		<script src="app/_admin/user/user.service.js"></script>
+
+		<script src="app/_admin/group/group.js"></script>
+		<script src="app/_admin/group/list.controller.js"></script>
+		<script src="app/_admin/group/detail.controller.js"></script>
+		<script src="app/_admin/group/group.service.js"></script>
+
+		<script src="app/_admin/attribute/attribute.js"></script>
+		<script src="app/_admin/attribute/list.controller.js"></script>
+		<script src="app/_admin/attribute/detail.controller.js"></script>
+		<script src="app/_admin/attribute/attribute.service.js"></script>
+
+		<script src="app/_admin/attribute-board/attribute-board.js"></script>
+		<script src="app/_admin/attribute-board/attribute-board.controller.js"></script>
+		<script src="app/_admin/attribute-board/attribute-board.service.js"></script>
+
+		<script src="app/_admin/attribute-select-board/attribute-select-board.js"></script>
+		<script src="app/_admin/attribute-select-board/attribute-select-board.controller.js"></script>
+		<script src="app/_admin/attribute-select-board/attribute-select-board.service.js"></script>
+
+		<script src="app/_admin/tree/tree.js"></script>
+		<script src="app/_admin/tree/list.controller.js"></script>
+		<script src="app/_admin/tree/detail-tree.controller.js"></script>
+		<script src="app/_admin/tree/detail-folder.controller.js"></script>
+		<script src="app/_admin/tree/tree.service.js"></script>
+
+		<script src="app/_admin/tree-board/tree-board.js"></script>
+		<script src="app/_admin/tree-board/tree-board.controller.js"></script>
+		<script src="app/_admin/tree-board/tree-board.service.js"></script>
+
+		<script src="app/_admin/workflow/workflow.js"></script>
+		<script src="app/_admin/workflow/list.controller.js"></script>
+		<script src="app/_admin/workflow/detail.controller.js"></script>
+		<script src="app/_admin/workflow/workflow.service.js"></script>
+
+		<script src="app/_admin/access-limit/access-limit.js"></script>
+		<script src="app/_admin/access-limit/list.controller.js"></script>
+		<script src="app/_admin/access-limit/detail.controller.js"></script>
+		<script src="app/_admin/access-limit/access-limit.service.js"></script>
+
+		<script src="app/_admin/function-limit/function-limit.js"></script>
+		<script src="app/_admin/function-limit/list.controller.js"></script>
+		<script src="app/_admin/function-limit/detail.controller.js"></script>
+		<script src="app/_admin/function-limit/function-limit.service.js"></script>
+
+		<script src="app/_admin/common-mark/common-mark.js"></script>
+		<script src="app/_admin/common-mark/list.controller.js"></script>
+		<script src="app/_admin/common-mark/detail.controller.js"></script>
+		<script src="app/_admin/common-mark/common-mark-upload.controller.js"></script>
+		<script src="app/_admin/common-mark/common-mark.service.js"></script>
+
+		<script src="app/_admin/mark-date/mark-date.js"></script>
+		<script src="app/_admin/mark-date/mark-date.controller.js"></script>
+		<script src="app/_admin/mark-date/mark-date.service.js"></script>
+
+		<script src="app/_admin/mark-position/mark-position.js"></script>
+		<script src="app/_admin/mark-position/list.controller.js"></script>
+		<script src="app/_admin/mark-position/detail.controller.js"></script>
+		<script src="app/_admin/mark-position/mark-position.service.js"></script>
+
+		<script src="app/_admin/auto-mark-print/auto-mark-print.js"></script>
+		<script src="app/_admin/auto-mark-print/list.controller.js"></script>
+		<script src="app/_admin/auto-mark-print/detail.controller.js"></script>
+		<script src="app/_admin/auto-mark-print/auto-mark-print.service.js"></script>
+
+		<script src="app/_admin/mail-template/mail-template.js"></script>
+		<script src="app/_admin/mail-template/mail-template.controller.js"></script>
+		<script src="app/_admin/mail-template/mail-template.service.js"></script>
+
+		<script src="app/_admin/ad-cooperation/ad-cooperation.js"></script>
+		<script src="app/_admin/ad-cooperation/ad-cooperation.controller.js"></script>
+		<script src="app/_admin/ad-cooperation/ad-cooperation.service.js"></script>
+
+		<script src="app/_admin/operation-log/operation-log.js"></script>
+		<script src="app/_admin/operation-log/operation-log.controller.js"></script>
+		<script src="app/_admin/operation-log/detail.controller.js"></script>
+		<script src="app/_admin/operation-log/setting.controller.js"></script>
+		<script src="app/_admin/operation-log/operation-log.service.js"></script>
+
+		<script src="app/_admin/document-type/document-type.js"></script>
+		<script src="app/_admin/document-type/document-type.service.js"></script>
+		<script src="app/_admin/document-type/list.controller.js"></script>
+		<script src="app/_admin/document-type/detail.controller.js"></script>
+
+		<script src="app/_admin/file-completely-delete/file-completely-delete.js"></script>
+		<script src="app/_admin/file-completely-delete/file-completely-delete.service.js"></script>
+		<script src="app/_admin/file-completely-delete/file-completely-delete.controller.js"></script>
+
+		<script src="app/_admin/system-info/system-info.js"></script>
+		<script src="app/_admin/system-info/system-info.controller.js"></script>
+		<script src="app/_admin/system-info/system-info.service.js"></script>
+
+		<!-- 管理者画面(モーダル) -->
+		<script src="app/_admin/select-user/select-user.js"></script>
+		<script src="app/_admin/select-user/select-user.controller.js"></script>
+		<script src="app/_admin/select-user/select-user.service.js"></script>
+
+		<!-- オプション機能 -->
+		<script src="app/_option/option.service.js"></script>
+		<!-- オプション機能 - 構成図面情報CSV取込 -->
+		<script src="app/_option/composition-drawing-csv-import/import-composition-drawing/import-composition-drawing.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/import-composition-drawing/import-composition-drawing.controller.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/import-composition-drawing/import-composition-drawing.service.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/operation-log-detail-composition-drawing/operation-log-detail-composition-drawing.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/operation-log-detail-composition-drawing/operation-log-detail-composition-drawing.controller.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/operation-log-detail-composition-drawing/operation-log-detail-composition-drawing.service.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/upload-composition-drawing/upload-composition-drawing.service.js"></script>
+		<script src="app/_option/composition-drawing-csv-import/select-file-composition-drawing/select-file-composition-drawing.service.js"></script>
+		<!-- オプション機能 - 図脳ファイルからの属性情報取得 -->
+		<script src="app/_option/zuno-file-attribute/main-zuno-file-attribute/main-zuno-file-attribute.service.js"></script>
+		<script src="app/_option/zuno-file-attribute/upload-zuno-file-attribute/upload-zuno-file-attribute.service.js"></script>
+		<script src="app/_option/zuno-file-attribute/upload-zuno-file-attribute-modal/upload-zuno-file-attribute-modal.js"></script>
+		<script src="app/_option/zuno-file-attribute/upload-zuno-file-attribute-modal/upload-zuno-file-attribute-modal.controller.js"></script>
+		<script src="app/_option/zuno-file-attribute/upload-zuno-file-attribute-modal/upload-zuno-file-attribute-modal.service.js"></script>
+		<script src="app/_option/zuno-file-attribute/check-in-zuno-file-attribute/check-in-zuno-file-attribute.service.js"></script>
+		<script src="app/_option/zuno-file-attribute/workflow-shinsei-zuno-file-attribute/workflow-shinsei-zuno-file-attribute.service.js"></script>
+		<!-- オプション機能 - ファイル(PDF)比較 -->
+		<script src="app/_option/file-comparison/file-compare/file-compare.js"></script>
+		<script src="app/_option/file-comparison/file-compare/file-compare.controller.js"></script>
+		<script src="app/_option/file-comparison/file-compare/file-compare.service.js"></script>
+
+	</body>
+
+</html>

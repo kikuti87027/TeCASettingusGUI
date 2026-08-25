@@ -1,0 +1,22 @@
+﻿<div class="modal-header">
+    <h4>アプリ自動連係の設定手順</h4>
+</div>
+<div class="modal-body">
+    <p>ファイルのダウンロードを開始しました。</p>
+    <div class="alert alert-info">
+        <strong>初めてこの機能をご利用になる場合の設定：</strong><br>
+        1. ブラウザのダウンロード履歴（または右上のポップアップ）から、保存されたファイルを<strong>右クリック</strong>します。<br>
+        2. メニューから<strong>「この種類のファイルは常に開く」</strong>にチェックを入れてください。<br>
+        ※次回からボタンを押すだけで、ローカルアプリが自動起動するようになります。
+    </div>
+    <div class="checkbox" style="margin-top: 15px;">
+        <label>
+            <input type="checkbox" ng-model="dontShowAgain"> <strong>今後はこの案内を表示しない</strong>
+        </label>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-icon" ng-click="closeModal()">
+        <span class="glyphicon glyphicon-ok"></span> 閉じる
+    </button>
+</div>

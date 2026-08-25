@@ -54,6 +54,8 @@ Partial Class Form_TeCASettings
         ProgressBar = New ProgressBar()
         GroupBox_Progress = New GroupBox()
         GroupBox_General = New GroupBox()
+        ComboBox_PrintMode = New ComboBox()
+        Label23 = New Label()
         ComboBox_LoginTimeout = New ComboBox()
         Label16 = New Label()
         ComboBox_vScroll = New ComboBox()
@@ -124,8 +126,8 @@ Partial Class Form_TeCASettings
         CheckBox_Wide = New CheckBox()
         Tab_mail = New TabPage()
         TabPage2 = New TabPage()
-        ComboBox_PrintMode = New ComboBox()
-        Label23 = New Label()
+        ComboBox_appLinkJNLP = New ComboBox()
+        Label24 = New Label()
         GroupBox_ninsyo.SuspendLayout()
         GroupBox_PDF.SuspendLayout()
         GroupBox_Upload.SuspendLayout()
@@ -429,6 +431,8 @@ Partial Class Form_TeCASettings
         ' 
         ' GroupBox_General
         ' 
+        GroupBox_General.Controls.Add(ComboBox_appLinkJNLP)
+        GroupBox_General.Controls.Add(Label24)
         GroupBox_General.Controls.Add(ComboBox_PrintMode)
         GroupBox_General.Controls.Add(Label23)
         GroupBox_General.Controls.Add(ComboBox_LoginTimeout)
@@ -439,10 +443,28 @@ Partial Class Form_TeCASettings
         GroupBox_General.Controls.Add(Label1)
         GroupBox_General.Location = New Point(5, 131)
         GroupBox_General.Name = "GroupBox_General"
-        GroupBox_General.Size = New Size(358, 138)
+        GroupBox_General.Size = New Size(358, 166)
         GroupBox_General.TabIndex = 9
         GroupBox_General.TabStop = False
         GroupBox_General.Text = "全般"
+        ' 
+        ' ComboBox_PrintMode
+        ' 
+        ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox_PrintMode.FormattingEnabled = True
+        ComboBox_PrintMode.Location = New Point(246, 102)
+        ComboBox_PrintMode.Name = "ComboBox_PrintMode"
+        ComboBox_PrintMode.Size = New Size(99, 23)
+        ComboBox_PrintMode.TabIndex = 12
+        ' 
+        ' Label23
+        ' 
+        Label23.AutoSize = True
+        Label23.Location = New Point(166, 107)
+        Label23.Name = "Label23"
+        Label23.Size = New Size(56, 15)
+        Label23.TabIndex = 13
+        Label23.Text = "印刷モード"
         ' 
         ' ComboBox_LoginTimeout
         ' 
@@ -710,7 +732,7 @@ Partial Class Form_TeCASettings
         ' 
         GroupBox_DWG.Controls.Add(Button_DWG)
         GroupBox_DWG.Controls.Add(TextBox_DWG)
-        GroupBox_DWG.Location = New Point(5, 275)
+        GroupBox_DWG.Location = New Point(5, 298)
         GroupBox_DWG.Name = "GroupBox_DWG"
         GroupBox_DWG.Size = New Size(358, 49)
         GroupBox_DWG.TabIndex = 25
@@ -1137,23 +1159,24 @@ Partial Class Form_TeCASettings
         TabPage2.Text = "アップロード・公開"
         TabPage2.UseVisualStyleBackColor = True
         ' 
-        ' ComboBox_PrintMode
+        ' ComboBox_appLinkJNLP
         ' 
-        ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
-        ComboBox_PrintMode.FormattingEnabled = True
-        ComboBox_PrintMode.Location = New Point(246, 102)
-        ComboBox_PrintMode.Name = "ComboBox_PrintMode"
-        ComboBox_PrintMode.Size = New Size(99, 23)
-        ComboBox_PrintMode.TabIndex = 12
+        ComboBox_appLinkJNLP.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox_appLinkJNLP.FormattingEnabled = True
+        ComboBox_appLinkJNLP.Location = New Point(247, 131)
+        ComboBox_appLinkJNLP.Name = "ComboBox_appLinkJNLP"
+        ComboBox_appLinkJNLP.Size = New Size(99, 23)
+        ComboBox_appLinkJNLP.TabIndex = 14
         ' 
-        ' Label23
+        ' Label24
         ' 
-        Label23.AutoSize = True
-        Label23.Location = New Point(166, 107)
-        Label23.Name = "Label23"
-        Label23.Size = New Size(56, 15)
-        Label23.TabIndex = 13
-        Label23.Text = "印刷モード"
+        Label24.AutoSize = True
+        Label24.Location = New Point(167, 136)
+        Label24.Name = "Label24"
+        Label24.Size = New Size(57, 15)
+        Label24.TabIndex = 15
+        Label24.Text = "アプリ連携"
+        Label24.TextAlign = ContentAlignment.MiddleCenter
         ' 
         ' Form_TeCASettings
         ' 
@@ -1325,4 +1348,6 @@ Partial Class Form_TeCASettings
     Friend WithEvents CheckBox_PublicSymc As CheckBox
     Friend WithEvents ComboBox_PrintMode As ComboBox
     Friend WithEvents Label23 As Label
+    Friend WithEvents ComboBox_appLinkJNLP As ComboBox
+    Friend WithEvents Label24 As Label
 End Class
