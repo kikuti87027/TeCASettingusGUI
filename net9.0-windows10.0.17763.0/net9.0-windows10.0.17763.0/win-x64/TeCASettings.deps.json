@@ -7,7 +7,7 @@
   "targets": {
     ".NETCoreApp,Version=v9.0": {},
     ".NETCoreApp,Version=v9.0/win-x64": {
-      "TeCASettings/3.4.0": {
+      "TeCASettings/3.4.0.1": {
         "dependencies": {
           "Azure.Core": "1.62.0",
           "BCrypt.Net-Next": "4.2.0",
@@ -1182,7 +1182,7 @@
     }
   },
   "libraries": {
-    "TeCASettings/3.4.0": {
+    "TeCASettings/3.4.0.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

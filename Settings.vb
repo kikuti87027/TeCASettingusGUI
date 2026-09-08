@@ -458,8 +458,12 @@ End Class
 
 Public Class JNLPprint
     Public Shared JNLPprint_printPvwSvcJS As String = TECA_sets.ClientWebPath & "\app\print-preview\print-preview.service.js"
+    Public Shared JNLPprint_PDFeditPath As String = TECA_sets.ClientWebPath & "\app\pdf\pdf.controller.js"
     Public Shared ReadOnly JNJPprint_FileList As New List(Of (FileName As String, DestPath As String)) From {
-        ("After_print-preview.service.js", Path.GetDirectoryName(JNLPprint_printPvwSvcJS))
+        ("After_print-preview.service.js", Path.GetDirectoryName(JNLPprint_printPvwSvcJS)),
+        ("After_pdf.service.js", Path.GetDirectoryName(JNLPprint_PDFeditPath)),
+        ("After_pdf.html", Path.GetDirectoryName(JNLPprint_PDFeditPath)),
+        ("After_pdf.controller.js", Path.GetDirectoryName(JNLPprint_PDFeditPath))
     }
 
 End Class
@@ -1523,7 +1527,9 @@ Public Class BugFixes
 
     ' (リソース内のファイル名, 出力先のパス, 摘要後のバージョン)
     Public Shared ReadOnly FixList As New List(Of (FileName As String, DestPath As String, DeployVersionWEB As String, DeployVersionAPI As String, DeployVersionDB As String, MainVersion As String)) From {
-        ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3")
+        ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3"),
+        ("ZUNO_TECA-372_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4"),
+        ("ReleaseNotes.pdf", TECA_sets.WEB_PATH & "\web\server\public\pdf\ReleaseNotes.pdf", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4")
     }
 
     ''' <summary>

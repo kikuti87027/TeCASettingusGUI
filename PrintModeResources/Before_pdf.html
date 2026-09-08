@@ -1,0 +1,169 @@
+<div class="row panes-full" pdf-layout>
+	<!-- PDF編集 -->
+	<div id="panePdfBody" class="pane-pdf-body"
+		ng-class="{'ios-no-scroll': (mode == Const.PDF_EDIT_MODE_MASKING || mode == Const.PDF_EDIT_MODE_MASKING_START)}">
+		<div id="base"></div>
+	</div>
+	<!-- PDF編集 ボタンエリア -->
+	<div class="pane-pdf-toolbar pane-toolbar">
+		<div class="btn-toolbar pdf-toolber">
+			<div class="btn-group">
+				<button type="button" class="btn btn-danger btn-icon" ng-click="save()" ng-disabled="checkDisabled(Const.BUTTON_SAVE)" ng-title="'hozon'|translate" tooltip>
+					<span class="glyphicon glyphicon-floppy-disk"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group">
+				<div class="pdf_combo_wrapper">
+					<select class="form-control pdf_combo_yoshi_size" ng-model="pdfData.pageInfo[pdfData.dispPage - 1].yoshiSizeId" ng-options="data.id as data.dispName for data in m_yoshi_size" ng-change="changeYoshiSize()"></select>
+				</div>
+			</div>
+			<div class="btn-group checkbox data-toggle-text">
+				<input type="checkbox" data-toggle="toggle" ng-text="'all_page_on-off'|translate" ng-model="pdfData.allPage" togglebtn></input>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary btn-icon" ng-click="print()"
+					ng-if="popoverMsg" data-container="body"
+					ng-disabled="checkDisabled(Const.BUTTON_PRINT)" ng-title="'print'|translate"
+					data-toggle="popover" data-placement="bottom" data-trigger="manual" ng-content="popoverMsg" popover>
+					<span class="glyphicon glyphicon-print error-animated faa-flash animated" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-primary btn-icon" ng-click="print()" ng-disabled="checkDisabled(Const.BUTTON_PRINT)"
+					ng-if="!popoverMsg" ng-title="'print'|translate" tooltip>
+					<span class="glyphicon glyphicon-print"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-icon" ng-click="selector()"
+					ng-class="{'btn-warning': mode == Const.PDF_EDIT_MODE_SELECT, 'btn-primary': mode != Const.PDF_EDIT_MODE_SELECT}"
+					ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" ng-title="'object_select'|translate" tooltip>
+					<span class="glyphicon glyphicon-hand-up"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-icon" ng-click="mask()"
+					ng-class="{'btn-warning': (mode == Const.PDF_EDIT_MODE_MASKING || mode == Const.PDF_EDIT_MODE_MASKING_START), 'btn-primary': (mode != Const.PDF_EDIT_MODE_MASKING && mode != Const.PDF_EDIT_MODE_MASKING_START)}"
+					ng-disabled="checkDisabled(Const.BUTTON_MASK)" ng-title="'henshu'|translate" tooltip>
+					<span class="glyphicon glyphicon-edit"></span>
+				</button>
+			</div>
+			<div class="btn-group" ng-show="getOption(Const.OPTION_SBT_IMPRINT)">
+				<button type="button" class="btn btn-icon dropdown-toggle" data-toggle="dropdown"
+					ng-class="{'btn-warning': mode == Const.PDF_EDIT_MODE_OUIN, 'btn-primary': mode != Const.PDF_EDIT_MODE_OUIN}"
+					aria-haspopup="true" aria-expanded="false" ng-title="'ouin'|translate"
+					ng-click="ouin()" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" tooltip>
+					<span class="glyphicon glyphicon-pawn"></span>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li ng-show="data.id != ''" ng-repeat-start="data in ouinList">
+						<a href ng-click="ouin(data)">{{data.name}}</a>
+					</li>
+					<li ng-show="data.id == ''" ng-repeat-end role="separator" class="divider"></li>
+				</ul>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group">
+				<button type="button" ng-class="mode == Const.PDF_EDIT_MODE_REMOVE ? 'btn-warning':'btn-primary'"
+					class="btn btn-icon" ng-click="remove()" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)"
+					ng-title="'henshu_sakujo'|translate" tooltip>
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary btn-icon" ng-click="changePage(Const.PAGING_FIRST)" ng-disabled="pdfData.dispPage <= 1 || !pdfData.dispPage" ng-title="'page_first'|translate" tooltip>
+					<span class="glyphicon glyphicon-fast-backward"></span>
+				</button>
+				<button type="button" class="btn btn-primary btn-icon" ng-click="changePage(Const.PAGING_PREVIOUS)" ng-disabled="pdfData.dispPage <= 1 || !pdfData.dispPage" ng-title="'page_before'|translate" tooltip>
+					<span class="glyphicon glyphicon-backward"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<input type="text" class="text-center form-control input-sm" name="page" id="page" size="5" ng-model="pdfData.dispPage"
+					ng-focus="oldValue = pdfData.dispPage" ng-blur="changeDispPage(oldValue)"
+					ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" jp-ng-model/>
+			</div>
+			<div class="btn-group mt-5">
+				<span class="inline">/{{pdfData.totalPageCount}}</span>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary btn-icon" ng-click="changePage(Const.PAGING_NEXT)" ng-disabled="pdfData.dispPage >= pdfData.totalPageCount || !pdfData.dispPage" ng-title="'page_after'|translate" tooltip>
+					<span class="glyphicon glyphicon-forward"></span>
+				</button>
+				<button type="button" class="btn btn-primary btn-icon" ng-click="changePage(Const.PAGING_LAST)" ng-disabled="pdfData.dispPage >= pdfData.totalPageCount || !pdfData.dispPage" ng-title="'page_last'|translate" tooltip>
+					<span class="glyphicon glyphicon-fast-forward"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group">
+				<div class="btn-group">
+					<div class="input-group-btn base-fit-btn">
+						<button type="button" class="btn btn-primary btn-icon" ng-click="baseFit(false)" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" ng-title="'fit_width'|translate" tooltip>
+							<span class="glyphicon glyphicon-resize-horizontal"></span>
+						</button>
+					</div>
+					<div class="input-group-btn base-fit-btn">
+						<button type="button" class="btn btn-primary btn-icon" ng-click="baseFit(true)" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" ng-title="'fit_screen'|translate" tooltip>
+							<span class="glyphicon glyphicon-resize-full"></span>
+						</button>
+					</div>
+					<div class="input-group-btn">
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-primary btn-icon" ng-click="changeScale(false)" ng-disabled="checkDisabled(Const.BUTTON_ZOOM_OUT)" ng-title="'shukusho'|translate" tooltip>
+								<span class="glyphicon glyphicon-zoom-out"></span>
+							</button>
+						</span>
+						<span class="input-group-addon">
+							<input class="range-slider" type="range" ng-value="slider.value" ng-info="slider" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" rangeslider>
+						</span>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-primary btn-icon" ng-click="changeScale(true)" ng-disabled="checkDisabled(Const.BUTTON_ZOOM_IN)" ng-title="'kakudai'|translate" tooltip>
+								<span class="glyphicon glyphicon-zoom-in"></span>
+							</button>
+						</span>
+					</div>
+				</div>
+				<div class="btn-group">
+					<div class="pdf_combo_wrapper pdf_scale">
+						<select class="form-control pdf_combo_select" ng-model="slider.value" ng-options="data.name as data.name for data in m_scale_joken" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)"></select>
+						<div>
+							<input class="form-control pdf_combo_text" type="text" ng-model="slider.value" ng-blur="checkSliderValue()" ng-change="changeSliderValue()" ng-disabled="checkDisabled(Const.BUTTON_TOOLS)" jp-ng-model/>
+						</div>
+					</div>
+				</div>
+				<div class="btn-group mt-5">
+					<span class="inline">%</span>
+				</div>
+			</div>
+			<div class="btn-group">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group pull-right pdf-btn-cancel">
+				<button type="button" class="btn btn-primary btn-icon" ng-click="cancel()" ng-disabled="checkDisabled(Const.BUTTON_CANCEL)" ng-title="'cancel'|translate" tooltip>
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			</div>
+			<div class="btn-group pull-right">
+				<span class="icon-blank"></span>
+			</div>
+			<div class="btn-group pull-right" ng-title="'print_yoshi_size'|translate" tooltip>
+				<span id="printYoshiSizeInfo" class="btn btn-primary btn-icon btn-non-disp-scrollbar" type="button" data-toggle="popover" data-placement="bottom" data-html="true" data-trigger="click" data-content="<pre>{{filePageSizeInfo}}</pre>" popover>
+					<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+				</span>
+			</div>
+		</div>
+	</div>
+	<a ng-href="{{jnlp}}" id="pdf-print" style="display: none;"></a>
+</div>

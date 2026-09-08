@@ -116,3 +116,13 @@
 
         ＝＝＝＝＝＝＝＝1.15.3　Master Release＝＝＝＝＝＝＝＝
 
+26-09-08　Ver3.4.0.1【Web1.15.0.4 / API1.15.0.4 / DB1.15.0.2】
+				【修正】	・【操作】-【印刷モード】
+                                 [Web] PDF編集にもJNLP印刷が存在、該当ファイル3つを組込リソースに追加し、JNJPprint_FileListへ追加定義
+								  　　　-->　ZUNO_TECA-373 PDF編集にもJNLP印刷が生存していた件
+				【BugFixes】・ゼロ長コメントのPDFで押印位置指定を用いた印刷を行うと、TeCAが強制ログオフの件を修正（ZUNO_TECA-372)
+				【BugFixes】・ReleaseNotesの差し替えも実装
+
+
+        ＝＝＝＝＝＝＝＝1.15.0.4　Master Release＝＝＝＝＝＝＝＝
+				 

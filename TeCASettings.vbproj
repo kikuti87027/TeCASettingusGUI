@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.4.0</Version>
+	<Version>3.4.0.1</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -115,13 +115,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="API_Patches\ReleaseNotes.pdf" />
     <None Remove="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
+    <None Remove="API_Patches\ZUNO_TECA-372_PrintPreviewServiceImpl.class" />
     <None Remove="PrintModeResources\After_check-out.controller.js" />
     <None Remove="PrintModeResources\After_check-out.html" />
     <None Remove="PrintModeResources\After_check-out.service.js" />
+    <None Remove="PrintModeResources\After_pdf.controller.js" />
+    <None Remove="PrintModeResources\After_pdf.html" />
+    <None Remove="PrintModeResources\After_pdf.service.js" />
     <None Remove="PrintModeResources\Before_check-out.controller.js" />
     <None Remove="PrintModeResources\Before_check-out.html" />
     <None Remove="PrintModeResources\Before_check-out.service.js" />
+    <None Remove="PrintModeResources\Before_pdf.controller.js" />
+    <None Remove="PrintModeResources\Before_pdf.html" />
+    <None Remove="PrintModeResources\Before_pdf.service.js" />
     <None Remove="PubSymcResource\After_AttributeResource.class" />
     <None Remove="PubSymcResource\After_AttributeServiceImpl.class" />
     <None Remove="PubSymcResource\After_index.html" />
@@ -139,13 +147,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="API_Patches\ReleaseNotes.pdf" />
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
+    <EmbeddedResource Include="API_Patches\ZUNO_TECA-372_PrintPreviewServiceImpl.class" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.controller.js" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.html" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.service.js" />
+    <EmbeddedResource Include="PrintModeResources\After_pdf.controller.js" />
+    <EmbeddedResource Include="PrintModeResources\After_pdf.html" />
+    <EmbeddedResource Include="PrintModeResources\After_pdf.service.js" />
     <EmbeddedResource Include="PrintModeResources\Before_check-out.controller.js" />
     <EmbeddedResource Include="PrintModeResources\Before_check-out.html" />
     <EmbeddedResource Include="PrintModeResources\Before_check-out.service.js" />
+    <EmbeddedResource Include="PrintModeResources\Before_pdf.controller.js" />
+    <EmbeddedResource Include="PrintModeResources\Before_pdf.html" />
+    <EmbeddedResource Include="PrintModeResources\Before_pdf.service.js" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeResource.class" />
     <EmbeddedResource Include="PubSymcResource\After_AttributeServiceImpl.class" />
     <EmbeddedResource Include="PrintModeResources\After_index.html" />
