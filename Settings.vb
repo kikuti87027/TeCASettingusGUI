@@ -1529,6 +1529,7 @@ Public Class BugFixes
     Public Shared ReadOnly FixList As New List(Of (FileName As String, DestPath As String, DeployVersionWEB As String, DeployVersionAPI As String, DeployVersionDB As String, MainVersion As String)) From {
         ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3"),
         ("ZUNO_TECA-372_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4"),
+        ("ZUNO_TECA-372B_PdfEditServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PdfEditServiceImpl.class", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4"),
         ("ReleaseNotes.pdf", TECA_sets.WEB_PATH & "\web\server\public\pdf\ReleaseNotes.pdf", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4")
     }
 
