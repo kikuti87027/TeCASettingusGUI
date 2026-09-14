@@ -13,8 +13,8 @@
           "CXuesong.Shims.VisualBasic.Devices": "0.3.0",
           "Npgsql": "10.0.3",
           "NuGet.Versioning": "7.9.0",
-          "System.Management": "10.0.11",
-          "System.ServiceProcess.ServiceController": "10.0.11",
+          "System.Management": "10.0.12",
+          "System.ServiceProcess.ServiceController": "10.0.12",
           "log4net": "3.4.0",
           "kikuchi": "1.7.4.2",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.17763.57"
@@ -244,11 +244,11 @@
           }
         }
       },
-      "System.CodeDom/10.0.11": {
+      "System.CodeDom/10.0.12": {
         "runtime": {
           "lib/net9.0/System.CodeDom.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1126.37416"
+            "fileVersion": "10.0.1226.42308"
           }
         }
       },
@@ -260,11 +260,11 @@
           }
         }
       },
-      "System.Diagnostics.EventLog/10.0.11": {
+      "System.Diagnostics.EventLog/10.0.12": {
         "runtime": {
           "lib/net9.0/System.Diagnostics.EventLog.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1126.37416"
+            "fileVersion": "10.0.1226.42308"
           }
         },
         "runtimeTargets": {
@@ -278,7 +278,7 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1126.37416"
+            "fileVersion": "10.0.1226.42308"
           }
         }
       },
@@ -290,22 +290,22 @@
           }
         }
       },
-      "System.Management/10.0.11": {
+      "System.Management/10.0.12": {
         "dependencies": {
-          "System.CodeDom": "10.0.11"
+          "System.CodeDom": "10.0.12"
         },
         "runtime": {
           "lib/net9.0/System.Management.dll": {
-            "assemblyVersion": "10.0.0.11",
-            "fileVersion": "10.0.1126.37416"
+            "assemblyVersion": "10.0.0.12",
+            "fileVersion": "10.0.1226.42308"
           }
         },
         "runtimeTargets": {
           "runtimes/win/lib/net9.0/System.Management.dll": {
             "rid": "win",
             "assetType": "runtime",
-            "assemblyVersion": "10.0.0.11",
-            "fileVersion": "10.0.1126.37416"
+            "assemblyVersion": "10.0.0.12",
+            "fileVersion": "10.0.1226.42308"
           }
         }
       },
@@ -328,22 +328,22 @@
           }
         }
       },
-      "System.ServiceProcess.ServiceController/10.0.11": {
+      "System.ServiceProcess.ServiceController/10.0.12": {
         "dependencies": {
-          "System.Diagnostics.EventLog": "10.0.11"
+          "System.Diagnostics.EventLog": "10.0.12"
         },
         "runtime": {
           "lib/net9.0/System.ServiceProcess.ServiceController.dll": {
-            "assemblyVersion": "10.0.0.11",
-            "fileVersion": "10.0.1126.37416"
+            "assemblyVersion": "10.0.0.12",
+            "fileVersion": "10.0.1226.42308"
           }
         },
         "runtimeTargets": {
           "runtimes/win/lib/net9.0/System.ServiceProcess.ServiceController.dll": {
             "rid": "win",
             "assetType": "runtime",
-            "assemblyVersion": "10.0.0.11",
-            "fileVersion": "10.0.1126.37416"
+            "assemblyVersion": "10.0.0.12",
+            "fileVersion": "10.0.1226.42308"
           }
         }
       },
@@ -551,12 +551,12 @@
       "path": "system.clientmodel/1.15.0",
       "hashPath": "system.clientmodel.1.15.0.nupkg.sha512"
     },
-    "System.CodeDom/10.0.11": {
+    "System.CodeDom/10.0.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-v40pNeBoZTYsiVxz+PzyZmmIr2JIhpK4VsFpQqZSZCXa51PDlNXIN2ESm8kDU0voZYVfLhxF9HvmBsxCJmkiRg==",
-      "path": "system.codedom/10.0.11",
-      "hashPath": "system.codedom.10.0.11.nupkg.sha512"
+      "sha512": "sha512-Kk3yEavoGHXCAFTLLegxztgSdj24JrkAHelwgWnu+YMFxezcU2DbABEOOIMdy04PExUtKQtlazaKqo0qSa1X6A==",
+      "path": "system.codedom/10.0.12",
+      "hashPath": "system.codedom.10.0.12.nupkg.sha512"
     },
     "System.Diagnostics.DiagnosticSource/10.0.10": {
       "type": "package",
@@ -565,12 +565,12 @@
       "path": "system.diagnostics.diagnosticsource/10.0.10",
       "hashPath": "system.diagnostics.diagnosticsource.10.0.10.nupkg.sha512"
     },
-    "System.Diagnostics.EventLog/10.0.11": {
+    "System.Diagnostics.EventLog/10.0.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-QTXEoQBzz00SFWbo7nAg1Ogd4f99lwqcO9uAJ7MYSLEUR28f6As32QktrqG2Fr9cfAfd1GjLyGYspE7Ipj7P6w==",
-      "path": "system.diagnostics.eventlog/10.0.11",
-      "hashPath": "system.diagnostics.eventlog.10.0.11.nupkg.sha512"
+      "sha512": "sha512-sOZM+VyRj1pg/ItlHsvrSbjws6oGqZveTzTNBGZ9ziwRDyKsOF3ub6vhvOdxotCIqtlnyHAIwP5sLNvgiZC+pQ==",
+      "path": "system.diagnostics.eventlog/10.0.12",
+      "hashPath": "system.diagnostics.eventlog.10.0.12.nupkg.sha512"
     },
     "System.IO.Pipelines/10.0.10": {
       "type": "package",
@@ -579,12 +579,12 @@
       "path": "system.io.pipelines/10.0.10",
       "hashPath": "system.io.pipelines.10.0.10.nupkg.sha512"
     },
-    "System.Management/10.0.11": {
+    "System.Management/10.0.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xyNn8KGbWI88LoUwg3rB8qcpFFST6dr8Ro/qS8GBu2GOwR0v7J82kVFHTiiPtvEKS79VbMTxs/sIKQ+Cq1Zs1g==",
-      "path": "system.management/10.0.11",
-      "hashPath": "system.management.10.0.11.nupkg.sha512"
+      "sha512": "sha512-ApUsYmsNG8aPiMxsO6ROGZnqJwSZY8zeMlAQcuQg+ilPFUcIyBUC0BL8qA6wmPLNVsvL4nyhUrhhxh6qn0cx0Q==",
+      "path": "system.management/10.0.12",
+      "hashPath": "system.management.10.0.12.nupkg.sha512"
     },
     "System.Memory.Data/10.0.10": {
       "type": "package",
@@ -600,12 +600,12 @@
       "path": "system.net.serversentevents/10.0.9",
       "hashPath": "system.net.serversentevents.10.0.9.nupkg.sha512"
     },
-    "System.ServiceProcess.ServiceController/10.0.11": {
+    "System.ServiceProcess.ServiceController/10.0.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-khROyIQ3GAZy5MbCabfmlbvxf9nuvdveFP2XbRCteZ9Lq8OFEvImmrjV6acl1LegRu/9T6VMxi9Lr+KZu29VHg==",
-      "path": "system.serviceprocess.servicecontroller/10.0.11",
-      "hashPath": "system.serviceprocess.servicecontroller.10.0.11.nupkg.sha512"
+      "sha512": "sha512-sFV+RM/yPtshiCAEIuTm8Dt4F7VuKRbL50PnGC9nXHolk/jw+z3T8zx7axKTBC8mqtQU2ZmjsoPC9b1iwOilNQ==",
+      "path": "system.serviceprocess.servicecontroller/10.0.12",
+      "hashPath": "system.serviceprocess.servicecontroller.10.0.12.nupkg.sha512"
     },
     "System.Text.Encodings.Web/10.0.10": {
       "type": "package",
