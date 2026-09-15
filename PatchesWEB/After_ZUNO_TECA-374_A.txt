@@ -1,0 +1,19 @@
+	// ファイル一覧データ取得処理
+	var getFileListData = function($scope, searchJoken, searchAreaFlg) {
+		var searchJoken = searchJoken || $scope.$parent.fileListSearchJoken;
+		// 現在の検索モードを退避
+		var oldTrashBoxMode = angular.copy($scope.$parent.trashBoxMode);
+		// 一覧エリアのリストデータの取得が存在する場合、詳細エリア等の初期化処理を行う
+		if (searchJoken.dataFetchKbn != Const.TREE_DATA_FETCH_KBN_TREE) {
+			getFileListDataInit($scope, searchJoken);
+		}
+		// ★【追加:ZUNO_TECA-374】searchJoken 内の数値項目が空文字や undefined の場合は null に正規化
+		if (searchJoken) {
+			if (searchJoken.id === undefined || searchJoken.id === "") {
+				searchJoken.id = null;
+			}
+			if (searchJoken.no === undefined || searchJoken.no === "") {
+				searchJoken.no = null;
+			}
+		}
+		// 通信用パラメータの設定

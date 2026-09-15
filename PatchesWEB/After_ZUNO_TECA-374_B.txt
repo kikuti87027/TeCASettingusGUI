@@ -1,0 +1,17 @@
+	// ファイル詳細データ取得処理
+	var getFileDetailData = function($scope, fileId, workflowId) {
+                // ★【追加:ZUNO_TECA-374】fileId が不正な場合は API 呼出を行わずガード
+		if (!fileId || fileId === "undefined" || fileId === "") {
+			return;
+		}
+
+		// 通信用パラメータの設定
+		var param = {
+			'langKey': CommonService.getLanguageKey($scope),
+			'id': CommonService.parseInt(fileId),
+			'workflowId': (workflowId && workflowId !== "undefined") ? CommonService.parseInt(workflowId) : null
+		};
+		var dtlInfo = {
+			fileId: fileId
+		};
+		// 詳細情報の取得

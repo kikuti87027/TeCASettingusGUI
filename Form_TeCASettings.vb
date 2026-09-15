@@ -249,7 +249,7 @@ Public Class Form_TeCASettings
                 '【PDF_Convert.properties】の更新 
                 Dim exchangeFtypes As Integer
                 For Each FType In pdfConvFtypeArray
-                    exchangeFtypes += Misc.ExchangeString(pdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
+                    exchangeFtypes += Misc.ExchangeString(PdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
                 Next
                 If exchangeFtypes <> pdfConvFtypeArray.Length Then
                     MessageBox.Show("PDFConverter変換：拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
@@ -421,11 +421,11 @@ Public Class Form_TeCASettings
 
                     '▼▼▼テンポラリから書き戻す
                     'classes下のやつをバックアップ
-                    File.Copy(mailPropPath, tmpFOLDER.ToString + "\mail.master", True)
+                    File.Copy(MailPropPath, tmpFOLDER.ToString + "\mail.master", True)
 
                     '書き戻し
                     Try
-                        File.Copy(tmpFOLDER.ToString + "\mail.tmp", mailPropPath, True)
+                        File.Copy(tmpFOLDER.ToString + "\mail.tmp", MailPropPath, True)
                     Catch ex As Exception
                         MessageBox.Show("TeCAシステムへの書き込みを失敗しました", "メール設定")
                         Label_notice.Text = "メール設定で更新エラー"
@@ -588,22 +588,22 @@ Public Class Form_TeCASettings
                 '    　check-out.service.js,
                 '    　check-out.controller.js
 
-                PubFlugLinkage.DeployFiles(ComboBox_appLinkJNLP.SelectedItem.ToString = "直接", appLinkJNLP.FileList)
+                PubFlugLinkage.DeployFiles(ComboBox_appLinkJNLP.SelectedItem.ToString = "直接", AppLinkJNLP.FileList)
 
                 ' 　 他機能と競合する以下２つ　--->　文字列差し替え
                 ' 　　 main.html,
                 ' 　　 main-service.js
                 ' 　　 
                 If ComboBox_appLinkJNLP.SelectedItem.ToString = "直接" Then
-                    ReplaceTextInFile(appLinkJNLP.mainHTML(False), appLinkJNLP.mainHTML(True), TECA_sets.ClientWebPath & "\app\main\main.html")
-                    ReplaceTextInFile(appLinkJNLP.mainServiceJS1(False), appLinkJNLP.mainServiceJS1(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    ReplaceTextInFile(appLinkJNLP.mainServiceJS2(False), appLinkJNLP.mainServiceJS2(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(AppLinkJNLP.mainHTML(False), AppLinkJNLP.mainHTML(True), TECA_sets.ClientWebPath & "\app\main\main.html")
+                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS1(False), AppLinkJNLP.mainServiceJS1(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS2(False), AppLinkJNLP.mainServiceJS2(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
                     PubFlugLinkage.GetFileFromRSC("guide-modal.html", TECA_sets.ClientWebPath & "\app\guide-modal\")
                     PubFlugLinkage.GetFileFromRSC("guide-modal.controller.js", TECA_sets.ClientWebPath & "\app\guide-modal\")
                 Else
-                    ReplaceTextInFile(appLinkJNLP.mainHTML(True), appLinkJNLP.mainHTML(False), TECA_sets.ClientWebPath & "\app\main\main.html")
-                    ReplaceTextInFile(appLinkJNLP.mainServiceJS1(True), appLinkJNLP.mainServiceJS1(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    ReplaceTextInFile(appLinkJNLP.mainServiceJS2(True), appLinkJNLP.mainServiceJS2(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(AppLinkJNLP.mainHTML(True), AppLinkJNLP.mainHTML(False), TECA_sets.ClientWebPath & "\app\main\main.html")
+                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS1(True), AppLinkJNLP.mainServiceJS1(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
+                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS2(True), AppLinkJNLP.mainServiceJS2(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
                     If Directory.Exists(TECA_sets.ClientWebPath & "\app\guide-modal\") Then
                         Try
                             Directory.Delete(TECA_sets.ClientWebPath & "\app\guide-modal\", True)
@@ -617,7 +617,17 @@ Public Class Form_TeCASettings
                 '　　Classファイルなど、ファイル交換でバグ修正対応を行ったものを埋込リソースから展開し、バージョン表記も変更する
                 BugFixes.DeployFixFiles()
 
+                '【WEBバグフィクス】
+                '　　JSファイルなど、ファイル内の所定行内について交換するタイプのバグ修正対応を行ったものを埋込リソースから展開する
+                Dim ZUNO_TECA_374 As Integer = 0
+                ZUNO_TECA_374 = BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_A.txt", True)
+                ZUNO_TECA_374 *= BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_B.txt", True)
+                ZUNO_TECA_374 *= BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_C.txt", True)
 
+                If ZUNO_TECA_374 < 0 Then
+                    MessageBox.Show($"ZUNO_TECA-374の修正ができませんでした。TeCACMDログをご覧ください")
+                    Exit Sub
+                End If
 
                 'PipeMan実行
                 If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
@@ -792,7 +802,7 @@ Public Class Form_TeCASettings
                 Exit For
             End Try
 
-            If (exec_mode.ToUpper = "STOP") Then
+            If (exec_mode.Equals("STOP", StringComparison.CurrentCultureIgnoreCase)) Then
 
                 If ServiceName = "yacexsvc" Then Exit For
 
@@ -807,7 +817,7 @@ Public Class Form_TeCASettings
                 End Try
             End If
 
-            If (exec_mode.ToUpper = "START") Then
+            If (exec_mode.Equals("START", StringComparison.CurrentCultureIgnoreCase)) Then
                 Try
                     Do While sc.Status <> ServiceControllerStatus.Running
                         sc.Start()
@@ -1291,7 +1301,7 @@ Public Class Form_TeCASettings
         End If
 
         '▼▼▼guide-modalフォルダの有無で「LNLPアプリ連携」のJNLP/直接の判定とコンボを選択
-        If Directory.Exists(appLinkJNLP.GuideModalpath) Then
+        If Directory.Exists(AppLinkJNLP.GuideModalpath) Then
             ComboBox_appLinkJNLP.SelectedItem = "直接"
         Else
             ComboBox_appLinkJNLP.SelectedItem = "JNLP"
@@ -1522,18 +1532,18 @@ Public Class Form_TeCASettings
             Dim mailCHB As Control() = Me.Controls.Find("CheckBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
 
             If mailTX.Length > 0 Then
-                CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+                CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(MailPropPath, MailCTRL, QUOTA.EqualToCR)
                 If (MailCTRL = "password") Then
                     CurrentPassword = CType(mailTX(0), TextBox).Text  '前のパスワードは保管
                 End If
             End If
 
             If mailCB.Length > 0 Then
-                CType(mailCB(0), ComboBox).SelectedItem = TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR)
+                CType(mailCB(0), ComboBox).SelectedItem = TXTFunc.IDSearch(MailPropPath, MailCTRL, QUOTA.EqualToCR)
             End If
 
             If mailCHB.Length > 0 Then
-                If TXTFunc.IDSearch(mailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
+                If TXTFunc.IDSearch(MailPropPath, MailCTRL, QUOTA.EqualToCR) = "true" Then
                     CType(mailCHB(0), CheckBox).Checked = True
                 Else
                     CType(mailCHB(0), CheckBox).Checked = False

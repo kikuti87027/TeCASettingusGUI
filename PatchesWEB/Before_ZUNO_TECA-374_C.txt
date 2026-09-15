@@ -1,0 +1,5 @@
+				// ツリーの場合
+
+				// ツリーIDの設定
+				searchJoken.id = branch.treeHyojiId;
+				// ツリー表示条件の設定

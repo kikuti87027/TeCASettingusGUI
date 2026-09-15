@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.4.0.2</Version>
+	<Version>3.4.0.3</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -119,6 +119,11 @@
     <None Remove="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
     <None Remove="API_Patches\ZUNO_TECA-372B_PdfEditServiceImpl.class" />
     <None Remove="API_Patches\ZUNO_TECA-372_PrintPreviewServiceImpl.class" />
+    <None Remove="PatchesWEB\After_ZUNO_TECA-374_B.txt" />
+    <None Remove="PatchesWEB\After_ZUNO_TECA-374_C.txt" />
+    <None Remove="PatchesWEB\Before_ZUNO_TECA-374_A.txt" />
+    <None Remove="PatchesWEB\Before_ZUNO_TECA-374_B.txt" />
+    <None Remove="PatchesWEB\Before_ZUNO_TECA-374_C.txt" />
     <None Remove="PrintModeResources\After_check-out.controller.js" />
     <None Remove="PrintModeResources\After_check-out.html" />
     <None Remove="PrintModeResources\After_check-out.service.js" />
@@ -152,6 +157,12 @@
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-372B_PdfEditServiceImpl.class" />
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-372_PrintPreviewServiceImpl.class" />
+    <EmbeddedResource Include="PatchesWEB\After_ZUNO_TECA-374_A.txt" />
+    <EmbeddedResource Include="PatchesWEB\After_ZUNO_TECA-374_B.txt" />
+    <EmbeddedResource Include="PatchesWEB\After_ZUNO_TECA-374_C.txt" />
+    <EmbeddedResource Include="PatchesWEB\Before_ZUNO_TECA-374_A.txt" />
+    <EmbeddedResource Include="PatchesWEB\Before_ZUNO_TECA-374_B.txt" />
+    <EmbeddedResource Include="PatchesWEB\Before_ZUNO_TECA-374_C.txt" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.controller.js" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.html" />
     <EmbeddedResource Include="PrintModeResources\After_check-out.service.js" />

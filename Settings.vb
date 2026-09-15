@@ -12,18 +12,40 @@ Public Class TECA_sets
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const DB_IPaddr As String = "127.0.0.1"
+    Public Const defaultLOGDIR As String = API_PATH & "..\log\tecacmd"
 
     Public Const AllowedPWD As String = ".deny"
-    Public Shared Tomcat_PATH As String = Misc.ExtractInstallPathFromPath(Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).ToString, "tomcat")
+    Private Shared ReadOnly _Tomcat_PATH As String = Misc.ExtractInstallPathFromPath(Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).ToString, "tomcat")
+    Public Shared ReadOnly Property Tomcat_PATH As String
+        Get
+            Return _Tomcat_PATH
+        End Get
+    End Property
 
-    Public Shared TeCAappPath As String = Tomcat_PATH & "\webapps\api#teca"
-    Public Shared NDMSroot As String = TeCAappPath & "\WEB-INF\\classes\jp\co\photron\ndms"
+    Private Shared ReadOnly _TeCAappPath As String = _Tomcat_PATH & "\webapps\api#teca"
+    Public Shared ReadOnly Property TeCAappPath As String
+        Get
+            Return _TeCAappPath
+        End Get
+    End Property
+
+    Private Shared ReadOnly _NDMSroot As String = _TeCAappPath & "\WEB-INF\\classes\jp\co\photron\ndms"
+    Public Shared ReadOnly Property NDMSroot As String
+        Get
+            Return _NDMSroot
+        End Get
+    End Property
 
     Public Const ApacheConf_PATH As String = WEB_PATH & "\Apache24\conf"
     Public Const ServerWebPath As String = WEB_PATH & "\web\server\config\environment"
     Public Const ClientWebPath As String = WEB_PATH & "\web\client"
     Public Const webVerPath As String = WEB_PATH & "\web\server\api\common\const.js"
-    Public Shared APIVerPath As String = TeCAappPath & "\META-INF\MANIFEST.MF"
+    Private Shared ReadOnly _APIVerPath As String = _TeCAappPath & "\META-INF\MANIFEST.MF"
+    Public Shared ReadOnly Property APIVerPath As String
+        Get
+            Return _APIVerPath
+        End Get
+    End Property
 
     Public Const SelectFileJS As String = ClientWebPath & "\app\select-file\select-file.service.js"
     Public Const SelectFileHTML As String = ClientWebPath & "\app\select-file\select-file.html"
@@ -39,41 +61,102 @@ Public Class TECA_sets
     '公開フラグ連携関連パス
     Public Const WebPublicSymc_AttrSVCJS As String = ClientWebPath & "\app\_admin\attribute\attribute.service.js"
     Public Const WebPublicSymc_DetailHTML As String = ClientWebPath & "\app\_admin\attribute\detail.html"
-    Public Shared WebPublicSymc_MZMapperXML As String = NDMSroot & "\mapper\db2\MZokuseiMapper.xml"
-    Public Shared WebPublicSymc_MZMapperCLS As String = NDMSroot & "\mapper\db2\MZokuseiMapper.class"
-    Public Shared WebPublicSymc_attrRscCLS As String = NDMSroot & "\service\attribute\AttributeResource.class"
-    Public Shared WebPublicSymc_attrSvcImplCLS As String = NDMSroot & "\service\attribute\AttributeServiceImpl.class"
-    Public Shared WebPublicSymc_MZokuseiCLS As String = NDMSroot & "\model\MZokusei.class"
+    Private Shared ReadOnly _WebPublicSymc_MZMapperXML As String = _NDMSroot & "\mapper\db2\MZokuseiMapper.xml"
+    Public Shared ReadOnly Property WebPublicSymc_MZMapperXML As String
+        Get
+            Return _WebPublicSymc_MZMapperXML
+        End Get
+    End Property
+
+    Private Shared ReadOnly _WebPublicSymc_MZMapperCLS As String = _NDMSroot & "\mapper\db2\MZokuseiMapper.class"
+    Public Shared ReadOnly Property WebPublicSymc_MZMapperCLS As String
+        Get
+            Return _WebPublicSymc_MZMapperCLS
+        End Get
+    End Property
+
+    Private Shared ReadOnly _WebPublicSymc_attrRscCLS As String = _NDMSroot & "\service\attribute\AttributeResource.class"
+    Public Shared ReadOnly Property WebPublicSymc_attrRscCLS As String
+        Get
+            Return _WebPublicSymc_attrRscCLS
+        End Get
+    End Property
+
+    Private Shared ReadOnly _WebPublicSymc_attrSvcImplCLS As String = _NDMSroot & "\service\attribute\AttributeServiceImpl.class"
+    Public Shared ReadOnly Property WebPublicSymc_attrSvcImplCLS As String
+        Get
+            Return _WebPublicSymc_attrSvcImplCLS
+        End Get
+    End Property
+
+    Private Shared ReadOnly _WebPublicSymc_MZokuseiCLS As String = _NDMSroot & "\model\MZokusei.class"
+    Public Shared ReadOnly Property WebPublicSymc_MZokuseiCLS As String
+        Get
+            Return _WebPublicSymc_MZokuseiCLS
+        End Get
+    End Property
 
     Public Const IDpath As String = ServerWebPath & "\production.js"
 
-    Public Shared mailPropPath As String = TeCAappPath & "\WEB-INF\classes\mail.properties"
-    Public Shared pdfconvpropPath As String = TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
+    Private Shared ReadOnly _mailPropPath As String = _TeCAappPath & "\WEB-INF\classes\mail.properties"
+    Public Shared ReadOnly Property MailPropPath As String
+        Get
+            Return _mailPropPath
+        End Get
+    End Property
+
+    Private Shared ReadOnly _pdfconvpropPath As String = _TeCAappPath & "\Web-INF\classes\pdf_converter.properties"
+    Public Shared ReadOnly Property PdfconvpropPath As String
+        Get
+            Return _pdfconvpropPath
+        End Get
+    End Property
 
     'アプリ連携関連パス
     Public Const appLink_server As String = WEB_PATH & "\server\api"
 
     'ID,SecretIDを取得
-    Public Shared ReadOnly ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
-    Public Shared ReadOnly SecretID = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
+    Private Shared ReadOnly _ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
+    Public Shared ReadOnly Property ClientID As String
+        Get
+            Return _ClientID
+        End Get
+    End Property
+
+    Private Shared ReadOnly _SecretID As String = TXTFunc.IDSearch(IDpath, "clientSecret", QUOTA.Apostrofy)
+    Public Shared ReadOnly Property SecretID As String
+        Get
+            Return _SecretID
+        End Get
+    End Property
 
     'TeCA環境かどうかを判断するサービスの名称
-    Public Shared ReadOnly TeCAServices As String() = {"tomcat", "apache2.4", "postgresql"}
+    Private Shared ReadOnly _TeCAServices As String() = {"tomcat", "apache2.4", "postgresql"}
+    Public Shared ReadOnly Property TeCAServices As String()
+        Get
+            Return _TeCAServices
+        End Get
+    End Property
 
     'スクロールバッファの現在値の取得と、変更先の一覧を定義
-    Public Shared ReadOnly vScrollArray As String() = {"EXCESS_ROWS_FILE_LIST",
+    Private Shared ReadOnly _vScrollArray As String() = {"EXCESS_ROWS_FILE_LIST",
                                     "EXCESS_ROWS_WORKFLOW_LIST",
                                     "EXCESS_ROWS_SHINSEI_FILE_LIST",
                                     "EXCESS_ROWS_UPLOAD_FILE_LIST",
                                     "EXCESS_ROWS_SEARCH_USER_LIST",
                                     "EXCESS_ROWS_SELECT_USER_LIST",
                                     "EXCESS_ROWS_PDF_PASSWORD_KAKUNIN_FILE_LIST"}
+    Public Shared ReadOnly Property VScrollArray As String()
+        Get
+            Return _vScrollArray
+        End Get
+    End Property
 
     '公開/非公開の検索キー定義
     Public Const DefaultKokai_key As String = "zokusei[IDX_ZOKUSEI.KOKAI]"
 
     'メール設定の項目リスト
-    Public Shared ReadOnly mailPropArray As String() = {"mail.smtp.host",
+    Private Shared ReadOnly _mailPropArray As String() = {"mail.smtp.host",
                                     "mail.transport.protocol",
                                     "mail.smtp.port",
                                     "mail.smtp.connectiontimeout",
@@ -84,28 +167,48 @@ Public Class TECA_sets
                                     "user",
                                     "password",
                                     "from.name"}
+    Public Shared ReadOnly Property MailPropArray As String()
+        Get
+            Return _mailPropArray
+        End Get
+    End Property
 
     '操作タイムアウトの変更先リスト
-    Public Shared ReadOnly TOUTArray As String(,) = {
-                                     {Tomcat_PATH + "\conf\web.xml", "<session-timeout>", QUOTA.WebXLM},
+    Private Shared ReadOnly _TOUTArray As String(,) = {
+                                     {_Tomcat_PATH + "\conf\web.xml", "<session-timeout>", QUOTA.WebXLM},
                                      {WEB_PATH + "\web\server\config\environment\production.js", "sessionTimeout:", QUOTA.prodJS},
                                      {WEB_PATH + "\web\server\config\environment\development.js", "sessionTimeout:", QUOTA.prodJS},
-                                     {Tomcat_PATH + "\webapps\api#teca\WEB-INF\beans.xml", "refreshTokenLifetime", QUOTA.beansXML}
+                                     {_Tomcat_PATH + "\webapps\api#teca\WEB-INF\beans.xml", "refreshTokenLifetime", QUOTA.beansXML}
                                      }
+    Public Shared ReadOnly Property TOUTArray As String(,)
+        Get
+            Return _TOUTArray
+        End Get
+    End Property
 
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
     Public Const connStrdb1 As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db1"
 
     'SetLocal用定数群
-    Public Shared ReadOnly SetLocalArray As String(,) = {
-                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
-                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db1.properties", "db1.url=jdbc:postgresql:", "db1.url=jdbc:postgresql://127.0.0.1:5432/db1"},
-                                     {Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db2.properties", "db2.url=jdbc:postgresql:", "db2.url=jdbc:postgresql://127.0.0.1:5432/db2"},
+    Private Shared ReadOnly _SetLocalArray As String(,) = {
+                                     {_Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
+                                     {_Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db1.properties", "db1.url=jdbc:postgresql:", "db1.url=jdbc:postgresql://127.0.0.1:5432/db1"},
+                                     {_Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db2.properties", "db2.url=jdbc:postgresql:", "db2.url=jdbc:postgresql://127.0.0.1:5432/db2"},
                                      {WEB_PATH & "\web\server\config\environment\production.js", "address", vbTab & vbTab & "address: '127.0.0.1',"}
                                      }
+    Public Shared ReadOnly Property SetLocalArray As String(,)
+        Get
+            Return _SetLocalArray
+        End Get
+    End Property
 
     'PDF_converter.propertiesの変更先リスト
-    Public Shared ReadOnly pdfConvFtypeArray As String() = {"bmp=", "png=", "gif=", "tif=", "tiff=", "jpg=", "jpeg="}
+    Private Shared ReadOnly _pdfConvFtypeArray As String() = {"bmp=", "png=", "gif=", "tif=", "tiff=", "jpg=", "jpeg="}
+    Public Shared ReadOnly Property PdfConvFtypeArray As String()
+        Get
+            Return _pdfConvFtypeArray
+        End Get
+    End Property
 
     Public Class QUOTA
         Public Const ColonToCamma As Integer = 0  '      キーワード: 置換対象値,   【コロン～カンマ間が置換対象】
@@ -457,8 +560,8 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
 End Class
 
 Public Class JNLPprint
-    Public Shared JNLPprint_printPvwSvcJS As String = TECA_sets.ClientWebPath & "\app\print-preview\print-preview.service.js"
-    Public Shared JNLPprint_PDFeditPath As String = TECA_sets.ClientWebPath & "\app\pdf\pdf.controller.js"
+    Public Shared ReadOnly JNLPprint_printPvwSvcJS As String = TECA_sets.ClientWebPath & "\app\print-preview\print-preview.service.js"
+    Public Shared ReadOnly JNLPprint_PDFeditPath As String = TECA_sets.ClientWebPath & "\app\pdf\pdf.controller.js"
     Public Shared ReadOnly JNJPprint_FileList As New List(Of (FileName As String, DestPath As String)) From {
         ("After_print-preview.service.js", Path.GetDirectoryName(JNLPprint_printPvwSvcJS)),
         ("After_pdf.service.js", Path.GetDirectoryName(JNLPprint_PDFeditPath)),
@@ -468,7 +571,7 @@ Public Class JNLPprint
 
 End Class
 
-Public Class appLinkJNLP
+Public Class AppLinkJNLP
 
     Public Shared ReadOnly GuideModalpath As String = TECA_sets.ClientWebPath & "\app\guide-modal"
 
@@ -481,7 +584,7 @@ Public Class appLinkJNLP
         ("After_check-out.controller.js", Path.GetDirectoryName(TECA_sets.ServerWebPath & "\api\check-out\check-out.controller.js"))
     }
 
-    Public Shared mainHTML As New Dictionary(Of Boolean, String) From {
+    Public Shared ReadOnly mainHTML As New Dictionary(Of Boolean, String) From {
         {False, "						</pdfjs-viewer>
 					</div>
 				</div>
@@ -499,7 +602,7 @@ Public Class appLinkJNLP
 <a ng-href=""{{jnlp}}"" id=""jnlp"" style=""display: none;""></a>"}
     }
 
-    Public Shared mainServiceJS1 As New Dictionary(Of Boolean, String) From {
+    Public Shared ReadOnly mainServiceJS1 As New Dictionary(Of Boolean, String) From {
         {False, "			} else if ($('#kokaiTime').attr('class').split("" "").indexOf('ng-invalid') != -1) {
 				// 時間入力エリア内で invalid が発生している場合、書式エラー
 				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
@@ -521,7 +624,7 @@ Public Class appLinkJNLP
 "}
     }
 
-    Public Shared mainServiceJS2 As New Dictionary(Of Boolean, String) From {
+    Public Shared ReadOnly mainServiceJS2 As New Dictionary(Of Boolean, String) From {
         {False, "						// 詳細情報の取得
 						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,
 							function(resolveData) {
@@ -1064,7 +1167,7 @@ Public Class PubFlugLinkage
   </update>
 </mapper>]]>.Value
 
-    Public Shared ZokuseiSync_MZMapperXMLList As New List(Of (OFFval As String, ONval As String)) From {
+    Private Shared _zokuseiSync_MZMapperXMLList As New List(Of (OFFval As String, ONval As String)) From {
             (ZokuseiSync_MZMapperXML1_OFF, ZokuseiSync_MZMapperXML1_ON),
             (ZokuseiSync_MZMapperXML2_OFF, ZokuseiSync_MZMapperXML2_ON),
             (ZokuseiSync_MZMapperXML3_OFF, ZokuseiSync_MZMapperXML3_ON),
@@ -1126,7 +1229,7 @@ Public Class PubFlugLinkage
 	</div>
 </form>]]>.Value
 
-    Public Shared ZokuseiSync_DetailHTMLList As New List(Of (OFFval As String, ONval As String)) From {
+    Private Shared _zokuseiSync_DetailHTMLList As New List(Of (OFFval As String, ONval As String)) From {
             (ZokuseiSync_DetailHTML1_OFF, ZokuseiSync_DetailHTML1_ON),
             (ZokuseiSync_DetailHTML2_OFF, ZokuseiSync_DetailHTML2_ON),
             (ZokuseiSync_DetailHTML3_OFF, ZokuseiSync_DetailHTML3_ON)
@@ -1160,7 +1263,7 @@ Public Class PubFlugLinkage
 						// フラグ
 						data.publicLinkFlg = $scope.data.publicLinkFlg;]]>.Value
 
-    Public Shared ZokuseiSync_AttrSvcJS3List As New List(Of (OFFval As String, ONval As String)) From {
+    Private Shared _zokuseiSync_AttrSvcJS3List As New List(Of (OFFval As String, ONval As String)) From {
             (ZokuseiSync_AttrSvcJS1_OFF, ZokuseiSync_AttrSvcJS1_ON),
             (ZokuseiSync_AttrSvcJS2_OFF, ZokuseiSync_AttrSvcJS2_ON),
             (ZokuseiSync_AttrSvcJS3_OFF, ZokuseiSync_AttrSvcJS3_ON)
@@ -1241,7 +1344,7 @@ Public Class PubFlugLinkage
 										</div>
 										<!-- 【ファイルID】]]>.Value
 
-    Public Shared KOKAI_MainHTML_List As New List(Of (OFFval As String, ONval As String)) From {
+    Private Shared _kOKAI_MainHTML_List As New List(Of (OFFval As String, ONval As String)) From {
             (MainHTML_OFF, MainHTML_ON)
         }
 
@@ -1265,10 +1368,81 @@ Public Class PubFlugLinkage
 				}
 				// --- 修正箇所ここまで ---]]>.Value
 
-    Public Shared PublishDateControl As New List(Of (OFFval As String, ONval As String)) From {
+    Private Shared _publishDateControl As New List(Of (OFFval As String, ONval As String)) From {
         (PublishDateDisplayOFF, PublishDateDisplayON)
     }
 
+    Public Shared Property ZokuseiSync_MZMapperXMLList As List(Of (OFFval As String, ONval As String))
+        Get
+            Return ZokuseiSync_MZMapperXMLList1
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            ZokuseiSync_MZMapperXMLList1 = value
+        End Set
+    End Property
+
+    Public Shared Property ZokuseiSync_MZMapperXMLList1 As List(Of (OFFval As String, ONval As String))
+        Get
+            Return ZokuseiSync_MZMapperXMLList2
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            ZokuseiSync_MZMapperXMLList2 = value
+        End Set
+    End Property
+
+    Public Shared Property ZokuseiSync_MZMapperXMLList2 As List(Of (OFFval As String, ONval As String))
+        Get
+            Return ZokuseiSync_MZMapperXMLList3
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            ZokuseiSync_MZMapperXMLList3 = value
+        End Set
+    End Property
+
+    Public Shared Property ZokuseiSync_MZMapperXMLList3 As List(Of (OFFval As String, ONval As String))
+        Get
+            Return _zokuseiSync_MZMapperXMLList
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            _zokuseiSync_MZMapperXMLList = value
+        End Set
+    End Property
+
+    Public Shared Property ZokuseiSync_DetailHTMLList As List(Of (OFFval As String, ONval As String))
+        Get
+            Return _zokuseiSync_DetailHTMLList
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            _zokuseiSync_DetailHTMLList = value
+        End Set
+    End Property
+
+    Public Shared Property PublishDateControl As List(Of (OFFval As String, ONval As String))
+        Get
+            Return _publishDateControl
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            _publishDateControl = value
+        End Set
+    End Property
+
+    Public Shared Property KOKAI_MainHTML_List As List(Of (OFFval As String, ONval As String))
+        Get
+            Return _kOKAI_MainHTML_List
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            _kOKAI_MainHTML_List = value
+        End Set
+    End Property
+
+    Public Shared Property ZokuseiSync_AttrSvcJS3List As List(Of (OFFval As String, ONval As String))
+        Get
+            Return _zokuseiSync_AttrSvcJS3List
+        End Get
+        Set(value As List(Of (OFFval As String, ONval As String)))
+            _zokuseiSync_AttrSvcJS3List = value
+        End Set
+    End Property
 
     ''' <summary>
     ''' チェックボックスの状態に応じてファイルをデプロイします。
@@ -1524,8 +1698,8 @@ Public Class PubFlugLinkage
 End Class
 
 Public Class BugFixes
-
-    ' (リソース内のファイル名, 出力先のパス, 摘要後のバージョン)
+    'classファイルの差し替えで完遂できるバグフィクスの定義リスト
+    ' 　　　　(リソース内のファイル名, 出力先のパス, 摘要後のバージョンWEB,API,DBの順)で列記する
     Public Shared ReadOnly FixList As New List(Of (FileName As String, DestPath As String, DeployVersionWEB As String, DeployVersionAPI As String, DeployVersionDB As String, MainVersion As String)) From {
         ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3"),
         ("ZUNO_TECA-372_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4"),
@@ -1559,6 +1733,88 @@ Public Class BugFixes
         Next
 
         Return allSuccess
+    End Function
+    ''' <summary>
+    ''' 指定したファイルのテキストブロックを、埋め込みリソース内の Before / After の内容に基づいて置換します。
+    ''' </summary>
+    ''' <param name="chgFile">置換対象ファイルのパス（ディスク上のファイル）</param>
+    ''' <param name="SwapBlocksFile">埋め込みリソースの識別名（例: "BugFixes120.txt"）</param>
+    ''' <param name="Mode">True: Before -> After / False: After -> Before</param>
+    ''' <returns>0: 成功, 1: 該当箇所なし, -1: ファイルやリソースが存在しない（またはエラー）</returns>
+    Public Shared Function FixBlockTxt(chgFile As String, SwapBlocksFile As String, Optional Mode As Boolean = True) As Integer
+
+        ' 環境変数[tecacmdLOGDIR]の存在確認（未設定なら設定）
+        Dim EnvValLOGDIR = Environment.GetEnvironmentVariable("tecacmdLOGDIR")
+        If ((EnvValLOGDIR Is Nothing) Or (Not File.Exists(EnvValLOGDIR))) Then
+            Environment.SetEnvironmentVariable("tecacmdLOGDIR", TECA_sets.defaultLOGDIR)
+            EnvValLOGDIR = Environment.GetEnvironmentVariable("tecacmdLOGDIR")
+        End If
+        Try
+            ' --- 1. ディスク上の対象ファイル存在チェック ---
+            If Not File.Exists(chgFile) Then
+                Misc.WriteTraceLog(SwapBlocksFile & "を適用する先のファイルが見当たりません。", EnvValLOGDIR)
+                Return -1
+            End If
+
+            ' --- 2. 埋め込みリソース名を作成 ---
+            Dim fileName As String = Path.GetFileName(SwapBlocksFile)
+            Dim beforeResourceName As String = "Before_" & fileName
+            Dim afterResourceName As String = "After_" & fileName
+
+            ' --- 3. 埋め込みリソースからの読み込み ---
+            Dim beforeContent As String = GetEmbeddedResourceText(beforeResourceName)
+            Dim afterContent As String = GetEmbeddedResourceText(afterResourceName)
+
+            ' リソースが見つからない場合は -1
+            If beforeContent Is Nothing OrElse afterContent Is Nothing Then
+                Misc.WriteTraceLog(SwapBlocksFile & "のリソースファイルが見当たりません。", EnvValLOGDIR)
+                Return -1
+            End If
+
+            ' --- 4. 対象ファイル内容の読み込みと置換判定 ---
+            Dim chgContent As String = File.ReadAllText(chgFile)
+            Dim searchTarget As String = If(Mode, beforeContent, afterContent)
+            Dim replaceWith As String = If(Mode, afterContent, beforeContent)
+
+            ' 改行コード（CRLF / LF）の違いを吸収して判定
+            Dim normalizedChg As String = chgContent.Replace(vbCrLf, vbLf)
+            Dim normalizedSearch As String = searchTarget.Replace(vbCrLf, vbLf)
+
+            If Not normalizedChg.Contains(normalizedSearch) Then
+                Misc.WriteTraceLog(SwapBlocksFile & "を適用は見送りました。", EnvValLOGDIR)
+                Return 1
+            End If
+
+            ' 置換と保存
+            Dim normalizedReplace As String = replaceWith.Replace(vbCrLf, vbLf)
+            Dim updatedContent As String = normalizedChg.Replace(normalizedSearch, normalizedReplace)
+
+            File.WriteAllText(chgFile, updatedContent.Replace(vbLf, vbCrLf))
+            Return 0
+
+        Catch ex As Exception
+            Return -1
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' アセンブリから埋め込みリソースのテキストを取得するヘルパーメソッド
+    ''' </summary>
+    Private Shared Function GetEmbeddedResourceText(resourceFileName As String) As String
+        Dim asm As Assembly = Assembly.GetExecutingAssembly()
+
+        ' 完全修飾リソース名から末尾が一致するものを探す
+        Dim fullResourceName As String = asm.GetManifestResourceNames().
+            FirstOrDefault(Function(n) n.EndsWith(resourceFileName, StringComparison.OrdinalIgnoreCase))
+
+        If String.IsNullOrEmpty(fullResourceName) Then Return Nothing
+
+        Using stream As Stream = asm.GetManifestResourceStream(fullResourceName)
+            If stream Is Nothing Then Return Nothing
+            Using reader As New StreamReader(stream)
+                Return reader.ReadToEnd()
+            End Using
+        End Using
     End Function
 
 End Class
