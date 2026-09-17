@@ -163,6 +163,12 @@ Public Class Form_TeCASettings
 
             Case "変更して再起動"
 
+                'main.service.jsを初期化する
+                If Not PubFlugLinkage.GetFileFromRSC("ORIGINAL_main.service.js", mainSVCjs_path) Then
+                    MessageBox.Show("Web Clientのメイン処理を修正できませんでした。", "main.service.js")
+                    Exit Sub
+                End If
+
                 Dim tmpFOLDER As String = Path.GetTempPath()
 
                 Label_notice.Text = TeCA_Exec("Stop", 0, 80).ToString
@@ -252,7 +258,7 @@ Public Class Form_TeCASettings
                     exchangeFtypes += Misc.ExchangeString(PdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
                 Next
                 If exchangeFtypes <> pdfConvFtypeArray.Length Then
-                    MessageBox.Show("PDFConverter変換：拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
+                    MessageBox.Show("PDFConverter変換： 拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
@@ -539,10 +545,10 @@ Public Class Form_TeCASettings
                 End If
 
                 Dim isKokaiEnable As Boolean = CheckBox_EnableKokai.Checked
-                Dim isBehindKokai As Boolean = Misc.FindString(mainHTMLpath, PubFlugLinkage.KOKAI_MainHTML_List(0).OFFval, True)
+                Dim isBehindKokai As Boolean = Misc.FindString(TECA_sets.mainHTMLpath, PubFlugLinkage.KOKAI_MainHTML_List(0).OFFval, True)
 
                 If isKokaiEnable = isBehindKokai Then
-                    PubFlugLinkage.UpdateWebFile(mainHTMLpath,
+                    PubFlugLinkage.UpdateWebFile(TECA_sets.mainHTMLpath,
                                      PubFlugLinkage.KOKAI_MainHTML_List.Cast(Of Object)().ToList(),
                                      isKokaiEnable, "mainHTML")
                 End If
@@ -550,14 +556,14 @@ Public Class Form_TeCASettings
                 '【app.js】属性変更詳細ペイン　カレンダーピッカーとコンボ位置の自動調整
                 If CheckBox_CalPickerAutoAdjust.Checked Then
                     ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(False), DIC.AutoAdjustCalenderPosition(True), Scrollpath)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(False), DIC.AutoAdjustComboPosition_html(True), mainHTMLpath)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(False), DIC.AutoAdjustComboPosition_js(True), mainJS_path)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(False), DIC.AutoAdjustComboPosition_css(True), mainCSS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(False), DIC.AutoAdjustComboPosition_html(True), TECA_sets.mainHTMLpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(False), DIC.AutoAdjustComboPosition_js(True), TECA_sets.mainJS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(False), DIC.AutoAdjustComboPosition_css(True), TECA_sets.mainCSS_path)
                 Else
                     ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(True), DIC.AutoAdjustCalenderPosition(False), Scrollpath)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(True), DIC.AutoAdjustComboPosition_html(False), mainHTMLpath)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(True), DIC.AutoAdjustComboPosition_js(False), mainJS_path)
-                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(True), DIC.AutoAdjustComboPosition_css(False), mainCSS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(True), DIC.AutoAdjustComboPosition_html(False), TECA_sets.mainHTMLpath)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_js(True), DIC.AutoAdjustComboPosition_js(False), TECA_sets.mainJS_path)
+                    ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(True), DIC.AutoAdjustComboPosition_css(False), TECA_sets.mainCSS_path)
                 End If
 
                 '【print-preview.service.js】
@@ -594,42 +600,46 @@ Public Class Form_TeCASettings
                 ' 　　 main.html,
                 ' 　　 main-service.js
                 ' 　　 
-                If ComboBox_appLinkJNLP.SelectedItem.ToString = "直接" Then
-                    ReplaceTextInFile(AppLinkJNLP.mainHTML(False), AppLinkJNLP.mainHTML(True), TECA_sets.ClientWebPath & "\app\main\main.html")
-                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS1(False), AppLinkJNLP.mainServiceJS1(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS2(False), AppLinkJNLP.mainServiceJS2(True), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    PubFlugLinkage.GetFileFromRSC("guide-modal.html", TECA_sets.ClientWebPath & "\app\guide-modal\")
-                    PubFlugLinkage.GetFileFromRSC("guide-modal.controller.js", TECA_sets.ClientWebPath & "\app\guide-modal\")
+                ' 1. モード判定と共通パスの集約
+                Dim isDirect As Boolean = (ComboBox_appLinkJNLP.SelectedItem?.ToString() = "直接")
+
+                Dim mainServiceJsPath As String = IO.Path.Combine(TECA_sets.ClientWebPath, "app\main\main.service.js")
+                Dim guideModalDir As String = IO.Path.Combine(TECA_sets.ClientWebPath, "app\guide-modal\")
+
+                ' 【ZUNO_TECA-371: WEBバグフィクス 】
+                ' 　　モードに応じたmain.htmlの適用・復元
+                ReplaceTextInFile(AppLinkJNLP.mainHTML(Not isDirect), AppLinkJNLP.mainHTML(isDirect), TECA_sets.mainHTMLpath)
+
+                ' 　　モードに応じたmain.service.jsの適用・復元
+                BugFixes.ApplyBugFixes(mainServiceJsPath, "371", isDirect)
+
+                If isDirect Then
+                    PubFlugLinkage.GetFileFromRSC("guide-modal.html", guideModalDir)
+                    PubFlugLinkage.GetFileFromRSC("guide-modal.controller.js", guideModalDir)
                 Else
-                    ReplaceTextInFile(AppLinkJNLP.mainHTML(True), AppLinkJNLP.mainHTML(False), TECA_sets.ClientWebPath & "\app\main\main.html")
-                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS1(True), AppLinkJNLP.mainServiceJS1(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    ReplaceTextInFile(AppLinkJNLP.mainServiceJS2(True), AppLinkJNLP.mainServiceJS2(False), TECA_sets.ClientWebPath & "\app\main\main.service.js")
-                    If Directory.Exists(TECA_sets.ClientWebPath & "\app\guide-modal\") Then
+                    If IO.Directory.Exists(guideModalDir) Then
                         Try
-                            Directory.Delete(TECA_sets.ClientWebPath & "\app\guide-modal\", True)
+                            IO.Directory.Delete(guideModalDir, True)
                         Catch ex As Exception
                             Console.WriteLine("JNLPモードに不要なフォルダの削除中にエラーが発生しました: " & ex.Message)
                         End Try
                     End If
                 End If
-
                 '【APIバグフィクス】
                 '　　Classファイルなど、ファイル交換でバグ修正対応を行ったものを埋込リソースから展開し、バージョン表記も変更する
+                '   詳細はSettings.vb BugFiexクラスに列記
                 BugFixes.DeployFixFiles()
 
-                '【WEBバグフィクス】
-                '　　JSファイルなど、ファイル内の所定行内について交換するタイプのバグ修正対応を行ったものを埋込リソースから展開する
-                Dim ZUNO_TECA_374 As Integer = 0
-                ZUNO_TECA_374 = BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_A.txt", True)
-                ZUNO_TECA_374 *= BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_B.txt", True)
-                ZUNO_TECA_374 *= BugFixes.FixBlockTxt(mainSVCjs_path, "ZUNO_TECA-374_C.txt", True)
-
-                If ZUNO_TECA_374 < 0 Then
-                    MessageBox.Show($"ZUNO_TECA-374の修正ができませんでした。TeCACMDログをご覧ください")
+                '【ZUNO_TECA-374：　　WEB-CLIENT/main.service.jsの修正】
+                If BugFixes.ApplyBugFixes(Path.Combine(TECA_sets.ClientWebPath, "app\main\main.service.js"), "374") Then
+                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.5")
+                Else
+                    MessageBox.Show("ZUNO_TECA-374の修正ができませんでした。TeCACMDログをご覧ください")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.4")
                     Exit Sub
                 End If
 
-                'PipeMan実行
+                '【PipeMan実行とTeCAサービス再起動】
                 If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
                     TeCA.SvcCtrls("PG_REBOOT", True)
                 Else

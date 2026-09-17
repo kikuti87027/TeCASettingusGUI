@@ -1,0 +1,13 @@
+			} else {
+				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
+				var kokaiTimeElement = $('#kokaiTime');
+				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
+				if (kokaiTimeElement.length > 0) {
+					var kokaiTimeClass = kokaiTimeElement.attr('class') || """";
+					if (kokaiTimeClass.split("" "").indexOf('ng-invalid') != -1) {
+						// 時間入力エリア内で invalid が発生している場合、書式エラー 
+						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
+						rtnErrorFlg = true;
+					}
+				}
+				// --- 修正箇所ここまで ---

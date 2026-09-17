@@ -1,0 +1,26 @@
+						// 詳細情報の取得
+						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,
+							function(resolveData) {
+								// 成功処理
+								if (!CommonService.isError(resolveData)) {
+									$scope.jnlp = CommonService.getJnlpFile(resolveData.fileName, Const.JWS_START_MODE_EXEC);
+									$timeout(function() {
+										$('#jnlp')[0].click();
+									}, 500);
+									// システム操作ログ登録（成功）
+									CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 失敗処理
+									CommonService.errorProcess($scope, resolveData, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								}
+							},
+							function(rejectData, state) {
+								// 失敗処理
+								if (state != 'cancel') {
+									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 一時保存ファイルの削除
+									var param = { 'filename': rejectData.fileName };
+									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
+								}
+							}

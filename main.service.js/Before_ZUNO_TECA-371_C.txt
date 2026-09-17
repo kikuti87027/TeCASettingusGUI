@@ -1,0 +1,5 @@
+						var dtlInfo = {
+							fileId: $scope.$parent.detailAreaData.id
+						};
+						// 詳細情報の取得
+						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,

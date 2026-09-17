@@ -1,0 +1,21 @@
+// 公開系の表示が ON の場合のみ、公開系項目のチェックを実行
+		if (detailAreaData.displayKokaiFlg) {
+			// 公開日時チェック
+			if ((!CommonService.isEmpty(detailAreaData.kokaiTimestamp.date) && CommonService.isEmpty(detailAreaData.kokaiTimestamp.time))
+				|| (CommonService.isEmpty(detailAreaData.kokaiTimestamp.date) && !CommonService.isEmpty(detailAreaData.kokaiTimestamp.time))) {
+				// どちらか一方のみ入力済みの場合、書式エラー
+				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+				rtnErrorFlg = true;
+			} else {
+				// ★【修正:ZUNO_TECA-374_D】要素が存在し、かつ class 属性が取得できる場合のみ split 判定を行う
+				var kokaiTimeElement = $('#kokaiTime');
+				if (kokaiTimeElement.length > 0) {
+					var kokaiTimeClass = kokaiTimeElement.attr('class') || "";
+					if (kokaiTimeClass.split(" ").indexOf('ng-invalid') != -1) {
+						// 時間入力エリア内で invalid が発生している場合、書式エラー
+						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
+						rtnErrorFlg = true;
+					}
+				}
+			}
+		}

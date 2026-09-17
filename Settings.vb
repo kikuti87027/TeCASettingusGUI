@@ -5,6 +5,7 @@ Imports System.Text.RegularExpressions
 Imports BCrypt.Net
 Imports NpgsqlTypes
 Imports NuGet.Versioning
+Imports System.Linq
 
 Public Class TECA_sets
 
@@ -600,114 +601,6 @@ Public Class AppLinkJNLP
 	</div>
 </div>
 <a ng-href=""{{jnlp}}"" id=""jnlp"" style=""display: none;""></a>"}
-    }
-
-    Public Shared ReadOnly mainServiceJS1 As New Dictionary(Of Boolean, String) From {
-        {False, "			} else if ($('#kokaiTime').attr('class').split("" "").indexOf('ng-invalid') != -1) {
-				// 時間入力エリア内で invalid が発生している場合、書式エラー
-				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
-				rtnErrorFlg = true;
-"},
-        {True, "			} else {
-				// --- 修正箇所：物理的に要素が消えている場合の考慮 ---
-				var kokaiTimeElement = $('#kokaiTime');
-				// 要素が存在する場合のみ、クラス属性を取得して split 判定を行う
-				if (kokaiTimeElement.length > 0) {
-					var kokaiTimeClass = kokaiTimeElement.attr('class') || """";
-					if (kokaiTimeClass.split("" "").indexOf('ng-invalid') != -1) {
-						// 時間入力エリア内で invalid が発生している場合、書式エラー 
-						detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
-						rtnErrorFlg = true;
-					}
-				}
-				// --- 修正箇所ここまで ---
-"}
-    }
-
-    Public Shared ReadOnly mainServiceJS2 As New Dictionary(Of Boolean, String) From {
-        {False, "						// 詳細情報の取得
-						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,
-							function(resolveData) {
-								// 成功処理
-								if (!CommonService.isError(resolveData)) {
-									$scope.jnlp = CommonService.getJnlpFile(resolveData.fileName, Const.JWS_START_MODE_EXEC);
-									$timeout(function() {
-										$('#jnlp')[0].click();
-									}, 500);
-									// システム操作ログ登録（成功）
-									CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
-								} else {
-									// 失敗処理
-									CommonService.errorProcess($scope, resolveData, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
-								}
-							},
-							function(rejectData, state) {
-								// 失敗処理
-								if (state != 'cancel') {
-									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
-								} else {
-									// 一時保存ファイルの削除
-									var param = { 'filename': rejectData.fileName };
-									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
-								}
-							}
-"},
-        {True, "						// 詳細情報の取得
-						CommonService.httpPost(ACTION_APP_LINK, param,
-							function(resolveData) {
-								// 成功処理
-								
-								// 【共通関数のJSONパースバグを回避するため、自前で安全にダウンロードを発火】
-								var blob = new Blob([resolveData], { type: ""application/octet-stream"" });
-								var fileName = $scope.$parent.detailAreaData.fileName;
-								
-								if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-									// 古いIE / 互換モード用
-									window.navigator.msSaveOrOpenBlob(blob, fileName);
-								} else {
-									// モダンブラウザ（Chrome, Firefox, Edge）用
-									var fileURL = URL.createObjectURL(blob);
-									var anchor = document.createElement('a');
-									anchor.href = fileURL;
-									anchor.download = fileName; // これでファイル名を固定
-									document.body.appendChild(anchor);
-									anchor.click();
-									document.body.removeChild(anchor);
-									URL.revokeObjectURL(fileURL); // メモリ解放
-								}
-
-								// 役目を終えた空のタブを閉じる
-								if (win != null) {
-									win.close();
-								}
-
-								// ガイド表示判定（「次回から表示しない」が未チェックなら表示）
-								var skipGuide = StorageService.getData('skipAppLaunchGuide');
-								if (!skipGuide) {
-									var template = ""app/guide-modal/guide-modal.html"";
-									var controller = ""GuideModalController"";
-									CommonService.openModal($scope, template, controller);
-								}
-								
-								// システム操作ログ登録（成功）
-								CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
-							},
-							function(rejectData, state) {
-								// 失敗処理
-								if (state != 'cancel') {
-									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
-								} else {
-									// 一時保存ファイルの削除
-									var param = { 'filename': rejectData.fileName };
-									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
-								}
-								// 失敗した場合も開いたウィンドウを閉じる
-								if (win != null) {
-									win.close();
-								}
-							},
-							{responseType: 'arraybuffer'}
-"}
     }
 
 End Class
@@ -1708,6 +1601,34 @@ Public Class BugFixes
     }
 
     ''' <summary>
+    ''' 指定バグIDの修正ファイル（ZUNO_TECA-XXX_A.txt ～）を自動検出して順次適用/復元します。
+    ''' </summary>
+    ''' <param name="targetPath">対象ファイルのフルパス</param>
+    ''' <param name="bugId">バグID（例: "371", "374"）</param>
+    ''' <param name="isApply">True: 修正適用 / False: 復元（デフォルト: True）</param>
+    Public Shared Function ApplyBugFixes(targetPath As String, bugId As String, Optional isApply As Boolean = True) As Boolean
+        Dim resourceNames As String() = Assembly.GetExecutingAssembly().GetManifestResourceNames()
+
+        Dim isSuccess As Boolean = True
+        Dim appliedCount As Integer = 0
+
+        For Each c As Char In "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            Dim fileName As String = $"ZUNO_TECA-{bugId}_{c}.txt"
+
+            Dim exists As Boolean = resourceNames.Any(Function(r) r.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+
+            If exists Then
+                appliedCount += 1
+                If BugFixes.FixBlockTxt(targetPath, fileName, isApply) < 0 Then
+                    isSuccess = False
+                End If
+            End If
+        Next
+
+        Return isSuccess AndAlso (appliedCount > 0)
+    End Function
+
+    ''' <summary>
     ''' FixList に定義されたすべての修正ファイルを埋め込みリソースから取り出し、
     ''' 指定された DestPath（フルパス）へ上書き配置します。
     ''' </summary>
@@ -1749,6 +1670,7 @@ Public Class BugFixes
             Environment.SetEnvironmentVariable("tecacmdLOGDIR", TECA_sets.defaultLOGDIR)
             EnvValLOGDIR = Environment.GetEnvironmentVariable("tecacmdLOGDIR")
         End If
+
         Try
             ' --- 1. ディスク上の対象ファイル存在チェック ---
             If Not File.Exists(chgFile) Then
@@ -1770,7 +1692,6 @@ Public Class BugFixes
                 Misc.WriteTraceLog(SwapBlocksFile & "のリソースファイルが見当たりません。", EnvValLOGDIR)
                 Return -1
             End If
-
             ' --- 4. 対象ファイル内容の読み込みと置換判定 ---
             Dim chgContent As String = File.ReadAllText(chgFile)
             Dim searchTarget As String = If(Mode, beforeContent, afterContent)

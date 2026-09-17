@@ -1,5 +1,5 @@
 				// ツリーの場合
 
-				// ツリーIDの設定（★【修正:ZUNO_TECA-374】空文字や undefined の場合は null を設定）
+				// ツリーIDの設定（★【修正:ZUNO_TECA-374-C】空文字や undefined の場合は null を設定）
 				searchJoken.id = (branch.treeHyojiId !== undefined && branch.treeHyojiId !== "") ? branch.treeHyojiId : null;
 				// ツリー表示条件の設定

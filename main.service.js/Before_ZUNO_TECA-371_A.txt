@@ -1,0 +1,4 @@
+			} else if ($('#kokaiTime').attr('class').split("" "").indexOf('ng-invalid') != -1) {
+				// 時間入力エリア内で invalid が発生している場合、書式エラー
+				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, ""W00013"", [""timestampFormatHhMm""]);
+				rtnErrorFlg = true;

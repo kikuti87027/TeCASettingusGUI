@@ -7,7 +7,7 @@
 		if (searchJoken.dataFetchKbn != Const.TREE_DATA_FETCH_KBN_TREE) {
 			getFileListDataInit($scope, searchJoken);
 		}
-		// ★【追加:ZUNO_TECA-374】searchJoken 内の数値項目が空文字や undefined の場合は null に正規化
+		// ★【追加:ZUNO_TECA-374-A】searchJoken 内の数値項目が空文字や undefined の場合は null に正規化
 		if (searchJoken) {
 			if (searchJoken.id === undefined || searchJoken.id === "") {
 				searchJoken.id = null;

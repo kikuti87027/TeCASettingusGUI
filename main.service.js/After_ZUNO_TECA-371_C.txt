@@ -1,0 +1,7 @@
+						var dtlInfo = {
+							fileId: $scope.$parent.detailAreaData.id
+						};
+						// ★【追加:ZUNO_TECA-371C】ポップアップブロック回避 兼 ReferenceError 防止
+						var win = CommonService.windowOpen($scope);
+						// 詳細情報の取得
+						CommonService.httpModal($scope, ACTION_APP_LINK, param, false,

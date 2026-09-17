@@ -1,0 +1,55 @@
+						// 詳細情報の取得
+						CommonService.httpPost(ACTION_APP_LINK, param,
+							function(resolveData) {
+								// 成功処理
+								
+								// 【共通関数のJSONパースバグを回避するため、自前で安全にダウンロードを発火】
+								var blob = new Blob([resolveData], { type: "application/octet-stream" });
+								var fileName = $scope.$parent.detailAreaData.fileName;
+								
+								if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+									// 古いIE / 互換モード用
+									window.navigator.msSaveOrOpenBlob(blob, fileName);
+								} else {
+									// モダンブラウザ（Chrome, Firefox, Edge）用
+									var fileURL = URL.createObjectURL(blob);
+									var anchor = document.createElement('a');
+									anchor.href = fileURL;
+									anchor.download = fileName; // これでファイル名を固定
+									document.body.appendChild(anchor);
+									anchor.click();
+									document.body.removeChild(anchor);
+									URL.revokeObjectURL(fileURL); // メモリ解放
+								}
+
+								// 役目を終えた空のタブを閉じる
+								if (win != null) {
+									win.close();
+								}
+
+								// ガイド表示判定（「次回から表示しない」が未チェックなら表示）
+								var skipGuide = StorageService.getData('skipAppLaunchGuide');
+								if (!skipGuide) {
+									var template = "app/guide-modal/guide-modal.html";
+									var controller = "GuideModalController";
+									CommonService.openModal($scope, template, controller);
+								}
+								
+								// システム操作ログ登録（成功）
+								CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+							},
+							function(rejectData, state) {
+								// 失敗処理
+								if (state != 'cancel') {
+									CommonService.systemError($scope, state, Const.SOSA_LOG_GAMEN_KBN_MAIN, Const.SOSA_LOG_SOSA_KBN_DOWNLOAD, dtlInfo, Const.SOSA_LOG_SOSA_DTL_KBN_DOWNLOAD_APPLICATION_LINKAGE);
+								} else {
+									// 一時保存ファイルの削除
+									var param = { 'filename': rejectData.fileName };
+									CommonService.httpPost(ACTION_JNLP_FILE_REMOVE, param, function(resolveData) {}, function(rejectData) {});
+								}
+								// 失敗した場合も開いたウィンドウを閉じる
+								if (win != null) {
+									win.close();
+								}
+							},
+							{responseType: 'arraybuffer'}
