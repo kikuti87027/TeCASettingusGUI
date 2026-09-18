@@ -134,4 +134,6 @@
 				【追加】	・Settings.vb / BugFixes.FixBlocktxt
 							　　FixBlocktxtに差し替えたいファイル内テキストブロック（組込オブジェクト）とファイルパスを与えると、
 							　　更新して再起動時に自動更新するFunctionを追加。（主にWeb系の組込リソース差し替え用）
+							・チェックアウトでダウンロードされるファイルがdownload_xxx.zip（サイズ０）になる不具合を修正(ZUNO_TECA-375/Web）
+							　　対策自体は埋め込みオブジェクト(After_check-out.service.js)交換のみ
 

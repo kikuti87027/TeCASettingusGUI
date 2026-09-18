@@ -1,5 +1,5 @@
 'use strict';
-
+//【ZUNO_TECA-375】対策済み
 // ★修正：サービス宣言の末尾に「StorageService」を正しく追加
 app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants, CommonService, Const, StorageService) {
 
@@ -140,71 +140,63 @@ app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants
 						dtlInfo.fileId.push(obj.id);
 					});
 
-					// 🌟 1. ポップアップブロックを回避するため、通信の「直前」に空のタブを開いておく
-					var win = CommonService.windowOpen($scope);
+					// ポップアップブロック回避用（CAD連携時のみウィンドウを開く）
+					var win = data.cad ? CommonService.windowOpen($scope) : null;
 
-					// 詳細情報の取得（★修正：httpModal から httpPost に変更し、引数をスッキリさせる）
 					CommonService.httpPost(Action + "/check-out", param,
 						function(resolveData) {
 							// 成功処理
-
-							// 🌟 2. ダウンロードするファイル名の決定（CAD連携かZIP通常保存か）
-							var fileName = "";
 							if (data.cad) {
-								fileName = cadFileName;
-							} else {
-								fileName = "download_" + CommonService.formatDate.format(new Date(), "yyyyMMddhhmmss") + ".zip";
-							}
+								// ★ CAD/アプリ連携の場合：レスポンスは JSON (テキスト)
+								var reader = new FileReader();
+								reader.onload = function(re) {
+									var json = JSON.parse(re.target.result);
+									
+									// Blobダウンロード（ファイルそのものを保存）
+									var fileBlob = new Blob([resolveData], { type: "application/octet-stream" });
+									CommonService.linkDownload($scope, resolveData, cadFileName, win);
 
-						    // 🌟 3.【共通関数のJSONパースバグを回避するため、自前で安全にダウンロードを発火】
-						    var blob = new Blob([resolveData], { type: "application/octet-stream" });
-						    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-						        // 古いIE / 互換モード用
-						        window.navigator.msSaveOrOpenBlob(blob, fileName);
-						    } else {
-						        // モダンブラウザ（Chrome, Firefox, Edge）用
-						        var fileURL = URL.createObjectURL(blob);
-						        var anchor = document.createElement('a');
-						        anchor.href = fileURL;
-						        anchor.download = fileName;
-						        document.body.appendChild(anchor);
-						        anchor.click();
-						        document.body.removeChild(anchor);
-						        URL.revokeObjectURL(fileURL); // メモリ解放
-						    }
-
-						    // 🌟 4. 役目を終えた空のタブをスッキリ閉じる
-						    if (win != null) {
-						        win.close();
-						    }
-
-							if (data.cad) {
-								// CAD連携ありの追加ルート
-								// ストレージから「非表示フラグ」を確認
-								var skipGuide = StorageService.getData('skipAppLaunchGuide');
-								
-								if (!skipGuide) {
-									// まだフラグがなければ、ガイドモーダルを表示
-									var template = "app/guide-modal/guide-modal.html";
-									var controller = "GuideModalController";
-									CommonService.openModal($scope, template, controller);
-									$scope.close(); // 👈 ★この1行を追加して自分を閉じます
-								} else {
-									// すでにフラグがある場合は、通常のチェックアウト完了メッセージを表示して閉じる
-									var promiseRes = CommonService.dispMessage($scope, "I00001", ["checkOut"]);
-									promiseRes.then(function(result) {
-										$scope.close(); // ★修正：scope ではなくコントローラー直結の $scope.close() を実行
-									});
-								}
-							} else {
-								// CAD連携なしの通常ルート
-								var promiseRes = CommonService.dispMessage($scope, "I00001", ["checkOut"]);
-								promiseRes.then(
-									function(result) {
-										$scope.close(); // ★修正：scope ではなくコントローラー直結の $scope.close() を実行
+									var skipGuide = StorageService.getData('skipAppLaunchGuide');
+									if (!skipGuide) {
+										var template = "app/guide-modal/guide-modal.html";
+										var controller = "GuideModalController";
+										CommonService.openModal($scope, template, controller);
 									}
-								);
+									$scope.close();
+								};
+								var blob = new Blob([resolveData], { type: "text/plain" });
+								reader.readAsText(blob);
+
+							} else {
+								// ★ 通常のチェックアウトの場合：単一ファイルなら元のファイル名、複数ならZIP
+								var fileName = "";
+								if ($scope.checkoutInfo.data.length === 1) {
+									fileName = cadFileName; // 単体ファイル名（例: A100-72-01_NR.xlsx）
+								} else {
+									fileName = "download_" + CommonService.formatDate.format(new Date(), "yyyyMMddhhmmss") + ".zip";
+								}
+
+								// バイナリをダウンロード発火
+								var blob = new Blob([resolveData], { type: "application/octet-stream" });
+								if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+									window.navigator.msSaveOrOpenBlob(blob, fileName);
+								} else {
+									var fileURL = URL.createObjectURL(blob);
+									var anchor = document.createElement('a');
+									anchor.href = fileURL;
+									anchor.download = fileName;
+									document.body.appendChild(anchor);
+									anchor.click();
+									document.body.removeChild(anchor);
+									URL.revokeObjectURL(fileURL);
+								}
+
+								var promiseRes = CommonService.dispMessage($scope, "I00001", ["checkOut"]);
+								promiseRes.then(function(result) {
+									$scope.close();
+								});
 							}
+
 							// システム操作ログ登録（成功）
 							CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_CHECK_OUT, Const.SOSA_LOG_SOSA_KBN_CHECK_OUT, dtlInfo);
 						},
@@ -213,23 +205,20 @@ app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants
 							var reader = new FileReader();
 							reader.onload = function(re) {
 								var errorJson = {};
-								errorJson = JSON.parse(re.target.result);
-								if (!errorJson.errorInfo) {
-									errorJson = {};
-									errorJson.errorInfo = JSON.parse(re.target.result);
-								}
-								dtlInfo.errorInfo = errorJson.errorInfo;
+								try {
+									errorJson = JSON.parse(re.target.result);
+								} catch(e) {}
+								dtlInfo.errorInfo = errorJson.errorInfo || {};
 								CommonService.errorProcess($scope, errorJson, Const.SOSA_LOG_GAMEN_KBN_CHECK_OUT, Const.SOSA_LOG_SOSA_KBN_CHECK_OUT, dtlInfo);
 							};
 							var blob = new Blob([rejectData], { type: "text/plain" });
 							reader.readAsText(blob);
 
-							// 失敗した場合も開いたウィンドウを閉じる
 							if (win != null) {
 								win.close();
 							}
 						},
-						{responseType: 'arraybuffer'}
+						{ responseType: 'arraybuffer' }
 					);
 				}
 			);
