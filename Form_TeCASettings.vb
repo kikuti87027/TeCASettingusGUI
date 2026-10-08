@@ -32,6 +32,11 @@ Public Class Form_TeCASettings
             Me.Close()
         End If
 
+        '稼働環境（TecA 1.15.0以上）かどうか確認
+        If Not BugFixes.CheckVerIsGE("1.15.0") Then
+            MessageBox.Show("TeCASettingsはTeCA 1.15.0以上の環境でのみ使用可能です。", "注意", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Me.Close()
+        End If
         'プログレスバー初期化
         Me.GroupBox_Progress.Visible = False
 
@@ -163,9 +168,10 @@ Public Class Form_TeCASettings
 
             Case "変更して再起動"
 
-                'main.service.jsを初期化する
+                '埋込リソース保管の純正1.15.0のmain.service.jsを取得してシステムへ上書きする
                 If Not PubFlugLinkage.GetFileFromRSC("ORIGINAL_main.service.js", mainSVCjs_path) Then
-                    MessageBox.Show("Web Clientのメイン処理を修正できませんでした。", "main.service.js")
+                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "Web Clientの初期化に失敗しました。")
+                    MessageBox.Show("Web Clientの初期化に失敗しました。")
                     Exit Sub
                 End If
 
@@ -621,7 +627,7 @@ Public Class Form_TeCASettings
                         Try
                             IO.Directory.Delete(guideModalDir, True)
                         Catch ex As Exception
-                            Console.WriteLine("JNLPモードに不要なフォルダの削除中にエラーが発生しました: " & ex.Message)
+                            DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "JNLPモードに不要なフォルダの削除中にエラーが発生しました: " & ex.Message)
                         End Try
                     End If
                 End If
@@ -646,6 +652,11 @@ Public Class Form_TeCASettings
                     TeCA.SvcCtrls("PG_REBOOT")
                 End If
                 Label_notice.Text = TeCA_Exec("START", 80, 100).ToString
+
+                '【ZUNO_TECA-377：　「api..」フォルダの抹消'】
+                If Not BugFixes.DeleteWeirdApiFolder("C:\teca\api..") Then
+                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "ZUNO_TECA-377: 不要フォルダの抹消に失敗しました。")
+                End If
 
             Case "TeCAを停止する"
 

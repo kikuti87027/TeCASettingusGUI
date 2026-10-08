@@ -13,7 +13,7 @@ Public Class TECA_sets
     Public Const API_PATH As String = "C:\TeCA\api"
     Public Const WEB_PATH As String = "C:\TeCA\web"
     Public Const DB_IPaddr As String = "127.0.0.1"
-    Public Const defaultLOGDIR As String = API_PATH & "..\log\tecacmd"
+    Public Const defaultLOGDIR As String = API_PATH & "\..\log\tecacmd"
 
     Public Const AllowedPWD As String = ".deny"
     Private Shared ReadOnly _Tomcat_PATH As String = Misc.ExtractInstallPathFromPath(Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine).ToString, "tomcat")
@@ -1664,17 +1664,10 @@ Public Class BugFixes
     ''' <returns>0: 成功, 1: 該当箇所なし, -1: ファイルやリソースが存在しない（またはエラー）</returns>
     Public Shared Function FixBlockTxt(chgFile As String, SwapBlocksFile As String, Optional Mode As Boolean = True) As Integer
 
-        ' 環境変数[tecacmdLOGDIR]の存在確認（未設定なら設定）
-        Dim EnvValLOGDIR = Environment.GetEnvironmentVariable("tecacmdLOGDIR")
-        If ((EnvValLOGDIR Is Nothing) Or (Not File.Exists(EnvValLOGDIR))) Then
-            Environment.SetEnvironmentVariable("tecacmdLOGDIR", TECA_sets.defaultLOGDIR)
-            EnvValLOGDIR = Environment.GetEnvironmentVariable("tecacmdLOGDIR")
-        End If
-
         Try
             ' --- 1. ディスク上の対象ファイル存在チェック ---
             If Not File.Exists(chgFile) Then
-                Misc.WriteTraceLog(SwapBlocksFile & "を適用する先のファイルが見当たりません。", EnvValLOGDIR)
+                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{SwapBlocksFile}を適用する先のファイルが見当たりません。")
                 Return -1
             End If
 
@@ -1689,7 +1682,7 @@ Public Class BugFixes
 
             ' リソースが見つからない場合は -1
             If beforeContent Is Nothing OrElse afterContent Is Nothing Then
-                Misc.WriteTraceLog(SwapBlocksFile & "のリソースファイルが見当たりません。", EnvValLOGDIR)
+                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{SwapBlocksFile}のリソースファイルが見当たりません。")
                 Return -1
             End If
             ' --- 4. 対象ファイル内容の読み込みと置換判定 ---
@@ -1702,7 +1695,7 @@ Public Class BugFixes
             Dim normalizedSearch As String = searchTarget.Replace(vbCrLf, vbLf)
 
             If Not normalizedChg.Contains(normalizedSearch) Then
-                Misc.WriteTraceLog(SwapBlocksFile & "を適用は見送りました。", EnvValLOGDIR)
+                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{SwapBlocksFile}を適用は見送りました。")
                 Return 1
             End If
 
@@ -1738,4 +1731,147 @@ Public Class BugFixes
         End Using
     End Function
 
+    ''' <summary>
+    ''' 【ZUNO_TECA-377】指定された特殊なフォルダ（末尾がピリオドなど）を安全に削除します。
+    ''' </summary>
+    ''' <param name="targetFolderPath">削除対象のフォルダパス</param>
+    ''' <returns>削除に成功した場合は True、それ以外は False</returns>
+    Private Declare Unicode Function GetFileAttributes Lib "kernel32.dll" Alias "GetFileAttributesW" (ByVal lpFileName As String) As UInteger
+    Private Const INVALID_FILE_ATTRIBUTES As UInteger = &HFFFFFFFFUI
+    Private Const FILE_ATTRIBUTE_DIRECTORY As UInteger = &H10UI
+
+    Public Shared Function DeleteWeirdApiFolder(targetFolderPath As String) As Boolean
+        Dim targetPath As String = targetFolderPath
+        If Not targetPath.StartsWith("\\?\") Then
+            targetPath = "\\?\" & targetPath
+        End If
+
+        ' クラス内のPrivate関数を使って存在チェック
+        If DirectoryExistsExact(targetPath) Then
+            Dim psi As New ProcessStartInfo()
+            psi.FileName = "cmd.exe"
+            psi.Arguments = $"/c rd /s /q ""{targetPath}"""
+            psi.CreateNoWindow = True
+            psi.UseShellExecute = False
+
+            Dim process As Process = Process.Start(psi)
+            process.WaitForExit()
+
+            Return (process.ExitCode = 0)
+        Else
+            Return True
+        End If
+    End Function
+
+    ' ▼ 外部には見せない（Private）判定用Function ▼
+    Private Shared Function DirectoryExistsExact(path As String) As Boolean
+        Dim attr As UInteger = GetFileAttributes(path)
+        If attr = INVALID_FILE_ATTRIBUTES Then
+            Return False
+        End If
+        Return (attr And FILE_ATTRIBUTE_DIRECTORY) <> 0
+    End Function
+
+    ''' <summary>
+    ''' 指定されたバージョンが現在のバージョン以上であるかを確認します。
+    ''' </summary>
+    ''' <param name="targetVersion">検査したいバージョン数値</param>
+    ''' <param name="webVerPath">Webバージョンファイルのパス</param>
+    ''' <param name="APIVerPath">APIバージョンファイルのパス</param>
+    ''' <param name="connectionStringDB">DB接続文字列</param>
+    ''' <param name="connectionStringPRODUCT">PRODUCT接続文字列</param>
+    ''' <returns>True：現行システムは指定されたバージョンと等しいかそれ以上である。False：それ以外</returns>
+    Public Shared Function CheckVerIsGE(targetVersion As String,
+                                                       Optional argWebVerPath As String = Nothing,
+                                                       Optional argAPIVerPath As String = Nothing,
+                                                       Optional connectionStringDB As String = Nothing,
+                                                       Optional connectionStringPRODUCT As String = Nothing) As Boolean
+        Try
+            Dim targetWebVerPath As String = If(String.IsNullOrEmpty(argWebVerPath), TECA_sets.webVerPath, argWebVerPath)
+            Dim targetAPIVerPath As String = If(String.IsNullOrEmpty(argAPIVerPath), TECA_sets.APIVerPath, argAPIVerPath)
+            Dim connectDBstr As String = If(String.IsNullOrEmpty(connectionStringDB), DefaultConst.ConnString_db2, connectionStringDB)
+            connectDBstr = connectDBstr.Replace("db2", "db1")
+
+            Dim connectPRODUCTstr As String = If(String.IsNullOrEmpty(connectionStringPRODUCT), connectDBstr, connectionStringPRODUCT)
+
+            ' 1. 検査対象バージョンのパース
+            Dim target As NuGetVersion = NuGetVersion.Parse(targetVersion)
+            Dim detectedVersions As New List(Of NuGetVersion)()
+
+            ' 2. 各ソースからバージョンを検出し、リストに追加していく
+
+            ' A. webVerPath (JSファイル) から検出
+            If Not String.IsNullOrEmpty(targetWebVerPath) AndAlso File.Exists(targetWebVerPath) Then
+                Dim jsContent As String = File.ReadAllText(targetWebVerPath, New UTF8Encoding(False))
+                Dim match As Match = Regex.Match(jsContent, "VERSION:\s*'([^']+)")
+                If match.Success Then
+                    Dim v As NuGetVersion = Nothing
+                    If NuGetVersion.TryParse(match.Groups(1).Value, v) Then
+                        detectedVersions.Add(v)
+                    End If
+                End If
+            End If
+
+            ' B. APIVerPath (マニフェストファイル) から検出
+            If Not String.IsNullOrEmpty(targetAPIVerPath) AndAlso File.Exists(targetAPIVerPath) Then
+                Dim mfContent As String = File.ReadAllText(targetAPIVerPath, New UTF8Encoding(False))
+                Dim match As Match = Regex.Match(mfContent, "Implementation-Version:\s*(.+)")
+                If match.Success Then
+                    Dim v As NuGetVersion = Nothing
+                    If NuGetVersion.TryParse(match.Groups(1).Value.Trim(), v) Then
+                        detectedVersions.Add(v)
+                    End If
+                End If
+            End If
+
+
+            ' C. DB (connectionStringDB) から検出
+            If Not String.IsNullOrEmpty(connectDBstr) Then
+                Using conn As New NpgsqlConnection(connectDBstr)
+                    conn.Open()
+                    Dim sqlDb As String = "SELECT info_val FROM t_system_info_kyotsu WHERE info_key = 'DB_VERSION';"
+                    Using cmd As New NpgsqlCommand(sqlDb, conn)
+                        Dim res = cmd.ExecuteScalar()
+                        If res IsNot Nothing AndAlso Not DBNull.Value.Equals(res) Then
+                            Dim v As NuGetVersion = Nothing
+                            If NuGetVersion.TryParse(res.ToString(), v) Then
+                                detectedVersions.Add(v)
+                            End If
+                        End If
+                    End Using
+                End Using
+            End If
+
+            ' D. DB (connectionStringPRODUCT) から検出
+            If Not String.IsNullOrEmpty(connectPRODUCTstr) Then
+                Using conn As New NpgsqlConnection(connectPRODUCTstr)
+                    conn.Open()
+                    Dim sqlProduct As String = "SELECT info_val FROM t_system_info_kyotsu WHERE info_key = 'PRODUCT_VERSION';"
+                    Using cmd As New NpgsqlCommand(sqlProduct, conn)
+                        Dim res = cmd.ExecuteScalar()
+                        If res IsNot Nothing AndAlso Not DBNull.Value.Equals(res) Then
+                            Dim v As NuGetVersion = Nothing
+                            If NuGetVersion.TryParse(res.ToString(), v) Then
+                                detectedVersions.Add(v)
+                            End If
+                        End If
+                    End Using
+                End Using
+            End If
+
+            DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log",
+                                 $"バージョン情報:{detectedVersions(3).ToString()}（WEB:{detectedVersions(0).ToString()} / API:{detectedVersions(1).ToString()} / DB:{detectedVersions(2).ToString()}）")
+
+            ' 3. 取得したバージョンリストの最小値と、検査バージョンを比較
+            If detectedVersions.Count > 0 Then
+                Dim minVersion As NuGetVersion = detectedVersions.Min()
+                Return minVersion >= target
+            End If
+
+            Return False
+
+        Catch ex As Exception
+            Return False
+        End Try
+    End Function
 End Class

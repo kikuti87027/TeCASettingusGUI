@@ -137,3 +137,13 @@
 							・チェックアウトでダウンロードされるファイルがdownload_xxx.zip（サイズ０）になる不具合を修正(ZUNO_TECA-375/Web）
 							　　対策自体は埋め込みオブジェクト(After_check-out.service.js)交換のみ
 
+ 26-10-08　Ver3.4.0.4【Web1.15.0.4 / API1.15.0.4 / DB1.15.0.2】
+				【追加】	・Settings.vb / BugFixes.DeleteWeirdApiFolder　
+				　　　　　　　　　[api..]フォルダがあった場合に削除する（ZUNO_TECA-377）
+				【追加】	・Settings.vb / BugFixes.CheckVerIsGE
+				                  引数で与えたVer番号よりも大きいか等しいかを判定するFunctionを追加。その時点のVer一覧もログに排出する
+				【追加】	・Form_load
+								　 BugFixes.CheckVerIsGEで1.15.0以上であることを判定し、Trueである場合のみ稼働するように修正
+
+							
+				設定変更に関するログ出力を実装中
