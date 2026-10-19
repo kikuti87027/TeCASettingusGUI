@@ -145,5 +145,11 @@
 				【追加】	・Form_load
 								　 BugFixes.CheckVerIsGEで1.15.0以上であることを判定し、Trueである場合のみ稼働するように修正
 
-							
-				設定変更に関するログ出力を実装中
+ 26-10-13　Ver3.4.0.5【Web1.15.0.4 / API1.15.0.4 / DB1.15.0.2】
+				【追加】	・Button_execute_Click
+								　 Kikuchi.dll:DeployUtils.WriteLogを追加 
+
+ 26-10-15　Ver3.4.0.6【Web1.15.0.4 / API1.15.0.4 / DB1.15.0.2】
+				【修正】	・After_check-out.service.js
+								　　チェックアウトでダウンロードされるファイルがサイズ1になる不具合を修正(ZUNO_TECA-375/Web）
+								　　対策自体は埋め込みオブジェクト(After_check-out.service.js)交換のみ

@@ -142,64 +142,85 @@ app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants
 
 					// ポップアップブロック回避用（CAD連携時のみウィンドウを開く）
 					var win = data.cad ? CommonService.windowOpen($scope) : null;
+					CommonService.httpModal($scope, Action + "/check-out", param, true,
+						function (resolveData) {
+							// ========================================================
+							// 1. サイズ1KBの「隠れエラーJSON」対策（厳密なエラー判定）
+							// ========================================================
+							var isRealError = false;
+							var parsedJson = null;
 
-					CommonService.httpPost(Action + "/check-out", param,
-						function(resolveData) {
-							// 成功処理
-							if (data.cad) {
-								// ★ CAD/アプリ連携の場合：レスポンスは JSON (テキスト)
-								var reader = new FileReader();
-								reader.onload = function(re) {
-									var json = JSON.parse(re.target.result);
-									
-									// Blobダウンロード（ファイルそのものを保存）
-									var fileBlob = new Blob([resolveData], { type: "application/octet-stream" });
-									CommonService.linkDownload($scope, resolveData, cadFileName, win);
-
-									var skipGuide = StorageService.getData('skipAppLaunchGuide');
-									if (!skipGuide) {
-										var template = "app/guide-modal/guide-modal.html";
-										var controller = "GuideModalController";
-										CommonService.openModal($scope, template, controller);
+							if (resolveData && resolveData.byteLength < 5000) {
+								var uintArray = new Uint8Array(resolveData);
+								// 先頭が '{' (ASCII: 123) の場合のみJSONパースを試みる
+								if (uintArray.length > 0 && uintArray[0] === 123) {
+									try {
+										var text = new TextDecoder("utf-8").decode(uintArray);
+										parsedJson = JSON.parse(text);
+										// ★ code または errorInfo を持っている場合のみ「エラー」と判定する
+										if (parsedJson && (parsedJson.errorInfo || parsedJson.code)) {
+											isRealError = true;
+										}
+									} catch (e) {
+										isRealError = false;
 									}
-									$scope.close();
-								};
-								var blob = new Blob([resolveData], { type: "text/plain" });
-								reader.readAsText(blob);
+								}
+							}
 
+							// 本物のエラーの場合のみエラーダイアログを表示して中断
+							if (isRealError && parsedJson) {
+								dtlInfo.errorInfo = parsedJson.errorInfo || parsedJson;
+								CommonService.errorProcess($scope, parsedJson, Const.SOSA_LOG_GAMEN_KBN_CHECK_OUT, Const.SOSA_LOG_SOSA_KBN_CHECK_OUT, dtlInfo);
+								if (win != null) win.close();
+								return; // 中断
+							}
+
+							// ========================================================
+							// 2. 正常なバイナリデータの場合のダウンロード処理
+							// ========================================================
+							var fileName = "";
+							if (data.cad || $scope.checkoutInfo.data.length === 1) {
+								fileName = cadFileName; // 単体ファイル名
 							} else {
-								// ★ 通常のチェックアウトの場合：単一ファイルなら元のファイル名、複数ならZIP
-								var fileName = "";
-								if ($scope.checkoutInfo.data.length === 1) {
-									fileName = cadFileName; // 単体ファイル名（例: A100-72-01_NR.xlsx）
-								} else {
-									fileName = "download_" + CommonService.formatDate.format(new Date(), "yyyyMMddhhmmss") + ".zip";
-								}
+								fileName = "download_" + CommonService.formatDate.format(new Date(), "yyyyMMddhhmmss") + ".zip";
+							}
 
-								// バイナリをダウンロード発火
-								var blob = new Blob([resolveData], { type: "application/octet-stream" });
-								if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-									window.navigator.msSaveOrOpenBlob(blob, fileName);
-								} else {
-									var fileURL = URL.createObjectURL(blob);
-									var anchor = document.createElement('a');
-									anchor.href = fileURL;
-									anchor.download = fileName;
-									document.body.appendChild(anchor);
-									anchor.click();
-									document.body.removeChild(anchor);
-									URL.revokeObjectURL(fileURL);
-								}
+							var blob = new Blob([resolveData], { type: "application/octet-stream" });
+							if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+								window.navigator.msSaveOrOpenBlob(blob, fileName);
+							} else {
+								var fileURL = URL.createObjectURL(blob);
+								var anchor = document.createElement('a');
+								anchor.href = fileURL;
+								anchor.download = fileName;
+								document.body.appendChild(anchor);
+								anchor.click();
+								document.body.removeChild(anchor);
+								URL.revokeObjectURL(fileURL);
+							}
 
+							if (win != null) win.close();
+
+							if (data.cad) {
+								var skipGuide = StorageService.getData('skipAppLaunchGuide');
+								if (!skipGuide) {
+									var template = "app/guide-modal/guide-modal.html";
+									var controller = "GuideModalController";
+									CommonService.openModal($scope, template, controller);
+								}
+								$scope.close();
+							} else {
 								var promiseRes = CommonService.dispMessage($scope, "I00001", ["checkOut"]);
-								promiseRes.then(function(result) {
+								promiseRes.then(function (result) {
 									$scope.close();
 								});
 							}
 
-							// システム操作ログ登録（成功）
 							CommonService.systemSosaLogSuccess($scope, Const.SOSA_LOG_GAMEN_KBN_CHECK_OUT, Const.SOSA_LOG_SOSA_KBN_CHECK_OUT, dtlInfo);
 						},
+
+					//-------------------------------
+
 						function(rejectData, state) {
 							// 失敗処理
 							var reader = new FileReader();
@@ -214,9 +235,7 @@ app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants
 							var blob = new Blob([rejectData], { type: "text/plain" });
 							reader.readAsText(blob);
 
-							if (win != null) {
-								win.close();
-							}
+							if (win != null) win.close();
 						},
 						{ responseType: 'arraybuffer' }
 					);

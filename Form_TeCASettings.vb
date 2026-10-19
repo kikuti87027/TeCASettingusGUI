@@ -7,11 +7,12 @@ Imports NuGet.Versioning
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
 Imports Windows.Devices.Geolocation
+Imports kikuchi
 
 Public Class Form_TeCASettings
     Dim CurrentPassword As String  '旧パスワード保管用
     Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]、[db2.t_system_info]
-    Dim DIC As New SwitchWords
+    Private DIC As New TeCASettings.TRIGGERS.SwitchWords
     Dim pdfJS_CurrentViewScale As String　'現在のプレビュー表示拡大率（編集前の退避）
     Dim Thubnail_current As String　'現在のプレビューサムネイル解像度（編集前の退避）
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow, TRG_File_kokai_linkage_exists As Boolean
@@ -34,7 +35,7 @@ Public Class Form_TeCASettings
 
         '稼働環境（TecA 1.15.0以上）かどうか確認
         If Not BugFixes.CheckVerIsGE("1.15.0") Then
-            MessageBox.Show("TeCASettingsはTeCA 1.15.0以上の環境でのみ使用可能です。", "注意", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show($"TeCAのバージョンが確認できないか、1.15.0以下の環境です。{vbCrLf}tecacmd -reboot dbで再起動をお試しください。", "TeCASettingsは1.15.0以上でのみ稼働します", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End If
         'プログレスバー初期化
@@ -285,7 +286,7 @@ Public Class Form_TeCASettings
                 End If
 
                 '【ClientID/SecretID】の更新
-                SwitchWords.UpdateClientAndSecretIds(ClientID, SecretID)
+                TRIGGERS.SwitchWords.UpdateClientAndSecretIds(ClientID, SecretID)
 
                 '【apache/httpd.conf】AH000558エラーをこっそり直す
                 If Misc.FindString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default")) Then
@@ -805,6 +806,7 @@ Public Class Form_TeCASettings
 
         ProgressBar.Value = beginProgress
         Dim RunningMsg As String = ""
+        Dim LogString As String = ""
 
         For Each ServiceName As String In ServiceArray
             Dim sc As New ServiceController(Misc.GetServiceNameByPartialName(ServiceName))
@@ -822,6 +824,7 @@ Public Class Form_TeCASettings
                 RunningMsg = RunningMsg + vbCrLf + ServiceName + "が存在しません。"
                 Exit For
             End Try
+
 
             If (exec_mode.Equals("STOP", StringComparison.CurrentCultureIgnoreCase)) Then
 
@@ -850,7 +853,13 @@ Public Class Form_TeCASettings
                     RunningMsg = RunningMsg + vbCrLf + "起動不良 : " + ServiceName + " is " + sc.Status.ToString
                 End Try
             End If
+
+            LogString &= $"{ServiceName},"
+
         Next
+        DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{exec_mode.ToUpper()} ({LogString})")
+
+
 
         If (RunningMsg = "") Then
             TeCA_Exec = ""

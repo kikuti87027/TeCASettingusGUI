@@ -61,54 +61,37 @@ export function checkOut(req, res) {
 	headers["Accept"] = "application/json, application/zip, application/octet-stream";
 
 	var parameters = req.body.data;
-	if (req.body.data.cad) {
-		// CAD連携あり
-		Common.requestApiBinary(req, Const.METHOD_POST, Const.PATH_FILES + "/check-out", headers, parameters, 
-			function(buffer, state) {
-				if (state != 200) {
-					// バイナリレスポンスのためエラーステータスを設定
-					res.statusCode = state;
-					if (buffer) {
-						res.send(buffer);
-					} else {
-						Common.errorResponseState(req, res, state);
-					}
-					return;
-				}
-				// ★直接ブラウザへダウンロードさせるためのヘッダーとバイナリを返却
-				res.setHeader("Content-Type", "application/octet-stream");
-				// フロントから引き渡されたCADファイル名を安全にエンコードしてセット
-				var encodedFileName = encodeURIComponent(req.body.cadFileName);
-				res.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
-				
-				res.send(buffer);
-				logger.endLog(req, "checkOut", "");
-			},
-			function(error) {
+	
+	// CAD連携の有無に関係なく、常に requestApiBinary で生バイナリを取得して直接返す
+	Common.requestApiBinary(req, Const.METHOD_POST, Const.PATH_FILES + "/check-out", headers, parameters, 
+		function(buffer, state) {
+			if (state != 200) {
 				// バイナリレスポンスのためエラーステータスを設定
-				res.statusCode = 500;
-				Common.errorResponseServerConnectError(req, res, error);
-			}
-		);
-	} else {
-		// CAD連携なし
-		Common.requestApiDownload(req, Const.METHOD_POST, Const.PATH_FILES + "/check-out", headers, parameters, 
-			function(buffer, state) {
-				if (state != 200) {
-					// バイナリレスポンスのためエラーステータスを設定
-					res.statusCode = state;
+				res.statusCode = state;
+				if (buffer) {
 					res.send(buffer);
-					return;
+				} else {
+					Common.errorResponseState(req, res, state);
 				}
-				// レスポンス
-				res.send(buffer);
-				logger.endLog(req, "checkOut", "");
-			},
-			function(error) {
-				// バイナリレスポンスのためエラーステータスを設定
-				res.statusCode = 500;
-				Common.errorResponseServerConnectError(req, res, error);
+				return;
 			}
-		);
-	}
+			
+			// 直接ブラウザへダウンロードさせるためのヘッダーとバイナリを返却
+			res.setHeader("Content-Type", "application/octet-stream");
+			
+			// 単一ファイル/CAD連携時はファイル名を取得、複数ファイル（ZIP）時はデフォルト名を使用
+			var fileName = req.body.cadFileName || "download.zip";
+			var encodedFileName = encodeURIComponent(fileName);
+			res.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
+			
+			// 実バイナリデータをブラウザへ送信
+			res.send(buffer);
+			logger.endLog(req, "checkOut", "");
+		},
+		function(error) {
+			// バイナリレスポンスのためエラーステータスを設定
+			res.statusCode = 500;
+			Common.errorResponseServerConnectError(req, res, error);
+		}
+	);
 }

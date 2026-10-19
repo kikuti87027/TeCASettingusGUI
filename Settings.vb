@@ -114,7 +114,7 @@ Public Class TECA_sets
     End Property
 
     'アプリ連携関連パス
-    Public Const appLink_server As String = WEB_PATH & "\server\api"
+    Public Const appLink_server As String = WEB_PATH & "\web\server\api"
 
     'ID,SecretIDを取得
     Private Shared ReadOnly _ClientID As String = TXTFunc.IDSearch(IDpath, "clientId", QUOTA.Apostrofy)
@@ -582,7 +582,7 @@ Public Class AppLinkJNLP
         ("After_main.detail.controller.js", Path.GetDirectoryName(TECA_sets.appLink_server & "\main\main.detail.controller.js")),
         ("After_check-out.html", Path.GetDirectoryName(TECA_sets.ClientWebPath & "\app\check-out\check-out.html")),
         ("After_check-out.service.js", Path.GetDirectoryName(TECA_sets.ClientWebPath & "\app\check-out\check-out.service.js")),
-        ("After_check-out.controller.js", Path.GetDirectoryName(TECA_sets.ServerWebPath & "\api\check-out\check-out.controller.js"))
+        ("After_check-out.controller.js", Path.GetDirectoryName(TECA_sets.appLink_server & "\check-out\check-out.controller.js"))
     }
 
     Public Shared ReadOnly mainHTML As New Dictionary(Of Boolean, String) From {
@@ -1695,7 +1695,6 @@ Public Class BugFixes
             Dim normalizedSearch As String = searchTarget.Replace(vbCrLf, vbLf)
 
             If Not normalizedChg.Contains(normalizedSearch) Then
-                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{SwapBlocksFile}を適用は見送りました。")
                 Return 1
             End If
 
@@ -1748,11 +1747,12 @@ Public Class BugFixes
 
         ' クラス内のPrivate関数を使って存在チェック
         If DirectoryExistsExact(targetPath) Then
-            Dim psi As New ProcessStartInfo()
-            psi.FileName = "cmd.exe"
-            psi.Arguments = $"/c rd /s /q ""{targetPath}"""
-            psi.CreateNoWindow = True
-            psi.UseShellExecute = False
+            Dim psi As New ProcessStartInfo With {
+                .FileName = "cmd.exe",
+                .Arguments = $"/c rd /s /q ""{targetPath}""",
+                .CreateNoWindow = True,
+                .UseShellExecute = False
+            }
 
             Dim process As Process = Process.Start(psi)
             process.WaitForExit()
@@ -1860,7 +1860,7 @@ Public Class BugFixes
             End If
 
             DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log",
-                                 $"バージョン情報:{detectedVersions(3).ToString()}（WEB:{detectedVersions(0).ToString()} / API:{detectedVersions(1).ToString()} / DB:{detectedVersions(2).ToString()}）")
+                                 $"バージョン情報:{detectedVersions(3)}（WEB:{detectedVersions(0)} / API:{detectedVersions(1)} / DB:{detectedVersions(2)}）")
 
             ' 3. 取得したバージョンリストの最小値と、検査バージョンを比較
             If detectedVersions.Count > 0 Then
@@ -1871,6 +1871,7 @@ Public Class BugFixes
             Return False
 
         Catch ex As Exception
+            DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"エラーが発生しました: {ex.Message}")
             Return False
         End Try
     End Function

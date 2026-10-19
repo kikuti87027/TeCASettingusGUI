@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
@@ -10,7 +10,7 @@
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
     <ImportedNamespaces>kikuchi=False,Npgsql=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,TeCASettings=True</ImportedNamespaces>
     <ApplicationIcon>Icons\64.ico</ApplicationIcon>
-	<Version>3.4.0.4</Version>
+	<Version>3.4.0.6</Version>
 	<InformationalVersion>3.00</InformationalVersion>
 	<Company>Photron</Company>
     <PackageIcon>orgext.png</PackageIcon>
@@ -220,10 +220,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Core" Version="1.62.0" />
+    <PackageReference Include="Azure.Core" Version="1.63.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="CXuesong.Shims.VisualBasic.Devices" Version="0.3.0" />
-    <PackageReference Include="log4net" Version="3.4.0" />
+    <PackageReference Include="log4net" Version="3.5.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.3.26207.106">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -231,19 +231,19 @@
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
     <PackageReference Include="NuGet.Versioning" Version="7.9.0" />
-    <PackageReference Include="System.Management" Version="10.0.12" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.12" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="kikuchi">
-      <HintPath>..\kikuchi\Publish\kikuchi.dll</HintPath>
-    </Reference>
+    <PackageReference Include="System.Management" Version="10.0.13" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.13" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="PrintModeResources\After_print-preview.service.js" />
     <EmbeddedResource Include="PrintModeResources\Before_print-preview.service.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="kikuchi">
+      <HintPath>..\kikuchi\bin\x64\Release\net10.0-windows10.0.17763.0\win-x64\kikuchi.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

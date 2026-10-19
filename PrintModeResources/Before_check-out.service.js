@@ -205,6 +205,6 @@ app.factory('CheckOutService', function($q, $location, $timeout, uiGridConstants
 					);
 				}
 			);
-		},
+		}
 	}
 });
