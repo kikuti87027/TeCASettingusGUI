@@ -8,3 +8,6 @@ dotnet_diagnostic.WFO1000.severity = none
 
 # WFO2001: Task is being passed to InvokeAsync without a cancellation token
 dotnet_diagnostic.WFO2001.severity = none
+
+# WFO1001: 'IDataObject' 型は 'ITypedDataObject' を実装しません
+dotnet_diagnostic.WFO1001.severity = none

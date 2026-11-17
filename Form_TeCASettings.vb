@@ -10,45 +10,45 @@ Imports Windows.Devices.Geolocation
 Imports kikuchi
 
 Public Class Form_TeCASettings
-    Dim CurrentPassword As String  '‹ŒƒpƒXƒ[ƒh•ÛŠÇ—p
-    Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]A[db2.t_system_info]
+    Dim CurrentPassword As String  'æ—§ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ä¿ç®¡ç”¨
+    Dim Dt_kaisha, Dt_systemInfo, DT_option, DT_systemInfoDB2 As New DataTable    '[db1.m_kaisha]ã€[db2.t_system_info]
     Private DIC As New TeCASettings.TRIGGERS.SwitchWords
-    Dim pdfJS_CurrentViewScale As String@'Œ»İ‚ÌƒvƒŒƒrƒ…[•\¦Šg‘å—¦i•ÒW‘O‚Ì‘Ş”ğj
-    Dim Thubnail_current As String@'Œ»İ‚ÌƒvƒŒƒrƒ…[ƒTƒ€ƒlƒCƒ‹‰ğ‘œ“xi•ÒW‘O‚Ì‘Ş”ğj
+    Dim pdfJS_CurrentViewScale As String 'ç¾åœ¨ã®ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼è¡¨ç¤ºæ‹¡å¤§ç‡ï¼ˆç·¨é›†å‰ã®é€€é¿ï¼‰
+    Dim Thubnail_current As String 'ç¾åœ¨ã®ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ã‚µãƒ ãƒã‚¤ãƒ«è§£åƒåº¦ï¼ˆç·¨é›†å‰ã®é€€é¿ï¼‰
     Public DefaultKokai_Exists, TRG_CheckInUNPUBLIC_exists, TRG_ApprovePUBLIC_exists, GrabToolNow, TRG_File_kokai_linkage_exists As Boolean
     Dim ProgressValue As Integer = 0
     Dim WebVersionStr As String = ""
 
-    ReadOnly assembly As Assembly = assembly.GetExecutingAssembly()
+    ReadOnly assembly As Assembly = Assembly.GetExecutingAssembly()
     ReadOnly version As Version = assembly.GetName().Version
     ReadOnly versionString As String = version.ToString()
 
     Private Sub Form_TeCASettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Me.Text = "}”]TeCA@ƒVƒXƒeƒ€İ’èƒc[ƒ‹ Ver." + versionString.ToString
+        Me.Text = "å›³è„³TeCA ã‚·ã‚¹ãƒ†ãƒ è¨­å®šãƒ„ãƒ¼ãƒ« Ver." + versionString.ToString
 
-        'TeCAƒT[ƒo[‚©‚Ç‚¤‚©Šm”F
+        'TeCAã‚µãƒ¼ãƒãƒ¼ã‹ã©ã†ã‹ç¢ºèª
         If Not TeCA.IsRunableEnvoronment(TECA_sets.TeCAServices) Then
-            MessageBox.Show("TeCASettings‚ÍTeCAƒT[ƒo[ã‚Å‚Ì‚İg—p‰Â”\‚Å‚·B", "’ˆÓ", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("TeCASettingsã¯TeCAã‚µãƒ¼ãƒãƒ¼ä¸Šã§ã®ã¿ä½¿ç”¨å¯èƒ½ã§ã™ã€‚", "æ³¨æ„", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End If
 
-        '‰Ò“­ŠÂ‹«iTecA 1.15.0ˆÈãj‚©‚Ç‚¤‚©Šm”F
+        'ç¨¼åƒç’°å¢ƒï¼ˆTecA 1.15.0ä»¥ä¸Šï¼‰ã‹ã©ã†ã‹ç¢ºèª
         If Not BugFixes.CheckVerIsGE("1.15.0") Then
-            MessageBox.Show($"TeCA‚Ìƒo[ƒWƒ‡ƒ“‚ªŠm”F‚Å‚«‚È‚¢‚©A1.15.0ˆÈ‰º‚ÌŠÂ‹«‚Å‚·B{vbCrLf}tecacmd -reboot db‚ÅÄ‹N“®‚ğ‚¨‚µ‚­‚¾‚³‚¢B", "TeCASettings‚Í1.15.0ˆÈã‚Å‚Ì‚İ‰Ò“­‚µ‚Ü‚·", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show($"TeCAã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãŒç¢ºèªã§ããªã„ã‹ã€1.15.0ä»¥ä¸‹ã®ç’°å¢ƒã§ã™ã€‚{vbCrLf}tecacmd -reboot dbã§å†èµ·å‹•ã‚’ãŠè©¦ã—ãã ã•ã„ã€‚", "TeCASettingsã¯1.15.0ä»¥ä¸Šã§ã®ã¿ç¨¼åƒã—ã¾ã™", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End If
-        'ƒvƒƒOƒŒƒXƒo[‰Šú‰»
+        'ãƒ—ãƒ­ã‚°ãƒ¬ã‚¹ãƒãƒ¼åˆæœŸåŒ–
         Me.GroupBox_Progress.Visible = False
 
-        'ƒRƒ“ƒ{ƒ{ƒbƒNƒX‰Šú‰»(‰Šú€–Ú“Š“ü‚Æ•ÒWƒƒbƒNON
+        'ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹åˆæœŸåŒ–(åˆæœŸé …ç›®æŠ•å…¥ã¨ç·¨é›†ãƒ­ãƒƒã‚¯ON
         ComboBox_initialize()
         InitializeControls()
 
         '--------------------------------------
-        'ƒ_ƒCƒAƒƒOƒRƒ“ƒgƒ[ƒ‹‚ğ‘S•””ñ•\¦
+        'ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚’å…¨éƒ¨éè¡¨ç¤º
         '--------------------------------------
-        '‘SƒAƒCƒeƒ€‚ğDisable
+        'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Disable
         LockDialog(False, True, True)
         Button_Exec.Enabled = False
         GroupBox_MailServer.Enabled = False
@@ -61,14 +61,14 @@ Public Class Form_TeCASettings
         GroupBox_KOKAI.Visible = True
 
 
-        GroupBox_ninsyo.Text = "İ’è’l‚ğ•ÏX‚·‚é‚É‚ÍClientID‚ÆSecretID‚ğ“ü—Í‚µ‚Ä‰º‚³‚¢"
+        GroupBox_ninsyo.Text = "è¨­å®šå€¤ã‚’å¤‰æ›´ã™ã‚‹ã«ã¯ClientIDã¨SecretIDã‚’å…¥åŠ›ã—ã¦ä¸‹ã•ã„"
         TextBox_ClientID.Text = ""
         TextBox_SecretID.Text = ""
 
-        'SecretID‚Í”é“½•¶š‚É‚·‚é
+        'SecretIDã¯ç§˜åŒ¿æ–‡å­—ã«ã™ã‚‹
         TextBox_SecretID.UseSystemPasswordChar = True
         '--------------------------------------
-        'TeCA‚Ì¶€‚ğ•\¦‚·‚é
+        'TeCAã®ç”Ÿæ­»ã‚’è¡¨ç¤ºã™ã‚‹
         '--------------------------------------
         Label_notice.AutoSize = True
 
@@ -78,56 +78,56 @@ Public Class Form_TeCASettings
     End Sub
 
     Private Sub Button_Nunsyo_Click(sender As Object, e As EventArgs) Handles Button_Nunsyo.Click
-        'ADMIN‚Å‚È‚¢ê‡‚ÍI—¹@@@@
+        'ADMINã§ãªã„å ´åˆã¯çµ‚äº†    
         If Misc.IsAdimin = False Then
-            MessageBox.Show("LocalAdminŒ ŒÀ‚ÌƒAƒJƒEƒ“ƒg‚Å‚²—˜—p‚­‚¾‚³‚¢")
+            MessageBox.Show("LocalAdminæ¨©é™ã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã§ã”åˆ©ç”¨ãã ã•ã„")
             Exit Sub
         End If
 
-        '”FØ–¢“ü—Í‚Í”²‚¯‚é
+        'èªè¨¼æœªå…¥åŠ›ã¯æŠœã‘ã‚‹
         If ((TextBox_ClientID.Text = "") Or (TextBox_SecretID.Text = "")) Then
-            GroupBox_ninsyo.Text = "ClientID‚ÆSecretID‚ª–¢“ü—Í‚Å‚·B"
-            LockDialog(False, True, True)  '‘SƒAƒCƒeƒ€‚ğDisable
+            GroupBox_ninsyo.Text = "ClientIDã¨SecretIDãŒæœªå…¥åŠ›ã§ã™ã€‚"
+            LockDialog(False, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Disable
             Exit Sub
         End If
 
-        '”FØ“ü—Í
-        LockDialog(False, True, True)  '‘SƒAƒCƒeƒ€‚ğDisable
+        'èªè¨¼å…¥åŠ›
+        LockDialog(False, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Disable
         Button_Exec.Enabled = True
 
         Select Case True
             Case TextBox_ClientID.Text = ClientID AndAlso TextBox_SecretID.Text = SecretID
                 ' NormalUserMode
-                GroupBox_ninsyo.Text = "İ’è’l‚ğ•ÏX‚Å‚«‚Ü‚·B"
-                TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
+                GroupBox_ninsyo.Text = "è¨­å®šå€¤ã‚’å¤‰æ›´ã§ãã¾ã™ã€‚"
+                TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
                 LockDialog(True, False, True)
 
             Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisor"
                 ' SupervisorMode
-                GroupBox_ninsyo.Text = "ššSupervisor Modešš"
-                TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
-                LockDialog(True, True, True)  '‘SƒAƒCƒeƒ€‚ğEnable
+                GroupBox_ninsyo.Text = "â˜…â˜…Supervisor Modeâ˜…â˜…"
+                TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
+                LockDialog(True, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Enable
 
             Case TextBox_ClientID.Text = "photron" AndAlso TextBox_SecretID.Text = "ZUNOsupervisors"
                 ' SupervisorMode
-                GroupBox_ninsyo.Text = "ššSupervisor Modešš"
-                TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
-                LockDialog(True, True, True)  '‘SƒAƒCƒeƒ€‚ğEnable
+                GroupBox_ninsyo.Text = "â˜…â˜…Supervisor Modeâ˜…â˜…"
+                TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
+                LockDialog(True, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Enable
 
 
             Case Else
-                GroupBox_ninsyo.Text = "ClientIDASecretID‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"
-                TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
+                GroupBox_ninsyo.Text = "ClientIDã€SecretIDãŒé–“é•ã£ã¦ã„ã¾ã™ã€‚"
+                TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
                 Button_Exec.Enabled = False
 
                 Exit Sub
         End Select
 
-        If (CheckBox_ƒ[ƒ‹’Ê’m.Checked = False) Then
+        If (CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.Checked = False) Then
             GroupBox_MailServer.Enabled = False
         End If
 
-        Me.ComboBox_ExecMode.SelectedItem = "•ÏX‚¹‚¸Ä‹N“®"
+        Me.ComboBox_ExecMode.SelectedItem = "å¤‰æ›´ã›ãšå†èµ·å‹•"
 
     End Sub
 
@@ -137,16 +137,16 @@ Public Class Form_TeCASettings
         Dim DOSENC2 As String = "> %TEMP%\ENC.txt"
         Dim DOSLINE As String
 
-        Label_notice.Text = "ˆ—’†‚Å‚·B‚µ‚Î‚ç‚­‚¨‘Ò‚¿‚­‚¾‚³‚¢B"
+        Label_notice.Text = "å‡¦ç†ä¸­ã§ã™ã€‚ã—ã°ã‚‰ããŠå¾…ã¡ãã ã•ã„ã€‚"
         Label_notice.Update()
 
         If Val(TextBox_UPLOAD_SIZE_MAX.Text.ToString) > 1073741824 Then
-            Label_notice.Text = "uƒAƒbƒv‚Ìƒtƒ@ƒCƒ‹ƒTƒCƒYv‚Í1GB‚ªÅ‘å‚Å‚·B"
+            Label_notice.Text = "ã€Œã‚¢ãƒƒãƒ—æ™‚ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã€ã¯1GBãŒæœ€å¤§ã§ã™ã€‚"
             Label_notice.Update()
             Exit Sub
         End If
 
-        'ƒvƒƒOƒŒƒXƒo[‰Šú‰»
+        'ãƒ—ãƒ­ã‚°ãƒ¬ã‚¹ãƒãƒ¼åˆæœŸåŒ–
         GroupBox_Progress.Visible = True
         ProgressBar.Minimum = 0
         ProgressBar.Maximum = 100
@@ -155,60 +155,67 @@ Public Class Form_TeCASettings
 
         Label_notice.AutoSize = True
         Select Case Me.ComboBox_ExecMode.SelectedItem.ToString
-            Case "•ÏX‚¹‚¸Ä‹N“®"
-                Label_notice.Text = TeCA_Exec("Stop", 0, 80).ToString
-
-                'PipeManÀs
-                If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
-                    TeCA.SvcCtrls("PG_REBOOT", True)
-                Else
-                    TeCA.SvcCtrls("PG_REBOOT")
+            Case "å¤‰æ›´ã›ãšå†èµ·å‹•"
+                If Not TeCAServiceCtrl.StopTeCAServices(ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
                 End If
 
-                Label_notice.Text = TeCA_Exec("START", 80, 100).ToString
+                'PipeManå®Ÿè¡Œï¼ˆtecacmd -reboot db ã¨åŒä¸€ãƒ­ã‚¸ãƒƒã‚¯ï¼‰
+                Dim doReindex As Boolean = (CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled)
+                If Not TeCAServiceCtrl.RebootPGAndStartTeCA(doReindex, ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
 
-            Case "•ÏX‚µ‚ÄÄ‹N“®"
+            Case "å¤‰æ›´ã—ã¦å†èµ·å‹•"
 
-                '–„ƒŠƒ\[ƒX•ÛŠÇ‚Ìƒ³1.15.0‚Ìmain.service.js‚ğæ“¾‚µ‚ÄƒVƒXƒeƒ€‚Öã‘‚«‚·‚é
+                'åŸ‹è¾¼ãƒªã‚½ãƒ¼ã‚¹ä¿ç®¡ã®ç´”æ­£1.15.0ã®main.service.jsã‚’å–å¾—ã—ã¦ã‚·ã‚¹ãƒ†ãƒ ã¸ä¸Šæ›¸ãã™ã‚‹
                 If Not PubFlugLinkage.GetFileFromRSC("ORIGINAL_main.service.js", mainSVCjs_path) Then
-                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "Web Client‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B")
-                    MessageBox.Show("Web Client‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B")
+                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "Web Clientã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸã€‚")
+                    MessageBox.Show("Web Clientã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸã€‚")
+                    GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
                 Dim tmpFOLDER As String = Path.GetTempPath()
 
-                Label_notice.Text = TeCA_Exec("Stop", 0, 80).ToString
+                ' 1. tecacmd -reboot db ã¨åŒã˜ã4ã‚µãƒ¼ãƒ“ã‚¹ã‚’ç¢ºå®Ÿã«åœæ­¢
+                If Not TeCAServiceCtrl.StopTeCAServices(ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
 
-                'yapp.jszƒXƒNƒ[ƒ‹ƒpƒ‰ƒ[ƒ^‚ÌXV
+                'ã€app.jsã€‘ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æ›´æ–°
                 For Each targetKeyword As String In vScrollArray
                     If (TXTFunc.TextSwap(Scrollpath.ToString, targetKeyword, ComboBox_vScroll.SelectedItem.ToString, QUOTA.ColonToCamma)) = "Error" Then
-                        Label_notice.Text = "ƒXƒNƒ[ƒ‹ƒpƒ‰ƒ[ƒ^XVƒGƒ‰["
+                        Label_notice.Text = "ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æ›´æ–°ã‚¨ãƒ©ãƒ¼"
                         GroupBox_Progress.Visible = False
                         Exit Sub
                     End If
                 Next
 
-                'yproduction.jszƒƒOƒCƒ“ƒ^ƒCƒ€ƒAƒEƒg‚ÌXV
-                For X As Integer = 0 To TECA_sets.TOUTArray.GetLength(1)
-                    Dim swapResult As String = TXTFunc.TextSwap(TECA_sets.TOUTArray(X, 0).ToString, TECA_sets.TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, TECA_sets.TOUTArray(X, 2))
+                'ã€production.jsã€‘ãƒ­ã‚°ã‚¤ãƒ³ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆã®æ›´æ–°
+                For X As Integer = 0 To TECA_sets.TOUTArray.GetLength(0) - 1
+                    Dim swapResult As String = TXTFunc.TextSwap(TECA_sets.TOUTArray(X, 0).ToString, TECA_sets.TOUTArray(X, 1).ToString, ComboBox_LoginTimeout.SelectedItem.ToString, CInt(TECA_sets.TOUTArray(X, 2)))
 
                     If (swapResult = "Error") Then
-                        Label_notice.Text = " ƒƒOƒCƒ“ƒ^ƒCƒ€ƒAƒEƒgXVƒGƒ‰["
+                        Label_notice.Text = " ãƒ­ã‚°ã‚¤ãƒ³ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆæ›´æ–°ã‚¨ãƒ©ãƒ¼"
+                        GroupBox_Progress.Visible = False
                         Exit Sub
                     End If
                 Next
 
-                'yt_system_infozƒTƒ€ƒl[ƒ‹‰ğ‘œ“x‚ÌXV
+                'ã€t_system_infoã€‘ã‚µãƒ ãƒãƒ¼ãƒ«è§£åƒåº¦ã®æ›´æ–°
                 If Thubnail_current <> ComboBox_ThumbnailRatio.SelectedItem Then
-                    Label_notice.Text = TeCA.UpdateDB(DIC.ThmbNailCmds(ComboBox_ThumbnailRatio.SelectedItem), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(DIC.ThmbNailCmds(ComboBox_ThumbnailRatio.SelectedItem), DynamicConnStrDB2)
                 End If
 
 
-                'yselect-file.service.jszƒtƒ@ƒCƒ‹‘I‘ğƒ‚[ƒ_ƒ‹‚Ìs”XV
+                'ã€select-file.service.jsã€‘ãƒ•ã‚¡ã‚¤ãƒ«é¸æŠãƒ¢ãƒ¼ãƒ€ãƒ«ã®è¡Œæ•°æ›´æ–°
                 Label_notice.Text = KeyValueParser.ReplaceValue(SelectFileJS, "var DEFAULT_DISP_CNT", ComboBox_FileSelectLineNum.SelectedItem)
 
-                'ybootstrap.min.csszƒtƒ@ƒCƒ‹‘I‘ğƒ‚[ƒ_ƒ‹‚Ì‰¡•Šgk
+                'ã€bootstrap.min.cssã€‘ãƒ•ã‚¡ã‚¤ãƒ«é¸æŠãƒ¢ãƒ¼ãƒ€ãƒ«ã®æ¨ªå¹…æ‹¡ç¸®
                 If CheckBox_Wide.Checked Then
                     ReplaceTextInFile(DIC.SelectFileCSS_Width("CSS_Normal"), DIC.SelectFileCSS_Width("CSS_Wide"), SelectFileCSS_Width)
                     ReplaceTextInFile(DIC.SelectFileCSS_Width("HTML1_Normal"), DIC.SelectFileCSS_Width("HTML1_Wide"), SelectFileHTML)
@@ -225,7 +232,7 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.SelectFileCSS_Width("JS2_Wide"), DIC.SelectFileCSS_Width("JS2_Normal"), SelectFileJS)
                 End If
 
-                'ymain.service.jszƒ[ƒNƒtƒ[Ú×ƒyƒCƒ“@ˆÄŒ‚Ì“WŠJs”Šgk‚ÌXV
+                'ã€main.service.jsã€‘ãƒ¯ãƒ¼ã‚¯ãƒ•ãƒ­ãƒ¼è©³ç´°ãƒšã‚¤ãƒ³ æ¡ˆä»¶ã®å±•é–‹è¡Œæ•°æ‹¡ç¸®ã®æ›´æ–°
                 If CheckBox_workflowListExpandable.Checked Then
                     ReplaceTextInFile(DIC.workFlowListExpandable(False), DIC.workFlowListExpandable(True), mainSVCjs_path)
                     ReplaceTextInFile(DIC.workFlowListSubGridExpandable(False), DIC.workFlowListSubGridExpandable(True), mainSVCjs_path)
@@ -236,68 +243,68 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.workFlowListsubGridValue_Expandable(True), DIC.workFlowListsubGridValue_Expandable(False), mainCSS_path)
                 End If
 
-                'ymain.service.jsz—š—ğƒyƒCƒ“@‰æ–ÊXV‚ÉƒXƒNƒ[ƒ‹ƒo[‚ğÅã’[‚ÉƒZƒbƒg‚µ’¼‚·
+                'ã€main.service.jsã€‘å±¥æ­´ãƒšã‚¤ãƒ³ ç”»é¢æ›´æ–°æ™‚ã«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’æœ€ä¸Šç«¯ã«ã‚»ãƒƒãƒˆã—ç›´ã™
                 If CheckBox_FileHistroryScrollPosition.Checked Then
                     ReplaceTextInFile(DIC.FileHistoryScroll_onTOP(False), DIC.FileHistoryScroll_onTOP(True), mainSVCjs_path)
                 Else
                     ReplaceTextInFile(DIC.FileHistoryScroll_onTOP(True), DIC.FileHistoryScroll_onTOP(False), mainSVCjs_path)
                 End If
 
-                'ypdf.jszƒvƒŒƒrƒ…[•\¦Šg‘å—¦ƒRƒ“ƒ{‚©‚ç‚ÌXV
+                'ã€pdf.jsã€‘ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼è¡¨ç¤ºæ‹¡å¤§ç‡ã‚³ãƒ³ãƒœã‹ã‚‰ã®æ›´æ–°
                 If Not String.IsNullOrEmpty(pdfJS_CurrentViewScale) Then
                     Label_notice.Text = Misc.ExchangeString(preViewJS, pdfJS_CurrentViewScale, DIC.pdfJS(ComboBox_PreViewScale.SelectedItem))
                 Else
-                    Label_notice.Text = "ƒvƒŒƒrƒ…[•\¦Šg‘å—¦‚ğXV‚Å‚«‚Ü‚¹‚ñ"
+                    Label_notice.Text = "ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼è¡¨ç¤ºæ‹¡å¤§ç‡ã‚’æ›´æ–°ã§ãã¾ã›ã‚“"
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
-                'ySetLocalz‚ÌXV 
+                'ã€SetLocalã€‘ã®æ›´æ–° 
                 If CheckBox_setLocal.Checked Then
                     For X = 0 To 3
                         Label_notice.Text = Misc.ExchangeString(SetLocalArray(X, 0), SetLocalArray(X, 1), SetLocalArray(X, 2), True, "Shift_JIS")
                     Next
                 End If
 
-                'yPDF_Convert.propertiesz‚ÌXV 
+                'ã€PDF_Convert.propertiesã€‘ã®æ›´æ–° 
                 Dim exchangeFtypes As Integer
                 For Each FType In pdfConvFtypeArray
                     exchangeFtypes += Misc.ExchangeString(PdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
                 Next
                 If exchangeFtypes <> pdfConvFtypeArray.Length Then
-                    MessageBox.Show("PDFConverter•ÏŠ·F Šg’£qí—Şibmp,png,gif,tif,tiff,jpg,jpeg)‚Ì‚¢‚¸‚ê‚©‚ª–¢’è‹`‚Å‚·")
+                    MessageBox.Show("PDFConverterå¤‰æ›ï¼š æ‹¡å¼µå­ç¨®é¡ï¼ˆbmp,png,gif,tif,tiff,jpg,jpeg)ã®ã„ãšã‚Œã‹ãŒæœªå®šç¾©ã§ã™")
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
                 If Not Misc.ConvertBOMFileToNoBOM(pdfconvpropPath) Then
-                    MessageBox.Show("PDF•ÏŠ·î•ñ‚©‚çBOM‚ğ”rœ‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B", "PDF•ÏŠ·ƒ‚[ƒh")
+                    MessageBox.Show("PDFå¤‰æ›æƒ…å ±ã‹ã‚‰BOMã‚’æ’é™¤ã§ãã¾ã›ã‚“ã§ã—ãŸã€‚", "PDFå¤‰æ›ãƒ¢ãƒ¼ãƒ‰")
                 End If
 
-                'CheckBox‚Æs’Šotrue/false‚ªˆÙ‚È‚Á‚Ä‚é‚È‚ç‘‚«Š·‚¦‚é
-                '@@@@@(ˆê’v‚·‚é‚È‚ç‘‚«Š·‚¦‚é•K—v‚Í‚È‚µj
+                'CheckBoxã¨è¡ŒæŠ½å‡ºtrue/falseãŒç•°ãªã£ã¦ã‚‹ãªã‚‰æ›¸ãæ›ãˆã‚‹
+                '     (ä¸€è‡´ã™ã‚‹ãªã‚‰æ›¸ãæ›ãˆã‚‹å¿…è¦ã¯ãªã—ï¼‰
                 If GrabToolNow <> CheckBox_GrabTool.Checked Then
                     Select Case CheckBox_GrabTool.Checked
                         Case True
                             Label_notice.Text = $"GrabTool on:{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("false"), DIC.pdfJS_Grab("true"))}"
                         Case False
-                            Label_notice.Text = $"GrabTool offF{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("true"), DIC.pdfJS_Grab("false"))}"
+                            Label_notice.Text = $"GrabTool offï¼š{Misc.ExchangeString(preViewJS, DIC.pdfJS_Grab("true"), DIC.pdfJS_Grab("false"))}"
                     End Select
                 End If
 
-                'yClientID/SecretIDz‚ÌXV
+                'ã€ClientID/SecretIDã€‘ã®æ›´æ–°
                 TRIGGERS.SwitchWords.UpdateClientAndSecretIds(ClientID, SecretID)
 
-                'yapache/httpd.confzAH000558ƒGƒ‰[‚ğ‚±‚Á‚»‚è’¼‚·
+                'ã€apache/httpd.confã€‘AH000558ã‚¨ãƒ©ãƒ¼ã‚’ã“ã£ãã‚Šç›´ã™
                 If Misc.FindString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default")) Then
                     Misc.ExchangeString(ApacheConf_PATH & "\httpd.conf", DIC.ApacheAH00558("Default"), DIC.ApacheAH00558("Fixed"))
                 End If
 
-                'ymail.propertiesz‚ÌXV
-                If (CheckBox_ƒ[ƒ‹’Ê’m.Checked = True) Then
+                'ã€mail.propertiesã€‘ã®æ›´æ–°
+                If (CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.Checked = True) Then
 
-                    '¥¥¥ƒ[ƒ‹İ’è“à—e‚Ì‘‚«‚İ@¨@ƒeƒ“ƒ|ƒ‰ƒŠ‚Émail.tmp‚Åì‚é
-                    '‘‚«‚Ş€–Ú‚Ì’è‹`
+                    'â–¼â–¼â–¼ãƒ¡ãƒ¼ãƒ«è¨­å®šå†…å®¹ã®æ›¸ãè¾¼ã¿ â†’ ãƒ†ãƒ³ãƒãƒ©ãƒªã«mail.tmpã§ä½œã‚‹
+                    'æ›¸ãè¾¼ã‚€é …ç›®ã®å®šç¾©
                     Dim mailPropArray2() As String = {"mail.smtp.host",
                                     "mail.smtp.port",
                                     "mail.transport.protocol",
@@ -315,21 +322,22 @@ Public Class Form_TeCASettings
                     Dim mailTIMEOUT() As String = {"mail.smtp.timeout",
                                                    "mail.smtp.writetimeout"}
 
-                    '‘‚«‚İæ‚Ì—pˆÓ
+                    'æ›¸ãè¾¼ã¿å…ˆã®ç”¨æ„
                     If (File.Exists(tmpFOLDER.ToString + "\mail.tmp") = True) Then
                         Try
                             File.Delete(tmpFOLDER.ToString + "\mail.tmp")
                         Catch ex As Exception
-                            MessageBox.Show("ƒeƒ“ƒ|ƒ‰ƒŠÁ‹•s—Ç:" + ex.ToString)
+                            MessageBox.Show("ãƒ†ãƒ³ãƒãƒ©ãƒªæ¶ˆå»ä¸è‰¯:" + ex.ToString)
+                            GroupBox_Progress.Visible = False
                             Exit Sub
                         End Try
                     End If
 
-                    'BOM–³‚µ‚ÌUTF8‚ÅƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ğì¬‚·‚é
+                    'BOMç„¡ã—ã®UTF8ã§ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã™ã‚‹
                     Dim enc As Encoding = New System.Text.UTF8Encoding(False)
                     Dim swTMPoutFile As New StreamWriter(tmpFOLDER.ToString + "\mail.tmp", False, enc)
 
-                    'ƒRƒ“ƒgƒ[ƒ‹‚Ì”‚¾‚¯ƒ‹[ƒv
+                    'ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®æ•°ã ã‘ãƒ«ãƒ¼ãƒ—
                     For Each srcCTRL As String In mailPropArray2
 
                         Dim CHB_answer As String
@@ -341,52 +349,53 @@ Public Class Form_TeCASettings
                             Dim TextBox_TMP As String = CType(writeTX(0), TextBox).Text.ToString
 
                             If (srcCTRL = "password") Then
-                                'ƒpƒXƒ[ƒh‚¾‚¯‚Ìˆ—
+                                'ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã ã‘ã®å‡¦ç†
                                 If (TextBox_TMP = CurrentPassword) Then
 
-                                    'š‘‚«Š·‚¦‚È‚µ¨‚È‚É‚à‚µ‚Ë‚¥ššš
+                                    'â˜…æ›¸ãæ›ãˆãªã—â†’ãªã«ã‚‚ã—ã­ã‡â˜…â˜…â˜…
                                     If (CheckBox_mail_smtp_auth.Checked = True) Then
                                         swTMPoutFile.Write(srcCTRL.ToString + "=" + TextBox_TMP + vbCrLf)
                                     Else
                                         swTMPoutFile.Write(srcCTRL.ToString + "=" + vbCrLf)
                                     End If
                                 Else
-                                    'š‘‚«Š·‚¦—L¨ˆÃ†‰»ššš
+                                    'â˜…æ›¸ãæ›ãˆæœ‰â†’æš—å·åŒ–â˜…â˜…â˜…
 
-                                    '¶ƒpƒXƒ[ƒh‚ğ–„‚ß‚ñ‚ÅˆÃ†‰»DOSƒoƒbƒ`‚ğ¶¬
+                                    'ç”Ÿãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’åŸ‹ã‚è¾¼ã‚“ã§æš—å·åŒ–DOSãƒãƒƒãƒã‚’ç”Ÿæˆ
                                     DOSLINE = DOSENC1 + TextBox_TMP + DOSENC2
                                     Dim swDOS As New StreamWriter(tmpFOLDER.ToString + "\ENC.bat", False, Encoding.GetEncoding("shift_jis"))
                                     swDOS.WriteLine(DOSLINE)
                                     swDOS.Close()
 
-                                    'DOSƒoƒbƒ`‹N“®
+                                    'DOSãƒãƒƒãƒèµ·å‹•
                                     Dim DosReturn As String = Misc.DOSEXE(tmpFOLDER.ToString + "\ENC.bat")
 
-                                    'DOSƒoƒbƒ`‚ÌŒ‹‰ÊiˆÃ†‰»‚³‚ê‚½‚à‚À‚ê‚Âj‚ğTEMP‚©‚çE‚¤
+                                    'DOSãƒãƒƒãƒã®çµæœï¼ˆæš—å·åŒ–ã•ã‚ŒãŸã‚‚ã¢ã‚Œã¤ï¼‰ã‚’TEMPã‹ã‚‰æ‹¾ã†
                                     Dim OneLine As String
                                     Using srENC As New StreamReader(tmpFOLDER.ToString + "\ENC.txt", Encoding.GetEncoding("shift_jis"))
                                         OneLine = srENC.ReadLine()
                                     End Using
 
-                                    'ƒpƒXƒ[ƒhs‚É“Š“ü
+                                    'ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰è¡Œã«æŠ•å…¥
                                     If (CheckBox_mail_smtp_auth.Checked = True) Then
                                         swTMPoutFile.Write(srcCTRL.ToString + "=" + OneLine + vbCrLf)
                                     Else
                                         swTMPoutFile.Write(srcCTRL.ToString + "=" + vbCrLf)
                                     End If
 
-                                    'ƒSƒ~‚ÍÁ“Å‚¾[
+                                    'ã‚´ãƒŸã¯æ¶ˆæ¯’ã ãƒ¼
                                     Try
                                         File.Delete(tmpFOLDER.ToString + "\ENC.txt")
                                         File.Delete(tmpFOLDER.ToString + "\ENC.bat")
                                     Catch ex As Exception
                                         Label_notice.Text = "Cannot remove TMPs:" + ex.Message.ToString
                                         Label_notice.Update()
+                                        GroupBox_Progress.Visible = False
                                         Exit Sub
                                     End Try
                                 End If
                             Else
-                                'ƒpƒXƒ[ƒh‚À‚á‚È‚¢‚Ì‚Í‘f’¼‚É‘‚­
+                                'ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¢ã‚ƒãªã„ã®ã¯ç´ ç›´ã«æ›¸ã
                                 swTMPoutFile.Write(srcCTRL.ToString + "=" + TextBox_TMP + vbCrLf)
                             End If
                         End If
@@ -395,7 +404,7 @@ Public Class Form_TeCASettings
                             swTMPoutFile.Write(srcCTRL.ToString + "=" + CType(writeCB(0), ComboBox).SelectedItem.ToString + vbCrLf)
                         End If
 
-                        'yChechBOX€–ÚzTrue‚ÆFalse‚ğtrue‚Æfalse‚É•ÏX
+                        'ã€ChechBOXé …ç›®ã€‘Trueã¨Falseã‚’trueã¨falseã«å¤‰æ›´
                         If writeCHB.Length > 0 Then
                             If (CType(writeCHB(0), CheckBox).Checked = True) Then
                                 CHB_answer = "true"
@@ -406,7 +415,7 @@ Public Class Form_TeCASettings
                             swTMPoutFile.Write(srcCTRL.ToString + "=" + CHB_answer + vbCrLf)
                         End If
 
-                        'smtps‚È‚çƒRƒƒ“ƒgƒAƒEƒg‚ğŠO‚·
+                        'smtpsãªã‚‰ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã‚’å¤–ã™
                         If (srcCTRL = "mail.transport.protocol") Then
                             For Each smtpsStep As String In mailSMTPS_add
                                 If (ComboBox_mail_transport_protocol.SelectedItem.ToString = "smtps") Then
@@ -417,14 +426,14 @@ Public Class Form_TeCASettings
                             Next
                         End If
 
-                        'ƒ^ƒCƒ€ƒAƒEƒgŒn‚Í‘S•”“¯‚¶’l‚ÉƒZƒbƒg
+                        'ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆç³»ã¯å…¨éƒ¨åŒã˜å€¤ã«ã‚»ãƒƒãƒˆ
                         If (srcCTRL.ToString = "mail.smtp.connectiontimeout") Then
                             For Each smtpsStep As String In mailTIMEOUT
                                 swTMPoutFile.Write(smtpsStep.ToString + "=" + CType(writeTX(0), TextBox).Text.ToString + vbCrLf)
                             Next
                         End If
 
-                        'charsets
+                        'charsetè¡Œ
                         If (srcCTRL = "charset") Then
                             swTMPoutFile.Write(srcCTRL.ToString + "=UTF-8" + vbCrLf)
                         End If
@@ -432,84 +441,84 @@ Public Class Form_TeCASettings
                     Next
                     swTMPoutFile.Close()
 
-                    '¥¥¥ƒeƒ“ƒ|ƒ‰ƒŠ‚©‚ç‘‚«–ß‚·
-                    'classes‰º‚Ì‚â‚Â‚ğƒoƒbƒNƒAƒbƒv
+                    'â–¼â–¼â–¼ãƒ†ãƒ³ãƒãƒ©ãƒªã‹ã‚‰æ›¸ãæˆ»ã™
+                    'classesä¸‹ã®ã‚„ã¤ã‚’ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
                     File.Copy(MailPropPath, tmpFOLDER.ToString + "\mail.master", True)
 
-                    '‘‚«–ß‚µ
+                    'æ›¸ãæˆ»ã—
                     Try
                         File.Copy(tmpFOLDER.ToString + "\mail.tmp", MailPropPath, True)
                     Catch ex As Exception
-                        MessageBox.Show("TeCAƒVƒXƒeƒ€‚Ö‚Ì‘‚«‚İ‚ğ¸”s‚µ‚Ü‚µ‚½", "ƒ[ƒ‹İ’è")
-                        Label_notice.Text = "ƒ[ƒ‹İ’è‚ÅXVƒGƒ‰["
+                        MessageBox.Show("TeCAã‚·ã‚¹ãƒ†ãƒ ã¸ã®æ›¸ãè¾¼ã¿ã‚’å¤±æ•—ã—ã¾ã—ãŸ", "ãƒ¡ãƒ¼ãƒ«è¨­å®š")
+                        Label_notice.Text = "ãƒ¡ãƒ¼ãƒ«è¨­å®šã§æ›´æ–°ã‚¨ãƒ©ãƒ¼"
                         GroupBox_Progress.Visible = False
                         Exit Sub
                     End Try
 
                 End If
 
-                'yƒ[ƒNƒtƒ[ŒnƒgƒŠƒK[2‚Â‚ğİ’u/–•ÁAƒAƒbƒvƒ[ƒh‚ÌƒfƒtƒHƒ‹ƒgŒöŠJ/”ñŒöŠJz
+                'ã€ãƒ¯ãƒ¼ã‚¯ãƒ•ãƒ­ãƒ¼ç³»ãƒˆãƒªã‚¬ãƒ¼2ã¤ã‚’è¨­ç½®/æŠ¹æ¶ˆã€ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå…¬é–‹/éå…¬é–‹ã€‘
                 Dim TRG As New TRIGGERS
 
-                '¡@ƒAƒbƒvƒ[ƒh‚Í”ñŒöŠJ‚É‚·‚é(CheckBox_UploadDefault)
+                'â–  ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ã¯éå…¬é–‹ã«ã™ã‚‹(CheckBox_UploadDefault)
                 DefaultKokai_Exists = Misc.FindFormula(KOKAI_FLG_File, DefaultKokai_key, "Const.UPLOAD_PUBLIC_OFF;")
 
                 If Not DefaultKokai_Exists AndAlso (CheckBox_UploadDefault.Checked) Then
-                    'UPload defaultÀs
-                    Label_notice.Text = $"UploadDefault=>UNPUBLICF{ReplaceTextInFile("Const.UPLOAD_PUBLIC_ON;", "Const.UPLOAD_PUBLIC_OFF;", KOKAI_FLG_File)}"
+                    'UPload defaultå®Ÿè¡Œ
+                    Label_notice.Text = $"UploadDefault=>UNPUBLICï¼š{ReplaceTextInFile("Const.UPLOAD_PUBLIC_ON;", "Const.UPLOAD_PUBLIC_OFF;", KOKAI_FLG_File)}"
                 End If
                 If DefaultKokai_Exists AndAlso Not (CheckBox_UploadDefault.Checked) Then
-                    'UPload default‰ğœÀs
-                    Label_notice.Text = $"UploadDefault=>PUBLICF{ReplaceTextInFile("Const.UPLOAD_PUBLIC_OFF;", "Const.UPLOAD_PUBLIC_ON;", KOKAI_FLG_File)}"
+                    'UPload defaultè§£é™¤å®Ÿè¡Œ
+                    Label_notice.Text = $"UploadDefault=>PUBLICï¼š{ReplaceTextInFile("Const.UPLOAD_PUBLIC_OFF;", "Const.UPLOAD_PUBLIC_ON;", KOKAI_FLG_File)}"
                 End If
 
-                '¡@·‚µ‘Ö‚¦Aƒ`ƒFƒbƒNƒCƒ“Œã‚Í”ñŒöŠJ‚É‚·‚é(CheckBox_UnpublicCheckin)
-                TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", connStr)
+                'â–  å·®ã—æ›¿ãˆã€ãƒã‚§ãƒƒã‚¯ã‚¤ãƒ³å¾Œã¯éå…¬é–‹ã«ã™ã‚‹(CheckBox_UnpublicCheckin)
+                TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", DynamicConnStrDB2)
 
                 If Not TRG_CheckInUNPUBLIC_exists AndAlso CheckBox_UnpublicCheckin.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerFunc"), connStr)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_Trigger"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerFunc"), DynamicConnStrDB2)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_Trigger"), DynamicConnStrDB2)
                 End If
                 If TRG_CheckInUNPUBLIC_exists AndAlso Not CheckBox_UnpublicCheckin.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerDROP"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("KOKAI_OFF_TriggerDROP"), DynamicConnStrDB2)
                 End If
 
-                '¡ƒ[ƒNƒtƒ[‚ª³”F‚³‚ê‚½‚çŒöŠJ‚·‚éiCheckBox_PublicateWorkflowOKj
-                TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", connStr)
+                'â– ãƒ¯ãƒ¼ã‚¯ãƒ•ãƒ­ãƒ¼ãŒæ‰¿èªã•ã‚ŒãŸã‚‰å…¬é–‹ã™ã‚‹ï¼ˆCheckBox_PublicateWorkflowOKï¼‰
+                TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", DynamicConnStrDB2)
 
                 If Not TRG_ApprovePUBLIC_exists AndAlso CheckBox_PublicateWorkflowOK.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerFunc"), connStr)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_Trigger"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerFunc"), DynamicConnStrDB2)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_Trigger"), DynamicConnStrDB2)
                 End If
                 If TRG_ApprovePUBLIC_exists AndAlso Not CheckBox_PublicateWorkflowOK.Checked Then
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), connStr)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("WKFL_TriggerDROP"), DynamicConnStrDB2)
                 End If
 
-                '¡uŒöŠJƒXƒCƒbƒ`‚Æ˜A“®v‚ğÀ‘•‚·‚éiCheckBox_PublicSymcj
+                'â– ã€Œå…¬é–‹ã‚¹ã‚¤ãƒƒãƒã¨é€£å‹•ã€ã‚’å®Ÿè£…ã™ã‚‹ï¼ˆCheckBox_PublicSymcï¼‰
 
-                '----y‚c‚az˜A“®ƒgƒŠƒK[İ’uó‹µ‚ğŠm”F
-                TRG_File_kokai_linkage_exists = TeCA.CheckTriggerExists("trg_file_kokai_linkage", "func_file_kokai_linkage", connStr)
+                '----ã€ï¼¤ï¼¢ã€‘é€£å‹•ãƒˆãƒªã‚¬ãƒ¼è¨­ç½®çŠ¶æ³ã‚’ç¢ºèª
+                TRG_File_kokai_linkage_exists = TeCA.CheckTriggerExists("trg_file_kokai_linkage", "func_file_kokai_linkage", DynamicConnStrDB2)
 
                 Dim isEnable As Boolean = CheckBox_PublicSymc.Checked
 
-                '----y‚c‚azÀ‘•/‰ğœ
+                '----ã€ï¼¤ï¼¢ã€‘å®Ÿè£…/è§£é™¤
                 If Not TRG_File_kokai_linkage_exists AndAlso isEnable Then
-                    ' DBÀ‘• (OFF -> ON)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_MakeColumn"), connStr)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerFunc"), connStr)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_Trigger"), connStr)
+                    ' DBå®Ÿè£… (OFF -> ON)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_MakeColumn"), DynamicConnStrDB2)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerFunc"), DynamicConnStrDB2)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_Trigger"), DynamicConnStrDB2)
                 ElseIf TRG_File_kokai_linkage_exists AndAlso Not isEnable Then
-                    ' DB‰ğœ (ON -> OFF)
-                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerDROP"), connStr)
+                    ' DBè§£é™¤ (ON -> OFF)
+                    Label_notice.Text = TeCA.UpdateDB(TRG.TRIGGERS_SQL("PublicSync_TriggerDROP"), DynamicConnStrDB2)
                 End If
 
-                '----y‚v‚d‚azÀ‘•/‰ğœ
+                '----ã€ï¼·ï¼¥ï¼¢ã€‘å®Ÿè£…/è§£é™¤
                 Dim isBehindKokaiRendo As Boolean = Misc.FindString(WebPublicSymc_MZMapperXML, PubFlugLinkage.ZokuseiSync_MZMapperXMLList(0).OFFval, True)
 
                 If isBehindKokaiRendo = isEnable Then
                     Try
-                        ' .Cast(Of Object)().ToList() ‚ğ•t—^‚µ‚ÄAŒ^‚ğ IEnumerable(Of Object) ‚É“K‡‚³‚¹‚é
-                        ' ‚±‚ê‚É‚æ‚èAUpdateWebFile ‚Ì“ü‚èŒû‚Å‚ÌƒLƒƒƒXƒgƒGƒ‰[‚ğ‰ñ”ğ‚µ‚Ü‚·
+                        ' .Cast(Of Object)().ToList() ã‚’ä»˜ä¸ã—ã¦ã€å‹ã‚’ IEnumerable(Of Object) ã«é©åˆã•ã›ã‚‹
+                        ' ã“ã‚Œã«ã‚ˆã‚Šã€UpdateWebFile ã®å…¥ã‚Šå£ã§ã®ã‚­ãƒ£ã‚¹ãƒˆã‚¨ãƒ©ãƒ¼ã‚’å›é¿ã—ã¾ã™
 
                         PubFlugLinkage.UpdateWebFile(WebPublicSymc_MZMapperXML,
                                      PubFlugLinkage.ZokuseiSync_MZMapperXMLList.Cast(Of Object)().ToList(),
@@ -524,13 +533,14 @@ Public Class Form_TeCASettings
                                      isEnable, "dtlH")
 
                     Catch ex As Exception
-                        ' ¸”s‚ÍƒƒbƒZ[ƒW‚ğ•\¦‚µ‚Ä’†’f
-                        MessageBox.Show(ex.Message, "ŒöŠJ˜A“®İ’èƒGƒ‰[")
+                        ' å¤±æ•—æ™‚ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¦ä¸­æ–­
+                        MessageBox.Show(ex.Message, "å…¬é–‹é€£å‹•è¨­å®šã‚¨ãƒ©ãƒ¼")
+                        GroupBox_Progress.Visible = False
                         Exit Sub
                     End Try
                 End If
 
-                '----y‚`‚o‚hzÀ‘•^‰ğœ
+                '----ã€ï¼¡ï¼°ï¼©ã€‘å®Ÿè£…ï¼è§£é™¤
                 PubFlugLinkage.DeployFiles(CheckBox_PublicSymc.Checked)
 
                 Dim rawWebValue As Object = KeyValueParser.FindValue(webVerPath, "VERSION")
@@ -542,9 +552,9 @@ Public Class Form_TeCASettings
                 Dim APIVersion = NuGetVersion.Parse(apiStr)
 
 
-                '¡ŒöŠJ‹@”\‚ğg—p‰Â”\‚É‚·‚éiCheckBox_EnableKokaij
+                'â– å…¬é–‹æ©Ÿèƒ½ã‚’ä½¿ç”¨å¯èƒ½ã«ã™ã‚‹ï¼ˆCheckBox_EnableKokaiï¼‰
 
-                'ŒöŠJ‚ğg‚¤‚©‚Ç‚¤‚©‚ÉŠÖ‚í‚ç‚¸Amain.service.js‚Í‹­§‘‚«Š·‚¦
+                'å…¬é–‹ã‚’ä½¿ã†ã‹ã©ã†ã‹ã«é–¢ã‚ã‚‰ãšã€main.service.jsã¯å¼·åˆ¶æ›¸ãæ›ãˆ
                 If Misc.FindString(mainSVCjs_path, PubFlugLinkage.PublishDateControl(0).ONval, True) Then
                     PubFlugLinkage.UpdateWebFile(mainSVCjs_path,
                                      PubFlugLinkage.PublishDateControl.Cast(Of Object)().ToList(),
@@ -560,7 +570,7 @@ Public Class Form_TeCASettings
                                      isKokaiEnable, "mainHTML")
                 End If
 
-                'yapp.jsz‘®«•ÏXÚ×ƒyƒCƒ“@ƒJƒŒƒ“ƒ_[ƒsƒbƒJ[‚ÆƒRƒ“ƒ{ˆÊ’u‚Ì©“®’²®
+                'ã€app.jsã€‘å±æ€§å¤‰æ›´è©³ç´°ãƒšã‚¤ãƒ³ ã‚«ãƒ¬ãƒ³ãƒ€ãƒ¼ãƒ”ãƒƒã‚«ãƒ¼ã¨ã‚³ãƒ³ãƒœä½ç½®ã®è‡ªå‹•èª¿æ•´
                 If CheckBox_CalPickerAutoAdjust.Checked Then
                     ReplaceTextInFile(DIC.AutoAdjustCalenderPosition(False), DIC.AutoAdjustCalenderPosition(True), Scrollpath)
                     ReplaceTextInFile(DIC.AutoAdjustComboPosition_html(False), DIC.AutoAdjustComboPosition_html(True), TECA_sets.mainHTMLpath)
@@ -573,51 +583,51 @@ Public Class Form_TeCASettings
                     ReplaceTextInFile(DIC.AutoAdjustComboPosition_css(True), DIC.AutoAdjustComboPosition_css(False), TECA_sets.mainCSS_path)
                 End If
 
-                'yprint-preview.service.jsz
-                '@@JNLPˆóü‚Æƒ_ƒCƒŒƒNƒgˆóü‚ğØ‚è‘Ö‚¦‚éB
-                '@@ƒfƒtƒH‚ÍJNLP,After‚Íu’¼Úv
-                '@@‚¤‚ß‚İƒŠƒ\[ƒXuPrintModeResourcesv‚©‚çã‘‚«ƒRƒs[‚µ‚Ä‚¢‚é
+                'ã€print-preview.service.jsã€‘
+                '  JNLPå°åˆ·ã¨ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆå°åˆ·ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
+                '  ãƒ‡ãƒ•ã‚©ã¯JNLP,Afterã¯ã€Œç›´æ¥ã€
+                '  ã†ã‚è¾¼ã¿ãƒªã‚½ãƒ¼ã‚¹ã€ŒPrintModeResourcesã€ã‹ã‚‰ä¸Šæ›¸ãã‚³ãƒ”ãƒ¼ã—ã¦ã„ã‚‹
 
-                PubFlugLinkage.DeployFiles(ComboBox_PrintMode.SelectedItem.ToString = "’¼Ú", JNLPprint.JNJPprint_FileList)
+                PubFlugLinkage.DeployFiles(ComboBox_PrintMode.SelectedItem.ToString = "ç›´æ¥", JNLPprint.JNJPprint_FileList)
 
-                'yDBŠÖ˜Aƒpƒ‰ƒ[ƒ^zDLG“ü—Í’l‚ÅXV‚·‚é
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.ToString + "' WHERE id=1 ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.ToString + "' WHERE id=1 ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_SIZE_MAX.Text.ToString + "' WHERE info_key='UPLOAD_SIZE_MAX' ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_FILE_NUMBER_MAX.Text.ToString + "' WHERE info_key='UPLOAD_FILE_NUMBER_MAX' ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_IMMEDIATE' ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_BATCH.Text.ToString + "' WHERE info_key='PDF_CONVERSION_MAX_BATCH' ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + ComboBox_LOG_LEVEL.SelectedItem.ToString + "' WHERE info_key='LOG_LEVEL' ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE m_option SET umu_flg='" + CheckBox_ƒ[ƒ‹’Ê’m.Checked.ToString + "' WHERE id=2 ", connStrdb1)
-                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.ToString + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", connStr)
+                'ã€DBé–¢é€£ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã€‘DLGå…¥åŠ›å€¤ã§æ›´æ–°ã™ã‚‹
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET domain_name='" + TextBox_Domain.Text.Replace("'", "''") + "' WHERE id=1 ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_kaisha SET sys_riyo_user_max='" + TextBox_MaxUsers.Text.Replace("'", "''") + "' WHERE id=1 ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_SIZE_MAX.Text.Replace("'", "''") + "' WHERE info_key='UPLOAD_SIZE_MAX' ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_UPLOAD_FILE_NUMBER_MAX.Text.Replace("'", "''") + "' WHERE info_key='UPLOAD_FILE_NUMBER_MAX' ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_IMMEDIATE.Text.Replace("'", "''") + "' WHERE info_key='PDF_CONVERSION_MAX_IMMEDIATE' ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + TextBox_PDF_CONVERSION_MAX_BATCH.Text.Replace("'", "''") + "' WHERE info_key='PDF_CONVERSION_MAX_BATCH' ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info_kyotsu SET info_val='" + ComboBox_LOG_LEVEL.SelectedItem.ToString + "' WHERE info_key='LOG_LEVEL' ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE m_option SET umu_flg='" + CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.Checked.ToString + "' WHERE id=2 ", DynamicConnStrDB1)
+                Label_notice.Text = TeCA.UpdateDB("UPDATE t_system_info SET info_val='" + TextBox_UPLOAD_CHUNK_SIZE.Text.Replace("'", "''") + "' WHERE (info_key='UPLOAD_CHUNK_SIZE' AND kaisha_id=1) ", DynamicConnStrDB2)
 
-                'yƒAƒvƒŠ˜AŒg(JNLP/’¼Ú)z
-                '@@JNLPƒAƒvƒŠ˜AŒg‚Æƒ_ƒCƒŒƒNƒgƒAƒvƒŠ˜AŒg‚ğØ‚è‘Ö‚¦‚éB
-                '@@ƒfƒtƒH‚ÍJNLP,After‚Íu’¼Úv
-                '@@‘ÎÛƒtƒ@ƒCƒ‹‚ª‘¼‹@”\‚Æ‹£‡‚µ‚È‚¢ˆÈ‰º‚T‚Â@--->@–„ƒŠƒ\[ƒXuPubSymcResourcev‚©‚ç‘Sƒtƒ@ƒCƒ‹ŒğŠ·
-                '    @index.html,
-                '    @main.detail.controller.js,
-                '    @check-out.html,
-                '    @check-out.service.js,
-                '    @check-out.controller.js
+                'ã€ã‚¢ãƒ—ãƒªé€£æº(JNLP/ç›´æ¥)ã€‘
+                '  JNLPã‚¢ãƒ—ãƒªé€£æºã¨ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¢ãƒ—ãƒªé€£æºã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹ã€‚
+                '  ãƒ‡ãƒ•ã‚©ã¯JNLP,Afterã¯ã€Œç›´æ¥ã€
+                '  å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ãŒä»–æ©Ÿèƒ½ã¨ç«¶åˆã—ãªã„ä»¥ä¸‹ï¼•ã¤ ---> åŸ‹è¾¼ãƒªã‚½ãƒ¼ã‚¹ã€ŒPubSymcResourceã€ã‹ã‚‰å…¨ãƒ•ã‚¡ã‚¤ãƒ«äº¤æ›
+                '     index.html,
+                '     main.detail.controller.js,
+                '     check-out.html,
+                '     check-out.service.js,
+                '     check-out.controller.js
 
-                PubFlugLinkage.DeployFiles(ComboBox_appLinkJNLP.SelectedItem.ToString = "’¼Ú", AppLinkJNLP.FileList)
+                PubFlugLinkage.DeployFiles(ComboBox_appLinkJNLP.SelectedItem.ToString = "ç›´æ¥", AppLinkJNLP.FileList)
 
-                ' @ ‘¼‹@”\‚Æ‹£‡‚·‚éˆÈ‰º‚Q‚Â@--->@•¶š—ñ·‚µ‘Ö‚¦
-                ' @@ main.html,
-                ' @@ main-service.js
-                ' @@ 
-                ' 1. ƒ‚[ƒh”»’è‚Æ‹¤’ÊƒpƒX‚ÌW–ñ
-                Dim isDirect As Boolean = (ComboBox_appLinkJNLP.SelectedItem?.ToString() = "’¼Ú")
+                '   ä»–æ©Ÿèƒ½ã¨ç«¶åˆã™ã‚‹ä»¥ä¸‹ï¼’ã¤ ---> æ–‡å­—åˆ—å·®ã—æ›¿ãˆ
+                '    main.html,
+                '    main-service.js
+                '    
+                ' 1. ãƒ¢ãƒ¼ãƒ‰åˆ¤å®šã¨å…±é€šãƒ‘ã‚¹ã®é›†ç´„
+                Dim isDirect As Boolean = (ComboBox_appLinkJNLP.SelectedItem?.ToString() = "ç›´æ¥")
 
                 Dim mainServiceJsPath As String = IO.Path.Combine(TECA_sets.ClientWebPath, "app\main\main.service.js")
                 Dim guideModalDir As String = IO.Path.Combine(TECA_sets.ClientWebPath, "app\guide-modal\")
 
-                ' yZUNO_TECA-371: WEBƒoƒOƒtƒBƒNƒX z
-                ' @@ƒ‚[ƒh‚É‰‚¶‚½main.html‚Ì“K—pE•œŒ³
+                ' ã€ZUNO_TECA-371: WEBãƒã‚°ãƒ•ã‚£ã‚¯ã‚¹ ã€‘
+                '   ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸmain.htmlã®é©ç”¨ãƒ»å¾©å…ƒ
                 ReplaceTextInFile(AppLinkJNLP.mainHTML(Not isDirect), AppLinkJNLP.mainHTML(isDirect), TECA_sets.mainHTMLpath)
 
-                ' @@ƒ‚[ƒh‚É‰‚¶‚½main.service.js‚Ì“K—pE•œŒ³
+                '   ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸmain.service.jsã®é©ç”¨ãƒ»å¾©å…ƒ
                 BugFixes.ApplyBugFixes(mainServiceJsPath, "371", isDirect)
 
                 If isDirect Then
@@ -628,55 +638,59 @@ Public Class Form_TeCASettings
                         Try
                             IO.Directory.Delete(guideModalDir, True)
                         Catch ex As Exception
-                            DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "JNLPƒ‚[ƒh‚É•s—v‚ÈƒtƒHƒ‹ƒ_‚Ìíœ’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: " & ex.Message)
+                            DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "JNLPãƒ¢ãƒ¼ãƒ‰ã«ä¸è¦ãªãƒ•ã‚©ãƒ«ãƒ€ã®å‰Šé™¤ä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: " & ex.Message)
                         End Try
                     End If
                 End If
-                'yAPIƒoƒOƒtƒBƒNƒXz
-                '@@Classƒtƒ@ƒCƒ‹‚È‚ÇAƒtƒ@ƒCƒ‹ŒğŠ·‚ÅƒoƒOC³‘Î‰‚ğs‚Á‚½‚à‚Ì‚ğ–„ƒŠƒ\[ƒX‚©‚ç“WŠJ‚µAƒo[ƒWƒ‡ƒ“•\‹L‚à•ÏX‚·‚é
-                '   Ú×‚ÍSettings.vb BugFiexƒNƒ‰ƒX‚É—ñ‹L
+                'ã€APIãƒã‚°ãƒ•ã‚£ã‚¯ã‚¹ã€‘
+                '  Classãƒ•ã‚¡ã‚¤ãƒ«ãªã©ã€ãƒ•ã‚¡ã‚¤ãƒ«äº¤æ›ã§ãƒã‚°ä¿®æ­£å¯¾å¿œã‚’è¡Œã£ãŸã‚‚ã®ã‚’åŸ‹è¾¼ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰å±•é–‹ã—ã€ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨è¨˜ã‚‚å¤‰æ›´ã™ã‚‹
+                '   è©³ç´°ã¯Settings.vb BugFiexã‚¯ãƒ©ã‚¹ã«åˆ—è¨˜
                 BugFixes.DeployFixFiles()
 
-                'yZUNO_TECA-374F@@WEB-CLIENT/main.service.js‚ÌC³z
+                'ã€ZUNO_TECA-374ï¼š  WEB-CLIENT/main.service.jsã®ä¿®æ­£ã€‘
                 If BugFixes.ApplyBugFixes(Path.Combine(TECA_sets.ClientWebPath, "app\main\main.service.js"), "374") Then
                     PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.5")
                 Else
-                    MessageBox.Show("ZUNO_TECA-374‚ÌC³‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½BTeCACMDƒƒO‚ğ‚²——‚­‚¾‚³‚¢")
+                    MessageBox.Show("ZUNO_TECA-374ã®ä¿®æ­£ãŒã§ãã¾ã›ã‚“ã§ã—ãŸã€‚TeCACMDãƒ­ã‚°ã‚’ã”è¦§ãã ã•ã„")
                     PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.4")
+                    GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
-                'yPipeManÀs‚ÆTeCAƒT[ƒrƒXÄ‹N“®z
-                If CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled Then
-                    TeCA.SvcCtrls("PG_REBOOT", True)
-                Else
-                    TeCA.SvcCtrls("PG_REBOOT")
+                'ã€PipeManå®Ÿè¡Œã¨TeCAã‚µãƒ¼ãƒ“ã‚¹å†èµ·å‹•ã€‘ï¼ˆtecacmd -reboot db ã¨åŒä¸€ãƒ­ã‚¸ãƒƒã‚¯ï¼‰
+                Dim doReindex As Boolean = (CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled)
+                If Not TeCAServiceCtrl.RebootPGAndStartTeCA(doReindex, ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
                 End If
-                Label_notice.Text = TeCA_Exec("START", 80, 100).ToString
 
-                'yZUNO_TECA-377F@uapi..vƒtƒHƒ‹ƒ_‚Ì–•Á'z
+                'ã€ZUNO_TECA-377ï¼š ã€Œapi..ã€ãƒ•ã‚©ãƒ«ãƒ€ã®æŠ¹æ¶ˆ'ã€‘
                 If Not BugFixes.DeleteWeirdApiFolder("C:\teca\api..") Then
-                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "ZUNO_TECA-377: •s—vƒtƒHƒ‹ƒ_‚Ì–•Á‚É¸”s‚µ‚Ü‚µ‚½B")
+                    DeployUtils.WriteLog(defaultLOGDIR & "\TeCAsettings.log", "ZUNO_TECA-377: ä¸è¦ãƒ•ã‚©ãƒ«ãƒ€ã®æŠ¹æ¶ˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚")
                 End If
 
-            Case "TeCA‚ğ’â~‚·‚é"
-
-                Label_notice.Text = TeCA_Exec("STOP", 0, 100).ToString
-
-                'PipeManÀs
-                If (CheckBox_Pipeman.Checked = True) And (CheckBox_Pipeman.Enabled = True) Then
-                    TeCA.SvcCtrls("PG_REBOOT", True)
-                Else
-                    TeCA.SvcCtrls("PG_REBOOT")
+            Case "TeCAã‚’åœæ­¢ã™ã‚‹"
+                If Not TeCAServiceCtrl.StopTeCAServices(ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
                 End If
 
-            Case "TeCA‚ğ‹N“®‚·‚é"
-                Label_notice.Text = TeCA_Exec("START", 0, 100).ToString
+                'PipeManå®Ÿè¡Œ
+                Dim doReindex As Boolean = (CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled)
+                Dim pgRes As String = TeCA.SvcCtrls("PG_REBOOT", doReindex, DynamicConnStrDB2, True)
+                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", pgRes)
+                ProgressBar.Value = 100
+
+            Case "TeCAã‚’èµ·å‹•ã™ã‚‹"
+                If Not TeCAServiceCtrl.StartTeCAServices(ProgressBar, GroupBox_Progress) Then
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
 
         End Select
 
 #If Not DEBUG Then
-        Label_notice.Text = "ˆ—‚ğŠ®—¹‚µ‚Ü‚µ‚½B" + TeCA.IsLive().ToString
+        Label_notice.Text = "å‡¦ç†ã‚’å®Œäº†ã—ã¾ã—ãŸã€‚" + TeCA.IsLive().ToString
 #End If
         Label_notice.Update()
 
@@ -687,27 +701,27 @@ Public Class Form_TeCASettings
 
     End Sub
     ''' <summary>
-    ''' ƒ_ƒCƒAƒƒO‚ÌƒƒbƒN§Œä 
+    ''' ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ­ãƒƒã‚¯åˆ¶å¾¡ 
     ''' </summary>
-    ''' <param name="SupervisorMode">SUperVisorMode‚Ì‚Æ‚«‚É‹@”\‚·‚éƒAƒCƒeƒ€‚à§Œä‚·‚é</param>
+    ''' <param name="SupervisorMode">SUperVisorModeã®ã¨ãã«æ©Ÿèƒ½ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã‚‚åˆ¶å¾¡ã™ã‚‹</param>
     ''' <param name="ONorOFF"></param>
     Private Sub LockDialog(ONorOFF As Boolean, Optional SupervisorMode As Boolean = False, Optional AllowedMode As Boolean = False)
         'SupervisorMode:   True=Photron / False=User
-        'ONorOFFF true or False
+        'ONorOFFï¼š true or False
 
-        'authText‚Í•\¦‚·‚é‚¾‚¯‚ÌƒAƒCƒeƒ€‚É‚·‚é
+        'authTextã¯è¡¨ç¤ºã™ã‚‹ã ã‘ã®ã‚¢ã‚¤ãƒ†ãƒ ã«ã™ã‚‹
         TextBoxAuthText.Enabled = True
         TextBoxAuthText.ReadOnly = True
 
 
-        'ƒVƒXƒeƒ€î•ñ/APIƒ^ƒu
+        'ã‚·ã‚¹ãƒ†ãƒ æƒ…å ±/APIã‚¿ãƒ–
         GroupBox_APIparams.Enabled = ONorOFF
         Button_ChangePwd.Enabled = ONorOFF
-        '‘€ìƒ^ƒu
+        'æ“ä½œã‚¿ãƒ–
         GroupBox_PDF.Enabled = ONorOFF
         GroupBox_General.Enabled = ONorOFF
         GroupBox_DWG.Enabled = ONorOFF
-        '‰æ–ÊƒfƒUƒCƒ“ƒ^ƒu
+        'ç”»é¢ãƒ‡ã‚¶ã‚¤ãƒ³ã‚¿ãƒ–
         GroupBox_FileSelector.Enabled = ONorOFF
         GroupBox_PreViewWindow.Enabled = ONorOFF
         GroupBox_Thumbnail.Enabled = ONorOFF
@@ -715,10 +729,10 @@ Public Class Form_TeCASettings
         GroupBox_AttrChange.Enabled = ONorOFF
         GroupBox_FileHistory.Enabled = ONorOFF
 
-        'ƒ[ƒ‹’Ê’mƒ^ƒu
+        'ãƒ¡ãƒ¼ãƒ«é€šçŸ¥ã‚¿ãƒ–
         GroupBox_MailServer.Enabled = ONorOFF
-        CheckBox_ƒ[ƒ‹’Ê’m.Enabled = ONorOFF
-        'ƒAƒbƒvƒ[ƒh/ŒöŠJƒ^ƒu
+        CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.Enabled = ONorOFF
+        'ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰/å…¬é–‹ã‚¿ãƒ–
         GroupBox_Upload.Enabled = ONorOFF
         GroupBox_KOKAI.Enabled = ONorOFF
 
@@ -735,7 +749,7 @@ Public Class Form_TeCASettings
             GroupBox_SystemID.Visible = ONorOFF
             GroupBox_KOKAI.Visible = ONorOFF
 
-            'supervisorMode‚Ì—áŠOiON‚¾‚Á‚½‚ç‘€ì•s”\‚É‚·‚é
+            'supervisorModeã®ä¾‹å¤–ï¼ˆONã ã£ãŸã‚‰æ“ä½œä¸èƒ½ã«ã™ã‚‹
             If CheckBox_setLocal.Checked Then
                 CheckBox_setLocal.Enabled = False
             Else
@@ -747,39 +761,39 @@ Public Class Form_TeCASettings
     Private Sub ComboBox_ExecMode_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox_ExecMode.SelectedIndexChanged
         Select Case Me.ComboBox_ExecMode.SelectedItem
 
-            Case "•ÏX‚µ‚ÄÄ‹N“®"
+            Case "å¤‰æ›´ã—ã¦å†èµ·å‹•"
                 Select Case True
                     Case ((TextBox_ClientID.Text = ClientID) And (TextBox_SecretID.Text = SecretID))
-                        GroupBox_ninsyo.Text = "İ’è’l‚ğ•ÏX‚Å‚«‚Ü‚·B"
-                        LockDialog(False, True, True)  'SuperVisorMode‚Ì‚İ§Œä‰Â‚ÌƒAƒCƒeƒ€‚àŠÜ‚ß‚½‘S•”‚ğDisable
-                        LockDialog(True,, True)  'UserMode‚ÅƒAƒCƒeƒ€‚ğEnable
+                        GroupBox_ninsyo.Text = "è¨­å®šå€¤ã‚’å¤‰æ›´ã§ãã¾ã™ã€‚"
+                        LockDialog(False, True, True)  'SuperVisorModeã®ã¿åˆ¶å¾¡å¯ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚‚å«ã‚ãŸå…¨éƒ¨ã‚’Disable
+                        LockDialog(True,, True)  'UserModeã§ã‚¢ã‚¤ãƒ†ãƒ ã‚’Enable
                         Button_Exec.Enabled = True
 
                     Case ((TextBox_ClientID.Text = ClientID & ".deny") And (TextBox_SecretID.Text = SecretID))
-                        TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
-                        GroupBox_ninsyo.Text = "ŒöŠJ‹@”\‚àİ’è’l‚ğ•ÏX‚Å‚«‚Ü‚·B"
-                        LockDialog(True, False, True)  'AlloedMode‚ÅEnable
+                        TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
+                        GroupBox_ninsyo.Text = "å…¬é–‹æ©Ÿèƒ½ã‚‚è¨­å®šå€¤ã‚’å¤‰æ›´ã§ãã¾ã™ã€‚"
+                        LockDialog(True, False, True)  'AlloedModeã§Enable
 
                     Case ((TextBox_ClientID.Text = "photron") And (TextBox_SecretID.Text = "ZUNOsupervisor"))
-                        GroupBox_ninsyo.Text = "ššSupervisor Modešš"
-                        LockDialog(True, True, True)  '‘SƒAƒCƒeƒ€‚ğEnable
+                        GroupBox_ninsyo.Text = "â˜…â˜…Supervisor Modeâ˜…â˜…"
+                        LockDialog(True, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Enable
                         Button_Exec.Enabled = True
 
                     Case Else
-                        GroupBox_ninsyo.Text = "ClientIDASecretID‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·B"
-                        LockDialog(False, True, True)  '‘SƒAƒCƒeƒ€‚ğDisable
+                        GroupBox_ninsyo.Text = "ClientIDã€SecretIDãŒé–“é•ã£ã¦ã„ã¾ã™ã€‚"
+                        LockDialog(False, True, True)  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Disable
                         Button_Exec.Enabled = False
                         Exit Sub
 
                 End Select
 
             Case Else
-                '  LockDialog(False,True )  '‘SƒAƒCƒeƒ€‚ğDisable
+                '  LockDialog(False,True )  'å…¨ã‚¢ã‚¤ãƒ†ãƒ ã‚’Disable
 
         End Select
 
         Select Case True
-            Case Me.ComboBox_ExecMode.SelectedItem.ToString() Like "*Ä‹N“®"
+            Case Me.ComboBox_ExecMode.SelectedItem.ToString() Like "*å†èµ·å‹•"
                 CheckBox_Pipeman.Enabled = True
             Case Else
                 CheckBox_Pipeman.Enabled = False
@@ -788,93 +802,9 @@ Public Class Form_TeCASettings
 
     End Sub
 
-    ''' <summary>
-    ''' ƒvƒƒOƒŒƒXƒo[•t‚«‚ÅTeCA‚ÌƒT[ƒrƒX‚ğ‹N“®/’â~‚·‚é
-    ''' </summary>
-    ''' <param name="exec_mode">START/STOP</param>
-    ''' <param name="beginProgress">ƒvƒƒOƒŒƒXƒo[ŠJn“ˆÊ’u</param>
-    ''' <param name="endProgress">ƒvƒƒOƒŒƒXƒo[I—¹“ˆÊ’u</param>
-    ''' <returns></returns>
-    Private Function TeCA_Exec(exec_mode As String, beginProgress As Integer, endProgress As Integer) As String
-
-        Dim ServiceArray() As String = {"Apache2.4",
-                                         "Tomcat",
-                                         "zunouteca",
-                                         "yacexsvc"}
-
-        Dim ProgressStep As Integer = (endProgress - beginProgress) \ ServiceArray.Length
-
-        ProgressBar.Value = beginProgress
-        Dim RunningMsg As String = ""
-        Dim LogString As String = ""
-
-        For Each ServiceName As String In ServiceArray
-            Dim sc As New ServiceController(Misc.GetServiceNameByPartialName(ServiceName))
-
-            ProgressBar.Value += ProgressStep
-
-            GroupBox_Progress.Text = exec_mode.ToString + " : " + ProgressBar.Value.ToString + "% in Progress."
-            GroupBox_Progress.Update()
-
-            'ƒT[ƒrƒX‘¶İŠm”F
-            Dim scIsAlive As String
-            Try
-                scIsAlive = sc.DisplayName
-            Catch ex As Exception
-                RunningMsg = RunningMsg + vbCrLf + ServiceName + "‚ª‘¶İ‚µ‚Ü‚¹‚ñB"
-                Exit For
-            End Try
-
-
-            If (exec_mode.Equals("STOP", StringComparison.CurrentCultureIgnoreCase)) Then
-
-                If ServiceName = "yacexsvc" Then Exit For
-
-                Try
-                    Do While sc.Status <> ServiceControllerStatus.Stopped
-                        sc.Stop()
-                        sc.WaitForStatus(ServiceControllerStatus.Stopped)
-                        Application.DoEvents()
-                    Loop
-                Catch
-                    RunningMsg = RunningMsg + vbCrLf + "I—¹•s—Ç : " + ServiceName + " is " + sc.Status.ToString
-                End Try
-            End If
-
-            If (exec_mode.Equals("START", StringComparison.CurrentCultureIgnoreCase)) Then
-                Try
-                    Do While sc.Status <> ServiceControllerStatus.Running
-                        sc.Start()
-                        sc.WaitForStatus(ServiceControllerStatus.Running)
-                        Application.DoEvents()
-                    Loop
-
-                Catch
-                    RunningMsg = RunningMsg + vbCrLf + "‹N“®•s—Ç : " + ServiceName + " is " + sc.Status.ToString
-                End Try
-            End If
-
-            LogString &= $"{ServiceName},"
-
-        Next
-        DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"{exec_mode.ToUpper()} ({LogString})")
-
-
-
-        If (RunningMsg = "") Then
-            TeCA_Exec = ""
-        Else
-            TeCA_Exec = "Err"
-            MessageBox.Show(RunningMsg, "ƒT[ƒrƒXƒGƒ‰[")
-        End If
-
-        ProgressBar.Value = endProgress
-
-    End Function
-
     Private Sub ComboBox_mail_transport_protocol_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox_mail_transport_protocol.SelectedIndexChanged
 
-        '  STARTTLS‚ÍSMTP‚¾‚¯‚Å“®‚­‚Ì‚ÅASMTPS‚Ì‚ÍDisable‚Í‚ÂFalse
+        '  STARTTLSã¯SMTPã ã‘ã§å‹•ãã®ã§ã€SMTPSã®æ™‚ã¯Disableã¯ã¤False
         If (ComboBox_mail_transport_protocol.SelectedItem = "smtp") Then
             CheckBox_mail_smtp_starttls_enable.Enabled = True
             If (CheckBox_mail_smtp_starttls_enable.Checked = False) Then
@@ -911,8 +841,8 @@ Public Class Form_TeCASettings
 
     End Sub
 
-    Private Sub CheckBox_ƒ[ƒ‹’Ê’m_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox_ƒ[ƒ‹’Ê’m.CheckedChanged
-        If (CheckBox_ƒ[ƒ‹’Ê’m.Checked = True) Then
+    Private Sub CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.CheckedChanged
+        If (CheckBox_ãƒ¡ãƒ¼ãƒ«é€šçŸ¥.Checked = True) Then
             GroupBox_MailServer.Enabled = True
         Else
             GroupBox_MailServer.Enabled = False
@@ -932,7 +862,7 @@ Public Class Form_TeCASettings
 
     Private Sub TextBox_DWG_DragEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles TextBox_DWG.DragEnter
 
-        'ƒtƒ@ƒCƒ‹Œ`®‚Ìê‡‚Ì‚İAƒhƒ‰ƒbƒO‚ğó‚¯•t‚¯‚Ü‚·B
+        'ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ã®å ´åˆã®ã¿ã€ãƒ‰ãƒ©ãƒƒã‚°ã‚’å—ã‘ä»˜ã‘ã¾ã™ã€‚
         If e.Data.GetDataPresent(DataFormats.FileDrop) = True Then
             e.Effect = DragDropEffects.Copy
         Else
@@ -943,12 +873,12 @@ Public Class Form_TeCASettings
 
     Private Sub TextBox_DWG_DragDrop(ByVal sender As Object, ByVal e As System.Windows.Forms.DragEventArgs) Handles TextBox_DWG.DragDrop
 
-        'ƒhƒ‰ƒbƒO‚³‚ê‚½ƒtƒ@ƒCƒ‹EƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğŠi”[‚µ‚Ü‚·B
+        'ãƒ‰ãƒ©ãƒƒã‚°ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ã‚’æ ¼ç´ã—ã¾ã™ã€‚
         Dim strFileName As String() = CType(e.Data.GetData(DataFormats.FileDrop, False), String())
 
-        'ƒtƒ@ƒCƒ‹‚Ì‘¶İŠm”F‚ğs‚¢A‚ ‚éê‡‚É‚Ì‚İA
-        'ƒeƒLƒXƒgƒ{ƒbƒNƒX‚ÉƒpƒX‚ğ•\¦‚µ‚Ü‚·B
-        'i‚±‚Ìˆ—‚ÅƒtƒHƒ‹ƒ_‚ğ‘ÎÛŠO‚É‚µ‚Ä‚¢‚Ü‚·Bj
+        'ãƒ•ã‚¡ã‚¤ãƒ«ã®å­˜åœ¨ç¢ºèªã‚’è¡Œã„ã€ã‚ã‚‹å ´åˆã«ã®ã¿ã€
+        'ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ã«ãƒ‘ã‚¹ã‚’è¡¨ç¤ºã—ã¾ã™ã€‚
+        'ï¼ˆã“ã®å‡¦ç†ã§ãƒ•ã‚©ãƒ«ãƒ€ã‚’å¯¾è±¡å¤–ã«ã—ã¦ã„ã¾ã™ã€‚ï¼‰
         If System.IO.File.Exists(strFileName(0).ToString) = True Then
             TextBox_DWG.Text = strFileName(0).ToString
         End If
@@ -961,16 +891,16 @@ Public Class Form_TeCASettings
 
         Select Case Button_DWG.Text
 
-            Case "XV"
+            Case "æ›´æ–°"
                 If (File.Exists(TextBox_DWG.Text) = False) Then
-                    Label_notice.Text = "w’è‚³‚ê‚½İ’èƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB"
+                    Label_notice.Text = "æŒ‡å®šã•ã‚ŒãŸè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚"
                     Exit Sub
                 End If
 
                 Dim srcLines As Integer = Misc.GetTextFileCount(srcFile, Encoding.GetEncoding("shift_jis"))
                 Dim tgtLines As Integer = Misc.GetTextFileCount(TextBox_DWG.Text, Encoding.GetEncoding("shift_jis"))
                 If (srcLines <> tgtLines) Then
-                    Label_notice.Text = "İ’èƒtƒ@ƒCƒ‹‚Ìs”‚ª•ÏX‚³‚ê‚Ä‚¢‚éˆ×Aˆ—‚Å‚«‚Ü‚¹‚ñB"
+                    Label_notice.Text = "è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®è¡Œæ•°ãŒå¤‰æ›´ã•ã‚Œã¦ã„ã‚‹ç‚ºã€å‡¦ç†ã§ãã¾ã›ã‚“ã€‚"
                     Label_notice.Update()
                     Exit Sub
                 End If
@@ -978,26 +908,26 @@ Public Class Form_TeCASettings
                 Try
                     File.Copy(TextBox_DWG.Text, srcFile.ToString, True)
                 Catch ex As Exception
-                    Label_notice.Text = "ƒtƒ@ƒCƒ‹XV•s”\:" + ex.Message.ToString
+                    Label_notice.Text = "ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ä¸èƒ½:" + ex.Message.ToString
                     Label_notice.Update()
                     Exit Sub
                 End Try
 
-                Label_notice.Text = "DWG‚ÌPDF•ÏŠ·İ’è‚ğXV‚µ‚Ü‚µ‚½B"
+                Label_notice.Text = "DWGã®PDFå¤‰æ›è¨­å®šã‚’æ›´æ–°ã—ã¾ã—ãŸã€‚"
                 Label_notice.Update()
-                TextBox_DWG.Text = "‚±‚±‚ª‹ó”’‚È‚çuæovAƒtƒ@ƒCƒ‹ƒhƒ‰ƒbƒO‚ÅuXVv"
+                TextBox_DWG.Text = "ã“ã“ãŒç©ºç™½ãªã‚‰ã€Œå–å‡ºã€ã€ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‰ãƒ©ãƒƒã‚°ã§ã€Œæ›´æ–°ã€"
                 TextBox_DWG.Update()
-                Button_DWG.Text = "æo"
+                Button_DWG.Text = "å–å‡º"
                 Button_DWG.Update()
-            Case "æo"
+            Case "å–å‡º"
                 Try
-                    File.Copy(srcFile.ToString, outPath.ToString + "\DWG‚ÌPDF•ÏŠ·.cfg", True)
+                    File.Copy(srcFile.ToString, outPath.ToString + "\DWGã®PDFå¤‰æ›.cfg", True)
                 Catch ex As Exception
-                    Label_notice.Text = "ƒtƒ@ƒCƒ‹æo•s”\:" + ex.Message.ToString
+                    Label_notice.Text = "ãƒ•ã‚¡ã‚¤ãƒ«å–å‡ºä¸èƒ½:" + ex.Message.ToString
                     Label_notice.Update()
                     Exit Sub
                 End Try
-                Label_notice.Text = "uDWG‚ÌPDF•ÏŠ·İ’èƒtƒ@ƒCƒ‹v‚ğƒfƒXƒNƒgƒbƒv‚Éì¬‚µ‚Ü‚µ‚½B"
+                Label_notice.Text = "ã€ŒDWGã®PDFå¤‰æ›è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã€ã‚’ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ä½œæˆã—ã¾ã—ãŸã€‚"
                 Label_notice.Update()
         End Select
 
@@ -1005,16 +935,16 @@ Public Class Form_TeCASettings
 
     Private Sub TextBox_DWG_TextChanged(sender As Object, e As EventArgs) Handles TextBox_DWG.TextChanged
         If (TextBox_DWG.Text.Contains("\"c) = True And TextBox_DWG.Text.Contains(":"c) = True) Then
-            Button_DWG.Text = "XV"
+            Button_DWG.Text = "æ›´æ–°"
         Else
-            Button_DWG.Text = "æo"
+            Button_DWG.Text = "å–å‡º"
         End If
         Button_DWG.Update()
     End Sub
 
 
     Private Sub Form_TeCASettings_DragEnter_1(sender As Object, e As DragEventArgs) Handles MyBase.DragEnter
-        'ƒtƒ@ƒCƒ‹Œ`®‚Ìê‡‚Ì‚İAƒhƒ‰ƒbƒO‚ğó‚¯•t‚¯‚Ü‚·B
+        'ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ã®å ´åˆã®ã¿ã€ãƒ‰ãƒ©ãƒƒã‚°ã‚’å—ã‘ä»˜ã‘ã¾ã™ã€‚
         If e.Data.GetDataPresent(DataFormats.FileDrop) = True Then
             e.Effect = DragDropEffects.Copy
         Else
@@ -1023,22 +953,22 @@ Public Class Form_TeCASettings
     End Sub
 
     Private Sub Form_TeCASettingsDragDrop(sender As Object, e As DragEventArgs) Handles MyBase.DragDrop
-        'ƒhƒ‰ƒbƒO‚³‚ê‚½ƒtƒ@ƒCƒ‹EƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğŠi”[B
+        'ãƒ‰ãƒ©ãƒƒã‚°ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ã‚’æ ¼ç´ã€‚
         Dim strFileName As String() = CType(e.Data.GetData(DataFormats.FileDrop, False), String())
 
-        '”FØNGiGroupBox‚ªDisablej‚È‚çDragDrop‚ğI—¹
+        'èªè¨¼NGï¼ˆï¼GroupBoxãŒDisableï¼‰ãªã‚‰DragDropã‚’çµ‚äº†
         If GroupBox_Upload.Enabled = False Then
             Exit Sub
         End If
 
-        '“Ç‚İ‚Ş•¶šƒR[ƒh‚Ìw’è(UTF-8 Bomb‚È‚µ)
+        'èª­ã¿è¾¼ã‚€æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®æŒ‡å®š(UTF-8 Bombãªã—)
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
         Dim enc As System.Text.Encoding = System.Text.Encoding.GetEncoding("utf-8")
         Dim SRbuffer, decodeCODE As String
 
         If (IO.File.Exists(strFileName(0).ToString) = True) Then
 
-            '‚·‚×‚Ä‚Ìs‚ğ“Ç‚İ‚Ş
+            'ã™ã¹ã¦ã®è¡Œã‚’èª­ã¿è¾¼ã‚€
             Try
                 Using SR As New StreamReader(strFileName(0).ToString, enc)
                     SRbuffer = SR.ReadToEnd()
@@ -1048,36 +978,36 @@ Public Class Form_TeCASettings
                 Exit Sub
             End Try
 
-            'ˆÃ†‰ğœ
+            'æš—å·è§£é™¤
             Try
                 decodeCODE = crypt.Decrypt(SRbuffer.ToString)
             Catch ex As Exception
-                Label_notice.Text = "ƒtƒ@ƒCƒ‹“à—e‚ÉƒGƒ‰[:" + ex.Message.ToString
+                Label_notice.Text = "ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ã«ã‚¨ãƒ©ãƒ¼:" + ex.Message.ToString
                 Exit Sub
             End Try
 
         Else
-            Label_notice.Text = "Drop‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB"
+            Label_notice.Text = "Dropã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚"
             Exit Sub
         End If
 
-        '–½—ßƒ[ƒh‚Ì•ª‰ğ‚ÆŒ`®ƒ`ƒFƒbƒN
+        'ï¼ï¼ï¼ï¼ï¼å‘½ä»¤ãƒ¯ãƒ¼ãƒ‰ã®åˆ†è§£ã¨å½¢å¼ãƒã‚§ãƒƒã‚¯
         Dim DecodeArray() As String = Split(decodeCODE.ToString, ":")
 
         If (DecodeArray.Length <> 4) Then
-            Label_notice.Text = "ƒtƒ@ƒCƒ‹“à—e‚ª•s“KØ‚Å‚·B(DecodeError:0)"
+            Label_notice.Text = "ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ãŒä¸é©åˆ‡ã§ã™ã€‚(DecodeError:0)"
             Exit Sub
         End If
         If (DecodeArray(1).ToString <> TextBox_Domain.Text) Or (DecodeArray(2).ToString <> TextBox_ClientID.Text) Then
-            Label_notice.Text = "ƒtƒ@ƒCƒ‹“à—e‚ª•s“KØ‚Å‚·B(DecodeError:1)"
+            Label_notice.Text = "ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ãŒä¸é©åˆ‡ã§ã™ã€‚(DecodeError:1)"
             Exit Sub
         End If
 
         Select Case DecodeArray(0)
             Case "LicenseUp"
-                Dim msg_result As DialogResult = MessageBox.Show("Œ»İ‚Ìƒ‰ƒCƒZƒ“ƒX”‚ğy " _
-                    + TextBox_MaxUsers.Text + " ¨ " + DecodeArray(3) + " z‚ÖXV‚µ‚Ü‚·B" + vbCrLf +
-                    "‚æ‚ë‚µ‚¢‚Å‚·‚©?", "”FØ‚³‚ê‚Ü‚µ‚½", MessageBoxButtons.OKCancel, MessageBoxIcon.Information)
+                Dim msg_result As DialogResult = MessageBox.Show("ç¾åœ¨ã®ãƒ©ã‚¤ã‚»ãƒ³ã‚¹æ•°ã‚’ã€ " _
+                    + TextBox_MaxUsers.Text + " â†’ " + DecodeArray(3) + " ã€‘ã¸æ›´æ–°ã—ã¾ã™ã€‚" + vbCrLf +
+                    "ã‚ˆã‚ã—ã„ã§ã™ã‹?", "èªè¨¼ã•ã‚Œã¾ã—ãŸ", MessageBoxButtons.OKCancel, MessageBoxIcon.Information)
                 If msg_result = DialogResult.OK Then
                     TextBox_MaxUsers.Text = DecodeArray(3).ToString
                 Else
@@ -1093,7 +1023,7 @@ Public Class Form_TeCASettings
 
     Private Sub Label_MaxUser_Click(sender As Object, e As EventArgs) Handles Label_MaxUser.Click
 
-        'SupervisorMode‚Å‚ÍƒNƒŠƒbƒN‘€ì‚Í–³‹
+        'SupervisorModeã§ã¯ã‚¯ãƒªãƒƒã‚¯æ“ä½œã¯ç„¡è¦–
         If (TextBox_MaxUsers.Enabled = True) Or (GroupBox_Upload.Enabled = False) Then
             Exit Sub
         End If
@@ -1101,17 +1031,17 @@ Public Class Form_TeCASettings
         Dim tmpFOLDER As String = Path.GetTempPath()
         Dim desktopPath As String = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
 
-        '‘‚«‚İæ‚Ì—pˆÓ(TMP)
+        'æ›¸ãè¾¼ã¿å…ˆã®ç”¨æ„(TMP)
         If (File.Exists(tmpFOLDER.ToString + "\TeCAInfo.tmp") = True) Then
             Try
                 File.Delete(tmpFOLDER.ToString + "\TeCAInfo.tmp")
             Catch ex As Exception
-                MessageBox.Show("ƒeƒ“ƒ|ƒ‰ƒŠÁ‹•s—Ç:" + ex.ToString)
+                MessageBox.Show("ãƒ†ãƒ³ãƒãƒ©ãƒªæ¶ˆå»ä¸è‰¯:" + ex.ToString)
                 Exit Sub
             End Try
         End If
 
-        'BOM–³‚µ‚ÌUTF8‚ÅƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ğì¬‚·‚é
+        'BOMç„¡ã—ã®UTF8ã§ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã™ã‚‹
         Dim enc As Encoding = New System.Text.UTF8Encoding(False)
         Dim swTMPoutFile As New StreamWriter(tmpFOLDER.ToString + "\TeCAInfo.tmp", False, enc)
 
@@ -1120,22 +1050,22 @@ Public Class Form_TeCASettings
                            "License    : " + TextBox_MaxUsers.Text.ToString)
         swTMPoutFile.Close()
 
-        '‘‚«‚İæ‚Ì—pˆÓ(desktop)
+        'æ›¸ãè¾¼ã¿å…ˆã®ç”¨æ„(desktop)
         If (File.Exists(desktopPath.ToString + "\TeCAInfo.txt") = True) Then
             Try
                 File.Delete(desktopPath.ToString + "\TeCAInfo.txt")
             Catch ex As Exception
-                MessageBox.Show("Á‹•s—Ç:" + ex.ToString)
+                MessageBox.Show("æ¶ˆå»ä¸è‰¯:" + ex.ToString)
                 Exit Sub
             End Try
         End If
         File.Copy(tmpFOLDER.ToString + "\TeCAInfo.tmp", desktopPath + "\TeCAInfo.txt")
-        MessageBox.Show("ƒfƒXƒNƒgƒbƒv‚ÉTeCAinfo.txt‚ğì¬‚µ‚Ü‚µ‚½B")
+        MessageBox.Show("ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«TeCAinfo.txtã‚’ä½œæˆã—ã¾ã—ãŸã€‚")
 
     End Sub
 
     Private Sub ComboBox_initialize()
-        'ƒRƒ“ƒ{‰Šú‰»(•ÒW•s‰Â‚É‚·‚é)
+        'ã‚³ãƒ³ãƒœåˆæœŸåŒ–(ç·¨é›†ä¸å¯ã«ã™ã‚‹)
         Me.ComboBox_LOG_LEVEL.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_ExecMode.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_vScroll.DropDownStyle = ComboBoxStyle.DropDownList
@@ -1147,17 +1077,17 @@ Public Class Form_TeCASettings
         Me.ComboBox_PrintMode.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_appLinkJNLP.DropDownStyle = ComboBoxStyle.DropDownList
 
-        'ŠeƒRƒ“ƒ{‚É‰Šúƒf[ƒ^‚ğ’Ç‰Á
+        'å„ã‚³ãƒ³ãƒœã«åˆæœŸãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ 
         With Me.ComboBox_LOG_LEVEL
             .Items.Add("INFO")
             .Items.Add("DEBUG")
         End With
 
         With Me.ComboBox_ExecMode
-            .Items.Add("•ÏX‚¹‚¸Ä‹N“®")
-            .Items.Add("•ÏX‚µ‚ÄÄ‹N“®")
-            .Items.Add("TeCA‚ğ’â~‚·‚é")
-            .Items.Add("TeCA‚ğ‹N“®‚·‚é")
+            .Items.Add("å¤‰æ›´ã›ãšå†èµ·å‹•")
+            .Items.Add("å¤‰æ›´ã—ã¦å†èµ·å‹•")
+            .Items.Add("TeCAã‚’åœæ­¢ã™ã‚‹")
+            .Items.Add("TeCAã‚’èµ·å‹•ã™ã‚‹")
         End With
 
         With Me.ComboBox_vScroll
@@ -1178,17 +1108,17 @@ Public Class Form_TeCASettings
         End With
 
         With ComboBox_PreViewScale
-            .Items.Add("©“®ƒY[ƒ€")
-            .Items.Add("ÀÛ‚ÌƒTƒCƒY")
-            .Items.Add("‚‚³‚É‡‚í‚¹‚é")
-            .Items.Add("•‚É‡‚í‚¹‚é")
-            .Items.Add("ƒy[ƒW‚ÌƒTƒCƒY‚É‡‚í‚¹‚é")
+            .Items.Add("è‡ªå‹•ã‚ºãƒ¼ãƒ ")
+            .Items.Add("å®Ÿéš›ã®ã‚µã‚¤ã‚º")
+            .Items.Add("é«˜ã•ã«åˆã‚ã›ã‚‹")
+            .Items.Add("å¹…ã«åˆã‚ã›ã‚‹")
+            .Items.Add("ãƒšãƒ¼ã‚¸ã®ã‚µã‚¤ã‚ºã«åˆã‚ã›ã‚‹")
         End With
 
         With ComboBox_ThumbnailRatio
-            .Items.Add("¬")
-            .Items.Add("•W€")
-            .Items.Add("‘å")
+            .Items.Add("å°")
+            .Items.Add("æ¨™æº–")
+            .Items.Add("å¤§")
         End With
 
         With ComboBox_RasterConvert
@@ -1198,40 +1128,40 @@ Public Class Form_TeCASettings
 
         With ComboBox_PrintMode
             .Items.Add("JNLP")
-            .Items.Add("’¼Ú")
+            .Items.Add("ç›´æ¥")
         End With
 
         With ComboBox_appLinkJNLP
             .Items.Add("JNLP")
-            .Items.Add("’¼Ú")
+            .Items.Add("ç›´æ¥")
         End With
 
 
-        Me.ComboBox_ExecMode.SelectedItem = "•ÏX‚¹‚¸Ä‹N“®"
-        Me.TextBox_DWG.Text = "‚±‚±‚ª‹ó”’‚È‚çuæovAƒtƒ@ƒCƒ‹ƒhƒ‰ƒbƒO‚ÅuXVv"
-        Me.Button_DWG.Text = "æo"
-        Me.TabPage2.Text = "ƒAƒbƒvƒ[ƒhEŒöŠJ"
+        Me.ComboBox_ExecMode.SelectedItem = "å¤‰æ›´ã›ãšå†èµ·å‹•"
+        Me.TextBox_DWG.Text = "ã“ã“ãŒç©ºç™½ãªã‚‰ã€Œå–å‡ºã€ã€ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‰ãƒ©ãƒƒã‚°ã§ã€Œæ›´æ–°ã€"
+        Me.Button_DWG.Text = "å–å‡º"
+        Me.TabPage2.Text = "ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ»å…¬é–‹"
 
 
     End Sub
 
     Private Sub InitializeControls()
 
-        '¥¥¥—š—ğƒyƒCƒ“@‰æ–ÊXV‚É‚Í•K‚¸ƒXƒNƒ[ƒ‹ƒo[‚ğÅã’[‚É‚·‚é
+        'â–¼â–¼â–¼å±¥æ­´ãƒšã‚¤ãƒ³ ç”»é¢æ›´æ–°æ™‚ã«ã¯å¿…ãšã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’æœ€ä¸Šç«¯ã«ã™ã‚‹
         If Misc.FindString(mainSVCjs_path, DIC.FileHistoryScroll_onTOP(False), True) Then
             CheckBox_FileHistroryScrollPosition.Checked = False
         Else
             CheckBox_FileHistroryScrollPosition.Checked = True
         End If
 
-        '¥¥¥‘®«•ÏXÚ×ƒyƒCƒ“@‰º’[‚É‚ ‚éƒJƒŒƒ“ƒ_ƒsƒbƒJ[‚ÆƒRƒ“ƒ{‚Ì©“®ˆÊ’u’²®
+        'â–¼â–¼â–¼å±æ€§å¤‰æ›´è©³ç´°ãƒšã‚¤ãƒ³ ä¸‹ç«¯ã«ã‚ã‚‹ã‚«ãƒ¬ãƒ³ãƒ€ãƒ”ãƒƒã‚«ãƒ¼ã¨ã‚³ãƒ³ãƒœã®è‡ªå‹•ä½ç½®èª¿æ•´
         If Misc.FindString(Scrollpath, DIC.AutoAdjustCalenderPosition(False)) Then
             CheckBox_CalPickerAutoAdjust.Checked = False
         Else
             CheckBox_CalPickerAutoAdjust.Checked = True
         End If
 
-        '¥¥¥ƒ[ƒNƒtƒ[Ú×ƒyƒCƒ“  ˆÄŒ“WŠJs”‚ÌŠg’£ƒXƒCƒbƒ`
+        'â–¼â–¼â–¼ãƒ¯ãƒ¼ã‚¯ãƒ•ãƒ­ãƒ¼è©³ç´°ãƒšã‚¤ãƒ³  æ¡ˆä»¶å±•é–‹è¡Œæ•°ã®æ‹¡å¼µã‚¹ã‚¤ãƒƒãƒ
         If Misc.FindString(mainSVCjs_path, DIC.workFlowListExpandable(False)) Then
             CheckBox_workflowListExpandable.Checked = False
         Else
@@ -1239,8 +1169,8 @@ Public Class Form_TeCASettings
         End If
 
 
-        '¥¥¥ƒtƒ@ƒCƒ‹‘I‘ğƒ‚[ƒ_ƒ‹  Œ»İ‚Ìó‘Ô‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
-        '@ƒ‚[ƒ_ƒ‹s”
+        'â–¼â–¼â–¼ãƒ•ã‚¡ã‚¤ãƒ«é¸æŠãƒ¢ãƒ¼ãƒ€ãƒ«  ç¾åœ¨ã®çŠ¶æ…‹ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
+        ' ãƒ¢ãƒ¼ãƒ€ãƒ«è¡Œæ•°
         Dim SelectFileLinesNow As String = KeyValueParser.FindValue(SelectFileJS, "var DEFAULT_DISP_CNT")
         If {"20", "40", "60"}.Contains(SelectFileLinesNow) Then
             Me.ComboBox_FileSelectLineNum.SelectedItem = SelectFileLinesNow
@@ -1248,15 +1178,15 @@ Public Class Form_TeCASettings
             Me.ComboBox_FileSelectLineNum.SelectedIndex = 0
         End If
 
-        'ƒ‚[ƒ_ƒ‹•
+        'ãƒ¢ãƒ¼ãƒ€ãƒ«å¹…
         If Misc.FindString(SelectFileCSS_Width, DIC.SelectFileCSS_Width("CSS_Normal")) Then
             CheckBox_Wide.Checked = False
         Else
             CheckBox_Wide.Checked = True
         End If
 
-        '¥¥¥ClientID/SecretID  Œ»İ‚Ìó‘Ô‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
-        '@ClientID
+        'â–¼â–¼â–¼ClientID/SecretID  ç¾åœ¨ã®çŠ¶æ…‹ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
+        ' ClientID
         Dim ClientID As String = KeyValueParser.FindValue(IDpath, "clientId")
         Dim secretID As String = KeyValueParser.FindValue(IDpath, "clientSecret")
         Dim base64 As New MyBase64str("UTF-8")
@@ -1266,7 +1196,7 @@ Public Class Form_TeCASettings
         Me.TextBoxSecretID.Text = secretID
         Me.TextBoxAuthText.Text = IDenc64
 
-        '¥¥¥ƒvƒŒƒrƒ…[‰æ–ÊŠg‘åƒ‚[ƒh@Œ»İ‚Ìó‘Ô‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
+        'â–¼â–¼â–¼ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ç”»é¢æ‹¡å¤§ãƒ¢ãƒ¼ãƒ‰ ç¾åœ¨ã®çŠ¶æ…‹ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
         For Each DetectLine As KeyValuePair(Of String, String) In DIC.pdfJS
             If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
                 Me.ComboBox_PreViewScale.SelectedItem = DetectLine.Key.ToString()
@@ -1277,41 +1207,41 @@ Public Class Form_TeCASettings
             End If
         Next
 
-        '¥¥¥production.js‚É127.0.0.1‚Ì‹LÚ‚ª‚ ‚é‚È‚çSetLocal:check On
+        'â–¼â–¼â–¼production.jsã«127.0.0.1ã®è¨˜è¼‰ãŒã‚ã‚‹ãªã‚‰SetLocal:check On
         If Misc.FindString(SetLocalArray(3, 0), SetLocalArray(3, 2)) Then
             CheckBox_setLocal.Checked = True
         Else
             CheckBox_setLocal.Checked = False
         End If
 
-        '¥¥¥pdfconverter.properties‚Ì‰æ‘œƒf[ƒ^İ’è‚ğƒRƒ“ƒ{‚Ö
+        'â–¼â–¼â–¼pdfconverter.propertiesã®ç”»åƒãƒ‡ãƒ¼ã‚¿è¨­å®šã‚’ã‚³ãƒ³ãƒœã¸
         If Misc.FindString(pdfconvpropPath, "png=pdfAutoConverterEx") Then
             ComboBox_RasterConvert.SelectedItem = "EX"
         Else
             ComboBox_RasterConvert.SelectedItem = "CAD"
         End If
 
-        '¥¥¥web/server/main/main.html@@ŒöŠJ‹@”\‚Ì—L–³‚ğCheckBox‚Ö
+        'â–¼â–¼â–¼web/server/main/main.html  å…¬é–‹æ©Ÿèƒ½ã®æœ‰ç„¡ã‚’CheckBoxã¸
         Dim webVersion = NuGetVersion.Parse(KeyValueParser.FindValue(webVerPath, "VERSION"))
 
         WebVersionStr = webVersion.ToString
 
-        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(mainHTMLpath, "<!-- yŒöŠJ“úz -->") Then
+        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(mainHTMLpath, "<!-- ã€å…¬é–‹æ—¥æ™‚ã€‘ -->") Then
             CheckBox_EnableKokai.Checked = True
         Else
             CheckBox_EnableKokai.Checked = False
         End If
 
-        '¥¥¥web/server/main/main.html@@ŒöŠJƒtƒ‰ƒO˜AŒg‹@”\—L–³‚ğCheckBox‚Ö
-        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(WebPublicSymc_MZMapperXML, "w’è‚³‚ê‚½‘®«ID(JSON‚ÌƒL[)‚Ì’l‚ğAŠes‚ÌŒöŠJƒtƒ‰ƒO(kokai_flg)‚Æ“¯Šú‚·‚é") Then
+        'â–¼â–¼â–¼web/server/main/main.html  å…¬é–‹ãƒ•ãƒ©ã‚°é€£æºæ©Ÿèƒ½æœ‰ç„¡ã‚’CheckBoxã¸
+        If webVersion.CompareTo("1.12.0") >= 0 AndAlso Misc.FindString(WebPublicSymc_MZMapperXML, "æŒ‡å®šã•ã‚ŒãŸå±æ€§ID(JSONã®ã‚­ãƒ¼)ã®å€¤ã‚’ã€å„è¡Œã®å…¬é–‹ãƒ•ãƒ©ã‚°(kokai_flg)ã¨åŒæœŸã™ã‚‹") Then
             CheckBox_PublicSymc.Checked = True
         Else
             CheckBox_PublicSymc.Checked = False
         End If
 
-        '¥¥¥ƒTƒ€ƒl[ƒ‹‰ğ‘œ“x@Œ»İ‚Ìó‘Ô‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
+        'â–¼â–¼â–¼ã‚µãƒ ãƒãƒ¼ãƒ«è§£åƒåº¦ ç¾åœ¨ã®çŠ¶æ…‹ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
         Dim GetThumbSizeCmd As String = "SELECT info_val FROM public.t_system_info WHERE info_key = 'THUMBNAIL_HEIGHT_MAX' ORDER BY kaisha_id LIMIT 1;"
-        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, connStr, True)
+        Dim ThumbSize As String = TeCA.RunSQLUnified(GetThumbSizeCmd, DynamicConnStrDB2, True)
 
         For Each ResolVal As KeyValuePair(Of String, String) In DIC.ThmbNailvalues
             If ResolVal.Value = ThumbSize Then
@@ -1323,27 +1253,27 @@ Public Class Form_TeCASettings
             End If
         Next
 
-        '¥¥¥print-preview.service.js‚Ì1s–Ú‚ÉuƒNƒ‰ƒCƒAƒ“ƒgˆóüƒhƒ‰ƒCƒo‘Î‰v‚Ì‘¶İ‰Â”Û‚ÅƒRƒ“ƒ{‚ğ‘I‘ğ‚·‚é
-        If Misc.FindString(JNLPprint.JNLPprint_printPvwSvcJS, "ƒNƒ‰ƒCƒAƒ“ƒgˆóüƒhƒ‰ƒCƒo‘Î‰") Then
-            ComboBox_PrintMode.SelectedItem = "’¼Ú"
+        'â–¼â–¼â–¼print-preview.service.jsã®1è¡Œç›®ã«ã€Œã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆå°åˆ·ãƒ‰ãƒ©ã‚¤ãƒå¯¾å¿œã€ã®å­˜åœ¨å¯å¦ã§ã‚³ãƒ³ãƒœã‚’é¸æŠã™ã‚‹
+        If Misc.FindString(JNLPprint.JNLPprint_printPvwSvcJS, "ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆå°åˆ·ãƒ‰ãƒ©ã‚¤ãƒå¯¾å¿œ") Then
+            ComboBox_PrintMode.SelectedItem = "ç›´æ¥"
         Else
             ComboBox_PrintMode.SelectedItem = "JNLP"
         End If
 
-        '¥¥¥guide-modalƒtƒHƒ‹ƒ_‚Ì—L–³‚ÅuLNLPƒAƒvƒŠ˜AŒgv‚ÌJNLP/’¼Ú‚Ì”»’è‚ÆƒRƒ“ƒ{‚ğ‘I‘ğ
+        'â–¼â–¼â–¼guide-modalãƒ•ã‚©ãƒ«ãƒ€ã®æœ‰ç„¡ã§ã€ŒLNLPã‚¢ãƒ—ãƒªé€£æºã€ã®JNLP/ç›´æ¥ã®åˆ¤å®šã¨ã‚³ãƒ³ãƒœã‚’é¸æŠ
         If Directory.Exists(AppLinkJNLP.GuideModalpath) Then
-            ComboBox_appLinkJNLP.SelectedItem = "’¼Ú"
+            ComboBox_appLinkJNLP.SelectedItem = "ç›´æ¥"
         Else
             ComboBox_appLinkJNLP.SelectedItem = "JNLP"
         End If
 
         '--------------------------------------
-        'yapp.jsz‚ÌvScroll’l‚ğComboBox‚ÉŠi”[
+        'ã€app.jsã€‘ã®vScrollå€¤ã‚’ComboBoxã«æ ¼ç´
         '--------------------------------------
         ComboBox_vScroll.SelectedItem = TXTFunc.IDSearch(Scrollpath, "EXCESS_ROWS_FILE_LIST", QUOTA.ColonToCamma)
 
         '--------------------------------------
-        'ypdf.jsz‚ÌHandToolOnLoad’l‚ğChechBox‚ÉŠi”[
+        'ã€pdf.jsã€‘ã®HandToolOnLoadå€¤ã‚’ChechBoxã«æ ¼ç´
         '--------------------------------------
         For Each DetectLine As KeyValuePair(Of Boolean, String) In DIC.pdfJS_Grab
             If Misc.FindString(preViewJS, DetectLine.Value.ToString) Then
@@ -1355,22 +1285,23 @@ Public Class Form_TeCASettings
         CheckBox_GrabTool.Checked = GrabToolNow
 
         '--------------------------------------
-        'yƒ^ƒCƒ€ƒAƒEƒg’lz‚ÌÅ¬‚ğ‹‚ß‚ÄƒRƒ“ƒ{‚ÖŠi”[
+        'ã€ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆå€¤ã€‘ã®æœ€å°ã‚’æ±‚ã‚ã¦ã‚³ãƒ³ãƒœã¸æ ¼ç´
         '--------------------------------------
-        Dim ResultValue(TOUTArray.GetLength(1)) As Integer
+        Dim maxToutIdx As Integer = TOUTArray.GetLength(0) - 1
+        Dim ResultValue(maxToutIdx) As Integer
 
-        For X As Integer = 0 To TOUTArray.GetLength(1)
+        For X As Integer = 0 To maxToutIdx
 
-            If TOUTArray(X, 2) = QUOTA.beansXML Then
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim) \ 60
+            If CInt(TOUTArray(X, 2)) = QUOTA.beansXML Then
+                ResultValue(X) = CInt(Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), CInt(TOUTArray(X, 2))).Trim)) \ 60
             Else
-                ResultValue(X) = Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), TOUTArray(X, 2)).Trim)
+                ResultValue(X) = CInt(Val(TXTFunc.IDSearch(TOUTArray(X, 0), TOUTArray(X, 1), CInt(TOUTArray(X, 2))).Trim))
             End If
 
         Next
 
-        'ƒRƒ“ƒ{‚É‚Í‹‚ß‚½Å¬‚ğ’†‰›’l‚Æ‚µ‚ÄA‘OŒã‚É”{X‚ÅƒRƒ“ƒ{‚Ì‘I‘ğˆ‚ğì‚é
-        '‚½‚¾‚µAƒ}ƒCƒiƒX’l‚â6ŠÔi360•ªj’´‚Íì‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+        'ã‚³ãƒ³ãƒœã«ã¯æ±‚ã‚ãŸæœ€å°ã‚’ä¸­å¤®å€¤ã¨ã—ã¦ã€å‰å¾Œã«å€ã€…ã§ã‚³ãƒ³ãƒœã®é¸æŠè‚¢ã‚’ä½œã‚‹
+        'ãŸã ã—ã€ãƒã‚¤ãƒŠã‚¹å€¤ã‚„6æ™‚é–“ï¼ˆ360åˆ†ï¼‰è¶…ã¯ä½œã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
 
         If ComboBox_LoginTimeout.Items.Count > 0 Then
             ComboBox_LoginTimeout.Items.Clear()
@@ -1397,16 +1328,16 @@ Public Class Form_TeCASettings
 
         Dim rows1, rows2 As DataRow()
 
-        '¥¥¥TeCA-DB1  ’l‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
+        'â–¼â–¼â–¼TeCA-DB1  å€¤ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
 
         Dim db1_msg As String
         Dim SQLCMD As String
         '--------------------------------------
-        '[db1.m_kaisha]‚ÌSELECTŒ‹‰Ê‚ğDt_kaisya‚ÉŠi”[
+        '[db1.m_kaisha]ã®SELECTçµæœã‚’Dt_kaisyaã«æ ¼ç´
         '--------------------------------------
         SQLCMD = "select * from public.m_kaisha where invalid_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_kaisha)
+        db1_msg = TeCA.DBtoDTBL(DynamicConnStrDB1, SQLCMD, Dt_kaisha)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = "[DT_kaisha]" & db1_msg.ToString
             Exit Sub
@@ -1416,11 +1347,11 @@ Public Class Form_TeCASettings
         db1_msg = Nothing
 
         '--------------------------------------
-        '[db1.t_system_info_kyotsu]‚ÌSELECTŒ‹‰Ê‚ğyDt_systemInfoz‚ÉŠi”[
+        '[db1.t_system_info_kyotsu]ã®SELECTçµæœã‚’ã€Dt_systemInfoã€‘ã«æ ¼ç´
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info_kyotsu "
 
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, Dt_systemInfo)
+        db1_msg = TeCA.DBtoDTBL(DynamicConnStrDB1, SQLCMD, Dt_systemInfo)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = "[DT_systemInfo]" & db1_msg.ToString
             Exit Sub
@@ -1430,11 +1361,11 @@ Public Class Form_TeCASettings
         db1_msg = Nothing
 
         '--------------------------------------
-        '[db1.m_option]‚ÌSELECTŒ‹‰Êiƒ[ƒ‹’Ê’mj‚ğyDt_optionz‚ÉŠi”[
+        '[db1.m_option]ã®SELECTçµæœï¼ˆãƒ¡ãƒ¼ãƒ«é€šçŸ¥ï¼‰ã‚’ã€Dt_optionã€‘ã«æ ¼ç´
         '--------------------------------------
-        SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='ƒ[ƒ‹’Ê’m'"
+        SQLCMD = "select umu_flg, name[1] from public.m_option where name[1]='ãƒ¡ãƒ¼ãƒ«é€šçŸ¥'"
 
-        db1_msg = TeCA.DBtoDTBL(connStrdb1, SQLCMD, DT_option)
+        db1_msg = TeCA.DBtoDTBL(DynamicConnStrDB1, SQLCMD, DT_option)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = "[DT_option]" & db1_msg.ToString
             Exit Sub
@@ -1444,11 +1375,11 @@ Public Class Form_TeCASettings
         db1_msg = Nothing
 
         '--------------------------------------
-        '[db2.t_system_info]‚ÌSELECTŒ‹‰Ê‚ğ[DT_systemInfoDB2]‚ÉŠi”[
+        '[db2.t_system_info]ã®SELECTçµæœã‚’[DT_systemInfoDB2]ã«æ ¼ç´
         '--------------------------------------
         SQLCMD = "select * from public.t_system_info where del_flg = false"
 
-        db1_msg = TeCA.DBtoDTBL(connStr, SQLCMD, DT_systemInfoDB2)
+        db1_msg = TeCA.DBtoDTBL(DynamicConnStrDB2, SQLCMD, DT_systemInfoDB2)
         If (db1_msg.Length > 5) Then
             Label_notice.Text = "[DT_systemInfoDB2]" & db1_msg.ToString
             Exit Sub
@@ -1457,13 +1388,13 @@ Public Class Form_TeCASettings
         SQLCMD = Nothing
         db1_msg = Nothing
 
-        '¥¥¥TeCA-DB2  ’l‚ğƒRƒ“ƒgƒ[ƒ‹‚ÉŠi”[‚·‚é
+        'â–¼â–¼â–¼TeCA-DB2  å€¤ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«æ ¼ç´ã™ã‚‹
         '--------------------------------------
-        '[DT_kaisya]‚ÅID=1iƒƒCƒ“ƒhƒƒCƒ“j‚ğ’T‚µyƒhƒƒCƒ“‚Æl”z‚ğƒRƒ“ƒgƒ[ƒ‹‚ÖŠi”[
+        '[DT_kaisya]ã§ID=1ï¼ˆãƒ¡ã‚¤ãƒ³ãƒ‰ãƒ¡ã‚¤ãƒ³ï¼‰ã‚’æ¢ã—ã€ãƒ‰ãƒ¡ã‚¤ãƒ³ã¨äººæ•°ã€‘ã‚’ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã¸æ ¼ç´
         '--------------------------------------
         rows1 = Dt_kaisha.Select("id = 1")
 
-        If rows1.Length <> 0 Then@@@@@@@@@@@@@@@'ID=1‚Ìsƒf[ƒ^‘¶İ‚ğŠm”F
+        If rows1.Length <> 0 Then               'ID=1ã®è¡Œãƒ‡ãƒ¼ã‚¿å­˜åœ¨ã‚’ç¢ºèª
             For Each d1 As DataRow In rows1
                 TextBox_Domain.Text = d1("domain_name")
                 TextBox_MaxUsers.Text = d1("sys_riyo_user_max")
@@ -1471,7 +1402,7 @@ Public Class Form_TeCASettings
         End If
 
         '--------------------------------------
-        'yDT_systemInfoz‚ÌƒL[ŒŸõŒ‹‰Ê‚ğŠY“–‚·‚éTextBox/Combo‚ÉŠi”[
+        'ã€DT_systemInfoã€‘ã®ã‚­ãƒ¼æ¤œç´¢çµæœã‚’è©²å½“ã™ã‚‹TextBox/Comboã«æ ¼ç´
         '--------------------------------------
         Dim info_keyArray() As String = {"UPLOAD_SIZE_MAX",
                                          "UPLOAD_FILE_NUMBER_MAX",
@@ -1486,16 +1417,16 @@ Public Class Form_TeCASettings
             If rows1.Length <> 0 Then
                 For Each d1 As DataRow In rows1
 
-                    'TextBox‚ğ’T‚·
+                    'TextBoxã‚’æ¢ã™
                     Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
-                    'ConboBox‚ğ’T‚·
+                    'ConboBoxã‚’æ¢ã™
                     Dim csCB As Control() = Me.Controls.Find("ComboBox_" + single_infoKey, True)
 
-                    'Œ©‚Â‚©‚Á‚½‚çText‚ğ’¼‚·
+                    'è¦‹ã¤ã‹ã£ãŸã‚‰Textã‚’ç›´ã™
                     If csTX.Length > 0 Then
                         CType(csTX(0), TextBox).Text = d1("info_val")
                     End If
-                    'Œ©‚Â‚©‚Á‚½‚çCombo‚ğ’¼‚·
+                    'è¦‹ã¤ã‹ã£ãŸã‚‰Comboã‚’ç›´ã™
                     If csCB.Length > 0 Then
                         CType(csCB(0), ComboBox).SelectedItem = d1("info_val")
                     End If
@@ -1505,9 +1436,9 @@ Public Class Form_TeCASettings
         Next
 
         '--------------------------------------
-        'yDT_optionz‚ÌƒL[ŒŸõŒ‹‰Ê‚ğŠY“–‚·‚éTextBox‚ÉŠi”[
+        'ã€DT_optionã€‘ã®ã‚­ãƒ¼æ¤œç´¢çµæœã‚’è©²å½“ã™ã‚‹TextBoxã«æ ¼ç´
         '--------------------------------------
-        Dim option_keyArray() As String = {"ƒ[ƒ‹’Ê’m"}
+        Dim option_keyArray() As String = {"ãƒ¡ãƒ¼ãƒ«é€šçŸ¥"}
 
         For Each single_infoKey As String In option_keyArray
 
@@ -1516,10 +1447,10 @@ Public Class Form_TeCASettings
             If rows2.Length <> 0 Then
                 For Each d1 As DataRow In rows2
 
-                    'CheckBox‚ğ’T‚·
+                    'CheckBoxã‚’æ¢ã™
                     Dim cs As Control() = Me.Controls.Find("CheckBox_" + single_infoKey, True)
 
-                    'Œ©‚Â‚©‚Á‚½‚çText‚ğ’¼‚·
+                    'è¦‹ã¤ã‹ã£ãŸã‚‰Textã‚’ç›´ã™
                     If cs.Length > 0 Then
                         CType(cs(0), CheckBox).Checked = d1("umu_flg")
 
@@ -1529,7 +1460,7 @@ Public Class Form_TeCASettings
         Next
 
         '--------------------------------------
-        'yDT_systemInfoDB2z‚ÌƒL[ŒŸõŒ‹‰Ê‚ğŠY“–‚·‚éTextBox‚ÉŠi”[
+        'ã€DT_systemInfoDB2ã€‘ã®ã‚­ãƒ¼æ¤œç´¢çµæœã‚’è©²å½“ã™ã‚‹TextBoxã«æ ¼ç´
         '--------------------------------------
         Dim DB2_keyArray() As String = {"UPLOAD_CHUNK_SIZE"}
 
@@ -1540,10 +1471,10 @@ Public Class Form_TeCASettings
             If rows2.Length <> 0 Then
                 For Each d1 As DataRow In rows2
 
-                    'TextBox‚ğ’T‚·
+                    'TextBoxã‚’æ¢ã™
                     Dim csTX As Control() = Me.Controls.Find("TextBox_" + single_infoKey, True)
 
-                    'Œ©‚Â‚©‚Á‚½‚çText‚ğ’¼‚·
+                    'è¦‹ã¤ã‹ã£ãŸã‚‰Textã‚’ç›´ã™
                     If csTX.Length > 0 Then
                         CType(csTX(0), TextBox).Text = d1("info_val")
                     End If
@@ -1553,7 +1484,7 @@ Public Class Form_TeCASettings
         Next
 
         '--------------------------------------
-        'ymail.propertiesz‚ÌƒL[ŒŸõŒ‹‰Ê‚ğŠY“–‚·‚éControl‚ÉŠi”[
+        'ã€mail.propertiesã€‘ã®ã‚­ãƒ¼æ¤œç´¢çµæœã‚’è©²å½“ã™ã‚‹Controlã«æ ¼ç´
         '--------------------------------------
         For Each MailCTRL As String In mailPropArray
 
@@ -1564,7 +1495,7 @@ Public Class Form_TeCASettings
             If mailTX.Length > 0 Then
                 CType(mailTX(0), TextBox).Text = TXTFunc.IDSearch(MailPropPath, MailCTRL, QUOTA.EqualToCR)
                 If (MailCTRL = "password") Then
-                    CurrentPassword = CType(mailTX(0), TextBox).Text  '‘O‚ÌƒpƒXƒ[ƒh‚Í•ÛŠÇ
+                    CurrentPassword = CType(mailTX(0), TextBox).Text  'å‰ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯ä¿ç®¡
                 End If
             End If
 
@@ -1582,9 +1513,9 @@ Public Class Form_TeCASettings
         Next
 
         '--------------------------------------
-        'yŒöŠJ/”ñŒöŠJzŒ»ó‚ğƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚É”½‰f
+        'ã€å…¬é–‹/éå…¬é–‹ã€‘ç¾çŠ¶ã‚’ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã«åæ˜ 
         '--------------------------------------
-        'y @ƒAƒbƒvƒ[ƒh‚Í”ñŒöŠJ‚É‚·‚éz
+        'ã€â–¡ ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ã¯éå…¬é–‹ã«ã™ã‚‹ã€‘
         DefaultKokai_Exists = Misc.FindFormula(KOKAI_FLG_File, DefaultKokai_key, "Const.UPLOAD_PUBLIC_OFF;")
         If DefaultKokai_Exists Then
             CheckBox_UploadDefault.Checked = True
@@ -1592,7 +1523,7 @@ Public Class Form_TeCASettings
             CheckBox_UploadDefault.Checked = False
         End If
 
-        TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", connStr)
+        TRG_CheckInUNPUBLIC_exists = TeCA.CheckTriggerExists("trg_update_t_file_info", "update_t_file_info_kokai_flg", DynamicConnStrDB2)
 
         If TRG_CheckInUNPUBLIC_exists Then
             CheckBox_UnpublicCheckin.Checked = True
@@ -1601,7 +1532,7 @@ Public Class Form_TeCASettings
 
         End If
 
-        TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", connStr)
+        TRG_ApprovePUBLIC_exists = TeCA.CheckTriggerExists("trg_func_set_kokai", "func_set_kokai", DynamicConnStrDB2)
 
         If TRG_ApprovePUBLIC_exists Then
             CheckBox_PublicateWorkflowOK.Checked = True
@@ -1611,7 +1542,7 @@ Public Class Form_TeCASettings
         End If
 
 
-        'SMTP”FØOFF‚Ì‚Æ‚«‚ÍƒpƒXƒ[ƒhDisable
+        'SMTPèªè¨¼OFFã®ã¨ãã¯ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰Disable
         If CheckBox_mail_smtp_auth.Checked = False Then
             TextBox_password.Enabled = False
             Label11.Enabled = False
@@ -1623,25 +1554,5 @@ Public Class Form_TeCASettings
     Private Sub Button_ChangePwd_Click(sender As Object, e As EventArgs) Handles Button_ChangePwd.Click
         Form_ChangePWD.Show()
     End Sub
-
-End Class
-
-Public Class MyBase64str
-
-    Private ReadOnly enc As Encoding
-
-    Public Sub New(ByVal encStr As String)
-        enc = Encoding.GetEncoding(encStr)
-    End Sub
-
-    Public Function Encode(ByVal str As String) As String
-        Return Convert.ToBase64String(enc.GetBytes(str))
-    End Function
-
-    Public Function Decode(ByVal str As String) As String
-        Return enc.GetString(Convert.FromBase64String(str))
-    End Function
-
-
 
 End Class

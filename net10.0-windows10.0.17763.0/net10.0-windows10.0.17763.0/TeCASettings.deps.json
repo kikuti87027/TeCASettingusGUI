@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "TeCASettings/3.4.0.6": {
+      "TeCASettings/3.5.0.0": {
         "dependencies": {
           "Azure.Core": "1.63.0",
           "BCrypt.Net-Next": "4.2.0",
@@ -17,21 +17,21 @@
           "System.ServiceProcess.ServiceController": "10.0.13",
           "log4net": "3.5.0",
           "kikuchi": "1.7.4.5",
-          "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.17763.57"
+          "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.17763.87"
         },
         "runtime": {
           "TeCASettings.dll": {}
         }
       },
-      "runtimepack.Microsoft.Windows.SDK.NET.Ref/10.0.17763.57": {
+      "runtimepack.Microsoft.Windows.SDK.NET.Ref/10.0.17763.87": {
         "runtime": {
           "Microsoft.Windows.SDK.NET.dll": {
             "assemblyVersion": "10.0.17763.38",
-            "fileVersion": "10.0.17763.55"
+            "fileVersion": "10.0.17763.86"
           },
           "WinRT.Runtime.dll": {
-            "assemblyVersion": "2.2.0.0",
-            "fileVersion": "2.2.0.48161"
+            "assemblyVersion": "2.3.1.0",
+            "fileVersion": "2.3.1.54291"
           }
         }
       },
@@ -48,7 +48,8 @@
         "runtime": {
           "lib/net10.0/Azure.Core.dll": {
             "assemblyVersion": "1.63.0.0",
-            "fileVersion": "1.6300.26.47507"
+            "fileVersion": "1.6300.26.47507",
+            "localPath": "Azure.Core.dll"
           }
         }
       },
@@ -56,7 +57,8 @@
         "runtime": {
           "lib/net10.0/BCrypt-Net-Next.dll": {
             "assemblyVersion": "4.2.0.0",
-            "fileVersion": "4.2.0.0"
+            "fileVersion": "4.2.0.0",
+            "localPath": "BCrypt-Net-Next.dll"
           }
         }
       },
@@ -64,7 +66,8 @@
         "runtime": {
           "lib/netstandard2.0/CXuesong.Shims.VisualBasic.Devices.dll": {
             "assemblyVersion": "0.3.0.0",
-            "fileVersion": "0.3.0.0"
+            "fileVersion": "0.3.0.0",
+            "localPath": "CXuesong.Shims.VisualBasic.Devices.dll"
           }
         }
       },
@@ -72,7 +75,8 @@
         "runtime": {
           "lib/netstandard2.0/log4net.dll": {
             "assemblyVersion": "3.5.0.0",
-            "fileVersion": "3.5.0.0"
+            "fileVersion": "3.5.0.0",
+            "localPath": "log4net.dll"
           }
         }
       },
@@ -80,7 +84,8 @@
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
             "assemblyVersion": "10.0.0.10",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Bcl.AsyncInterfaces.dll"
           }
         }
       },
@@ -91,7 +96,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Configuration.Abstractions.dll"
           }
         }
       },
@@ -99,7 +105,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.DependencyInjection.Abstractions.dll"
           }
         }
       },
@@ -111,7 +118,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Diagnostics.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Diagnostics.Abstractions.dll"
           }
         }
       },
@@ -122,7 +130,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.FileProviders.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.FileProviders.Abstractions.dll"
           }
         }
       },
@@ -137,7 +146,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Hosting.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Hosting.Abstractions.dll"
           }
         }
       },
@@ -148,7 +158,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Logging.Abstractions.dll"
           }
         }
       },
@@ -160,7 +171,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Options.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Options.dll"
           }
         }
       },
@@ -168,7 +180,8 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Primitives.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "Microsoft.Extensions.Primitives.dll"
           }
         }
       },
@@ -179,7 +192,8 @@
         "runtime": {
           "lib/net8.0/Microsoft.Identity.Client.dll": {
             "assemblyVersion": "4.90.0.0",
-            "fileVersion": "4.90.0.0"
+            "fileVersion": "4.90.0.0",
+            "localPath": "Microsoft.Identity.Client.dll"
           }
         }
       },
@@ -190,7 +204,8 @@
         "runtime": {
           "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll": {
             "assemblyVersion": "4.90.0.0",
-            "fileVersion": "4.90.0.0"
+            "fileVersion": "4.90.0.0",
+            "localPath": "Microsoft.Identity.Client.Extensions.Msal.dll"
           }
         }
       },
@@ -198,7 +213,8 @@
         "runtime": {
           "lib/net9.0/Microsoft.IdentityModel.Abstractions.dll": {
             "assemblyVersion": "8.14.0.0",
-            "fileVersion": "8.14.0.60815"
+            "fileVersion": "8.14.0.60815",
+            "localPath": "Microsoft.IdentityModel.Abstractions.dll"
           }
         }
       },
@@ -209,7 +225,8 @@
         "runtime": {
           "lib/net10.0/Npgsql.dll": {
             "assemblyVersion": "10.0.3.0",
-            "fileVersion": "10.0.3.0"
+            "fileVersion": "10.0.3.0",
+            "localPath": "Npgsql.dll"
           }
         }
       },
@@ -217,7 +234,8 @@
         "runtime": {
           "lib/net8.0/NuGet.Versioning.dll": {
             "assemblyVersion": "7.9.0.0",
-            "fileVersion": "7.9.0.83"
+            "fileVersion": "7.9.0.83",
+            "localPath": "NuGet.Versioning.dll"
           }
         }
       },
@@ -231,7 +249,8 @@
         "runtime": {
           "lib/net10.0/System.ClientModel.dll": {
             "assemblyVersion": "1.16.0.0",
-            "fileVersion": "1.1600.26.46705"
+            "fileVersion": "1.1600.26.46705",
+            "localPath": "System.ClientModel.dll"
           }
         }
       },
@@ -239,7 +258,8 @@
         "runtime": {
           "lib/net10.0/System.Management.dll": {
             "assemblyVersion": "10.0.0.13",
-            "fileVersion": "10.0.1326.50504"
+            "fileVersion": "10.0.1326.50504",
+            "localPath": "System.Management.dll"
           }
         },
         "runtimeTargets": {
@@ -247,7 +267,8 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.13",
-            "fileVersion": "10.0.1326.50504"
+            "fileVersion": "10.0.1326.50504",
+            "localPath": "runtimes/win/lib/net10.0/System.Management.dll"
           }
         }
       },
@@ -255,7 +276,8 @@
         "runtime": {
           "lib/net10.0/System.Memory.Data.dll": {
             "assemblyVersion": "10.0.0.10",
-            "fileVersion": "10.0.1026.32716"
+            "fileVersion": "10.0.1026.32716",
+            "localPath": "System.Memory.Data.dll"
           }
         }
       },
@@ -263,7 +285,8 @@
         "runtime": {
           "lib/net10.0/System.ServiceProcess.ServiceController.dll": {
             "assemblyVersion": "10.0.0.13",
-            "fileVersion": "10.0.1326.50504"
+            "fileVersion": "10.0.1326.50504",
+            "localPath": "System.ServiceProcess.ServiceController.dll"
           }
         },
         "runtimeTargets": {
@@ -271,7 +294,8 @@
             "rid": "win",
             "assetType": "runtime",
             "assemblyVersion": "10.0.0.13",
-            "fileVersion": "10.0.1326.50504"
+            "fileVersion": "10.0.1326.50504",
+            "localPath": "runtimes/win/lib/net10.0/System.ServiceProcess.ServiceController.dll"
           }
         }
       },
@@ -302,12 +326,12 @@
     }
   },
   "libraries": {
-    "TeCASettings/3.4.0.6": {
+    "TeCASettings/3.5.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "runtimepack.Microsoft.Windows.SDK.NET.Ref/10.0.17763.57": {
+    "runtimepack.Microsoft.Windows.SDK.NET.Ref/10.0.17763.87": {
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""

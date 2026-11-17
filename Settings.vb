@@ -1,4 +1,4 @@
-﻿Imports System.IO
+Imports System.IO
 Imports System.Reflection
 Imports System.Text
 Imports System.Text.RegularExpressions
@@ -6,6 +6,7 @@ Imports BCrypt.Net
 Imports NpgsqlTypes
 Imports NuGet.Versioning
 Imports System.Linq
+Imports kikuchi
 
 Public Class TECA_sets
 
@@ -190,6 +191,133 @@ Public Class TECA_sets
     Public Const connStr As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db2"
     Public Const connStrdb1 As String = "Host=localhost;Username=postgres;Password=PCJJWEqb2d;Database=db1"
 
+    '環境別の動的接続文字列キャッシュ（db2/DB2・db1/DB1・パスワード自動判定）
+    Private Shared _dynamicConnStrDB2 As String = Nothing
+    Private Shared _dynamicConnStrDB1 As String = Nothing
+
+    Public Shared ReadOnly Property DynamicConnStrDB2 As String
+        Get
+            If String.IsNullOrEmpty(_dynamicConnStrDB2) Then
+                InitDynamicConnStrings()
+            End If
+            Return _dynamicConnStrDB2
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property DynamicConnStrDB1 As String
+        Get
+            If String.IsNullOrEmpty(_dynamicConnStrDB1) Then
+                InitDynamicConnStrings()
+            End If
+            Return _dynamicConnStrDB1
+        End Get
+    End Property
+
+    Private Shared Sub InitDynamicConnStrings()
+        Dim db1Name As String = "db1"
+        Dim db2Name As String = "db2"
+        Dim pwd As String = "PCJJWEqb2d"
+
+        Try
+            ' kikuchi.dll の自動判定を実行（デフォルトパスワードで通ればそのまま完了）
+            Dim dbInfo = TeCA.CurrentDB_PWDnames()
+            If dbInfo.DBnames IsNot Nothing AndAlso dbInfo.DBnames.Count >= 3 Then
+                db1Name = dbInfo.DBnames(1)
+                db2Name = dbInfo.DBnames(2)
+            End If
+            If Not String.IsNullOrEmpty(dbInfo.PWDname) Then
+                pwd = dbInfo.PWDname
+            End If
+
+        Catch ex As InvalidOperationException
+            ' GUI環境でデフォルトパスワード不一致により Console.ReadKey が例外を投げた場合
+            DeployUtils.WriteLog($"{defaultLOGDIR}\TeCAsettings.log", "デフォルトパスワードでのDB接続に失敗したため、パスワード入力ダイアログを表示します。")
+
+            Dim inputPwd As String = ShowDBPasswordDialog()
+            If String.IsNullOrEmpty(inputPwd) Then
+                MessageBox.Show("DBパスワードが入力されなかったため、ツールを終了します。", "認証キャンセル", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Environment.Exit(1)
+            End If
+
+            pwd = inputPwd
+
+            ' 大文字(DB1/DB2) / 小文字(db1/db2) のどちらが存在するか接続確認して確定
+            If CanConnectDB("DB2", pwd) Then
+                db1Name = "DB1"
+                db2Name = "DB2"
+            ElseIf CanConnectDB("db2", pwd) Then
+                db1Name = "db1"
+                db2Name = "db2"
+            Else
+                MessageBox.Show("入力されたパスワードでTeCAデータベースに接続できませんでした。", "DB接続エラー", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Environment.Exit(1)
+            End If
+        End Try
+
+        TeCA.PostgreEnvirons(pwd, True)
+        _dynamicConnStrDB2 = $"Host=localhost;Port=5432;CommandTimeout=300;Database={db2Name};Username=postgres;Password={pwd};"
+        _dynamicConnStrDB1 = $"Host=localhost;Port=5432;CommandTimeout=300;Database={db1Name};Username=postgres;Password={pwd};"
+    End Sub
+
+    Private Shared Function CanConnectDB(dbName As String, password As String) As Boolean
+        Try
+            Dim cs As String = $"Host=localhost;Port=5432;Database={dbName};Username=postgres;Password={password};Pooling=False;Timeout=5;"
+            Using conn As New NpgsqlConnection(cs)
+                conn.Open()
+                Return True
+            End Using
+        Catch
+            Return False
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' 独自パスワード環境用の小型パスワード入力ダイアログ
+    ''' </summary>
+    Private Shared Function ShowDBPasswordDialog() As String
+        Using dlg As New Form()
+            dlg.Text = "TeCA-DB パスワード入力"
+            dlg.Size = New Size(360, 155)
+            dlg.FormBorderStyle = FormBorderStyle.FixedDialog
+            dlg.StartPosition = FormStartPosition.CenterScreen
+            dlg.MaximizeBox = False
+            dlg.MinimizeBox = False
+            dlg.TopMost = True
+
+            Dim lbl As New Label() With {
+                .Text = "PostgreSQL (postgres) のパスワードを入力してください：",
+                .Location = New Point(15, 15),
+                .AutoSize = True
+            }
+            Dim txt As New TextBox() With {
+                .Location = New Point(15, 42),
+                .Size = New Size(310, 23),
+                .UseSystemPasswordChar = True
+            }
+            Dim btnOk As New Button() With {
+                .Text = "OK",
+                .DialogResult = DialogResult.OK,
+                .Location = New Point(165, 78),
+                .Size = New Size(75, 26)
+            }
+            Dim btnCancel As New Button() With {
+                .Text = "キャンセル",
+                .DialogResult = DialogResult.Cancel,
+                .Location = New Point(250, 78),
+                .Size = New Size(75, 26)
+            }
+
+            dlg.Controls.AddRange({lbl, txt, btnOk, btnCancel})
+            dlg.AcceptButton = btnOk
+            dlg.CancelButton = btnCancel
+
+            If dlg.ShowDialog() = DialogResult.OK Then
+                Return txt.Text
+            End If
+            Return Nothing
+        End Using
+    End Function
+
     'SetLocal用定数群
     Private Shared ReadOnly _SetLocalArray As String(,) = {
                                      {_Tomcat_PATH & "\webapps\api#teca\WEB-INF\classes\db0.properties", "db0.url=jdbc:postgresql:", "db0.url=jdbc:postgresql://127.0.0.1:5432/db0"},
@@ -216,7 +344,7 @@ Public Class TECA_sets
         Public Const Apostrofy As Integer = 1
         Public Const EqualToCR As Integer = 2
         Public Const prodJS As Integer = 3    ' [: 60 *]のよーにコロンで始まり、アスタで終わる文字
-        Public Const beansXML As Integer = 4    ' [: 60 *]のよーにコロンで始まり、アスタで終わる文字
+        Public Const beansXML As Integer = 4    ' [value="3600"]のよーにvalue="と"で囲まれた文字
         Public Const WebXLM As Integer = 5    ' [>30<]   のよーに不等号で囲まれた文字
         Public Const WholeLine As Integer = 6    '       "キーワード": 置換対象値
     End Class
@@ -370,7 +498,7 @@ Public Class TRIGGERS
 					// ▼▼▼ 26-01-16 ワークフロー詳細ペイン：行数の自動増減機能の追加 ▼▼▼
 					// 1. 高さの計算（CommonServiceを使って正しい高さを算出）
 					//   第2引数:最大行数(50), 第3引数:最小行数(3) ※テンプレートの設定と合わせる
-					　var heightStyle = CommonService.getTableHeight(subGridOptions, 50, 3);
+					 var heightStyle = CommonService.getTableHeight(subGridOptions, 50, 3);
 					
 					// 2. 計算結果（例: {height: "300px"}）から数値（300）を取り出す
 					if (heightStyle && heightStyle.height) {
@@ -394,13 +522,13 @@ Public Class TRIGGERS
         {True, ".sub-grid {" & vbCrLf & vbTab & "height: auto;"}
     }
 
-        '================属性変更ウィンドウ　最下段にカレンダーピッカーを表示させるとき、フレームにかぶらないように自動調整する================
+        '================属性変更ウィンドウ 最下段にカレンダーピッカーを表示させるとき、フレームにかぶらないように自動調整する================
         ' カレンダーピッカー
         Public AutoAdjustCalenderPosition As New Dictionary(Of Boolean, String) From {
         {False, "orientation: attrs.placement"},
         {True, "orientation: ""auto"""}
     }
-        '================属性変更ウィンドウ　最下段にコンボを表示させるとき、フレームにかぶらないように自動調整する（main.js）===============
+        '================属性変更ウィンドウ 最下段にコンボを表示させるとき、フレームにかぶらないように自動調整する（main.js）===============
         Public Shared ReadOnly AutoAdjustComboPosition_js_Before As String = <![CDATA[
 		});
 });
@@ -467,7 +595,7 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
         {True, AutoAdjustComboPosition_html_After}
     }
 
-        '================履歴ウィンドウ　ペイン更新時には常にスクロールバーを最上部へ移動させる================
+        '================履歴ウィンドウ ペイン更新時には常にスクロールバーを最上部へ移動させる================
         Public Shared ReadOnly FileHistoryScrtollAlwaysOnTop_false As String = <![CDATA[					if (!addFlg) {
 						// ログの表示切り替えの場合
 						$scope.$parent.detailAreaData.log = [];
@@ -520,7 +648,6 @@ app.directive('smartDropdownPosition', function($window, $timeout) {
                 End If
             Next
         End Sub
-
 
     End Class
 
@@ -606,10 +733,42 @@ Public Class AppLinkJNLP
 End Class
 
 Public Class TXTFunc
+    ''' <summary>
+    ''' 行単位のテキストがコメント行（//, #, <!--）かどうかを判定する
+    ''' </summary>
+    Private Shared Function IsCommentLine(line As String) As Boolean
+        Dim trimmed As String = line.TrimStart()
+        Return trimmed.StartsWith("//") OrElse trimmed.StartsWith("#") OrElse trimmed.StartsWith("<!--")
+    End Function
+
+    ''' <summary>
+    ''' バッファ内でコメント行（//, #, <!--）をスキップし、有効な設定行にあるキーワードの開始インデックスを返す
+    ''' </summary>
+    Private Shared Function FindActiveKeywordIndex(buffer As String, keyWord As String) As Integer
+        Dim searchPos As Integer = 0
+        While searchPos < buffer.Length
+            Dim idx As Integer = buffer.IndexOf(keyWord, searchPos, StringComparison.CurrentCulture)
+            If idx < 0 Then Return -1
+
+            ' 該当位置の行頭を特定してコメント行かどうか判定
+            Dim lineStart As Integer = buffer.LastIndexOf(vbLf, idx)
+            lineStart = If(lineStart < 0, 0, lineStart + 1)
+            Dim linePrefix As String = buffer.Substring(lineStart, idx - lineStart).TrimStart()
+
+            If Not (linePrefix.StartsWith("//") OrElse linePrefix.StartsWith("#") OrElse linePrefix.StartsWith("<!--")) Then
+                Return idx
+            End If
+
+            ' コメント行だった場合は次の位置から再検索
+            searchPos = idx + keyWord.Length
+        End While
+        Return -1
+    End Function
+
     Public Shared Function IDSearch(IDFile As String, keyWord As String, mode As Integer) As String
 
         '   mode : true   キーワード    '取り出す文字列'   アポォで挟まれたところをとりだす
-        '   mode : 0(  　　キーワード:  取り出す文字列,　　 コロン以後からカンマまでをスペース除去で取り出す
+        '   mode : 0(    キーワード:  取り出す文字列,   コロン以後からカンマまでをスペース除去で取り出す
 
         '読み込む文字コードの指定(ここでは、Shift JIS)
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
@@ -622,6 +781,9 @@ Public Class TXTFunc
 
             'すべての行を読み込む
             For Each fff As String In System.IO.File.ReadAllLines(IDFile, enc)
+                'コメント行（//, #, <!--）はスキップ
+                If IsCommentLine(fff) Then Continue For
+
                 '文字を検索
                 If fff.Contains(keyWord) Then
                     Select Case mode
@@ -629,38 +791,42 @@ Public Class TXTFunc
                             Dim firstApo As Integer = fff.IndexOf(Chr(39))  '始まりアポォ位置
                             Dim lasttApo As Integer = fff.LastIndexOf(Chr(39))  '終わりアポォ位置
 
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1)
-                            result = fff
+                            If firstApo >= 0 AndAlso lasttApo > firstApo Then
+                                result = fff.Substring(firstApo + 1, lasttApo - firstApo - 1)
+                            End If
                         Case TECA_sets.QUOTA.ColonToCamma
                             Dim firstApo As Integer = fff.IndexOf(Chr(58))  '始まりコロ位置
                             Dim lasttApo As Integer = fff.LastIndexOf(Chr(44))  '終わりカンマ位置
 
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
+                            If firstApo >= 0 AndAlso lasttApo > firstApo Then
+                                result = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
+                            End If
                         Case TECA_sets.QUOTA.EqualToCR
                             Dim firstApo As Integer = fff.IndexOf(Chr(61))  '始まり[=]の位置
-                            If (fff.Substring(0, 1) <> "#") Then
-                                fff = fff.Substring(firstApo + 1)
-                                result = fff
+                            If firstApo >= 0 AndAlso (fff.Substring(0, 1) <> "#") Then
+                                result = fff.Substring(firstApo + 1)
                             End If
                         Case TECA_sets.QUOTA.WebXLM
                             Dim firstApo As Integer = fff.IndexOf(Chr(62))  '始まり[>]の位置
                             Dim lasttApo As Integer = fff.LastIndexOf(Chr(60))  '終わり[<]の位置
 
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
+                            If firstApo >= 0 AndAlso lasttApo > firstApo Then
+                                result = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
+                            End If
                         Case TECA_sets.QUOTA.beansXML
-                            Dim firstApo As Integer = fff.IndexOf("value=") + 6  '始まり[value=]の位置
+                            Dim valPos As Integer = fff.IndexOf("value=")  '始まり[value=]の位置
                             Dim lasttApo As Integer = fff.LastIndexOf(Chr(34))  '終わり["]の位置
 
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
+                            If valPos >= 0 AndAlso lasttApo > (valPos + 6) Then
+                                result = fff.Substring(valPos + 7, lasttApo - (valPos + 7)).TrimStart
+                            End If
                         Case TECA_sets.QUOTA.prodJS
                             Dim firstApo As Integer = fff.IndexOf(Chr(58))  '始まり[:]の位置
                             Dim lasttApo As Integer = fff.IndexOf(Chr(42))  '終わり[*]の位置
 
-                            fff = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
-                            result = fff
+                            If firstApo >= 0 AndAlso lasttApo > firstApo Then
+                                result = fff.Substring(firstApo + 1, lasttApo - firstApo - 1).TrimStart
+                            End If
 
                         Case TECA_sets.QUOTA.WholeLine
                             result = fff
@@ -687,7 +853,7 @@ Public Class TXTFunc
     End Function
 
     ''' <summary>
-    ''' テキストファイルの指定キーワードを指定文字列に置換する     
+    ''' テキストファイルの指定キーワードを指定文字列に置換する（コメント行は自動的にスキップ）
     ''' </summary>
     ''' <param name="IDFile"></param>
     ''' <param name="keyWord"></param>
@@ -696,12 +862,16 @@ Public Class TXTFunc
     ''' <returns></returns>
     Public Shared Function TextSwap(IDFile As String, keyWord As String, afterValue As String, mode As Integer) As String
 
+        If Not IO.File.Exists(IDFile) Then
+            Return "File not Found"
+        End If
+
         '読み取り属性を強制解除(Ver2.77）
         Dim fas As FileAttributes = File.GetAttributes(IDFile)
         If (fas And FileAttributes.ReadOnly) = FileAttributes.ReadOnly Then
             fas = fas And Not FileAttributes.ReadOnly
+            File.SetAttributes(IDFile, fas)
         End If
-        File.SetAttributes(IDFile, fas)
 
         '読み込む文字コードの指定(UTF-8 Bombなし)
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
@@ -710,92 +880,90 @@ Public Class TXTFunc
         Dim SRbuffer As String
         Dim afterBuffer As String = ""
 
-        If (IO.File.Exists(IDFile) = True) Then
+        'すべての行を読み込む
+        Try
+            Using SR As New StreamReader(IDFile, enc)
+                SRbuffer = SR.ReadToEnd()
+            End Using
+        Catch ex As Exception
+            TextSwap = "TextSwap:" + ex.ToString
+            Exit Function
+        End Try
 
-            'すべての行を読み込む
-            Try
-                Using SR As New StreamReader(IDFile, enc)
-                    SRbuffer = SR.ReadToEnd()
-                End Using
-            Catch ex As Exception
-                TextSwap = "TextSwap:" + ex.ToString
-                Exit Function
-            End Try
+        '置換（コメント行をスキップして有効行のキーワード位置を検索）
+        Dim SRBuf_KeyPos As Integer = FindActiveKeywordIndex(SRbuffer, keyWord)
+        If SRBuf_KeyPos >= 0 Then
+            Dim StartBuf As String = SRbuffer.Substring(SRBuf_KeyPos)
 
-            '置換
-            If SRbuffer.Contains(keyWord, StringComparison.CurrentCulture) Then
-                Dim SRBuf_KeyPos As Integer = SRbuffer.IndexOf(keyWord)
-                Dim StartBuf As String = SRbuffer.Substring(SRBuf_KeyPos)
+            Select Case mode
+                Case TECA_sets.QUOTA.Apostrofy                             '  KEYWORD   'TARGETvalue'
+                    Dim firstApo As Integer = StartBuf.IndexOf("'"c) + SRBuf_KeyPos  '始まりアポ位置
+                    Dim lastApo As Integer = SRbuffer.IndexOf("'"c, firstApo + 1)    '終わりアポ位置
+                    If firstApo >= SRBuf_KeyPos AndAlso lastApo > firstApo Then
+                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo - 1, afterValue)
+                    End If
 
-                Select Case mode
-                    Case TECA_sets.QUOTA.Apostrofy                             '  KEYWORD   'TARGETvalue'
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(39)) + SRbuffer.IndexOf(keyWord)  '始まりアポ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(39)) + firstApo  '終わりアポ位置
+                Case TECA_sets.QUOTA.ColonToCamma                             '  KEYWORD :TARGETvalue,
+                    Dim firstApo As Integer = StartBuf.IndexOf(":"c) + SRBuf_KeyPos  '始まりコロ位置
+                    Dim lastApo As Integer = SRbuffer.IndexOf(","c, firstApo + 1)    '終わりカンマ位置
+                    If firstApo >= SRBuf_KeyPos AndAlso lastApo > firstApo Then
+                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo - 1, " " & afterValue)
+                    End If
 
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + Chr(39))
+                Case TECA_sets.QUOTA.WebXLM
+                    Dim firstApo As Integer = StartBuf.IndexOf(">"c) + SRBuf_KeyPos  '始まりコロ位置
+                    Dim lastApo As Integer = SRbuffer.IndexOf("<"c, firstApo + 1)    '終わりカンマ位置
+                    If firstApo >= SRBuf_KeyPos AndAlso lastApo > firstApo Then
+                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo - 1, afterValue)
+                    End If
 
-                    Case TECA_sets.QUOTA.ColonToCamma                             '  KEYWORD :TARGETvalue,
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(58)) + SRbuffer.IndexOf(keyWord)  '始まりコロ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(44)) + firstApo  '終わりカンマ位置
+                Case TECA_sets.QUOTA.beansXML
+                    Dim valTagIdx As Integer = StartBuf.IndexOf("value=")
+                    If valTagIdx >= 0 Then
+                        Dim ValueStartPos As Integer = SRBuf_KeyPos + valTagIdx + 6        '値の始まり位置 [value=]の6文字分を飛ばす
+                        Dim ValueEndPos As Integer = SRbuffer.IndexOf(""""c, ValueStartPos + 1) '値の終わり ["]の位置
+                        If ValueEndPos > ValueStartPos Then
+                            afterBuffer = Replace(SRbuffer, ValueStartPos + 1, ValueEndPos - ValueStartPos - 1, (Val(afterValue) * 60).ToString)
+                        End If
+                    End If
 
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, " " + afterValue + Chr(44))
+                Case TECA_sets.QUOTA.prodJS
+                    Dim firstApo As Integer = StartBuf.IndexOf(":"c) + SRBuf_KeyPos    '始まり[:]の位置
+                    Dim lastApo As Integer = SRbuffer.IndexOf("*"c, firstApo + 1)      '終わり[*]の位置
+                    If firstApo >= SRBuf_KeyPos AndAlso lastApo > firstApo Then
+                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo - 1, " " & afterValue & " ")
+                    End If
 
-                    Case TECA_sets.QUOTA.WebXLM
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(62)) + SRbuffer.IndexOf(keyWord)  '始まりコロ位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(60)) + firstApo  '終わりカンマ位置
+                Case TECA_sets.QUOTA.WholeLine
+                    afterBuffer = SRbuffer.Replace(keyWord, afterValue)
 
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + " " + Chr(60))
+                Case Else
+                    Dim unused As String = "Unsupported Qota Mode:" + mode.ToString
 
-                    Case TECA_sets.QUOTA.beansXML
-                        Dim ValueStartPos As Integer = SRBuf_KeyPos + StartBuf.IndexOf("value=") + 6  　　　'値の始まり位置 [value=]の6文字分を飛ばす
-                        Dim EndBuf As String = SRbuffer.Substring(ValueStartPos + 1, 10)
-                        Dim ValueEndPos As Integer = ValueStartPos + 1 + EndBuf.IndexOf(Chr(34))            '値の終わり ["]の位置
+            End Select
 
-                        afterBuffer = Replace(SRbuffer, ValueStartPos + 1, ValueEndPos - ValueStartPos - 1, (Val(afterValue) * 60).ToString)
-
-                    Case TECA_sets.QUOTA.prodJS
-                        Dim firstApo As Integer = StartBuf.IndexOf(Chr(58)) + SRbuffer.IndexOf(keyWord)    '始まり[:]の位置
-                        Dim EndBuf As String = SRbuffer.Substring(firstApo, 10)
-                        Dim lastApo As Integer = EndBuf.IndexOf(Chr(42)) + firstApo  '終わり[*]の位置
-
-                        afterBuffer = Replace(SRbuffer, firstApo + 1, lastApo - firstApo, afterValue + " " + Chr(42))
-
-                    Case TECA_sets.QUOTA.WholeLine
-                        afterBuffer = SRbuffer.Replace(keyWord, afterValue)
-
-                    Case Else
-                        Dim unused As String = "Unsupported Qota Mode:" + mode.ToString
-
-                End Select
-
-            End If
-
-            If afterBuffer.Length < 10 Then
-                TextSwap = "Not Found String"
-                Exit Function
-            End If
-
-            Try
-                Dim SW As New StreamWriter(IDFile, False, enc)
-                SW.Write(afterBuffer)
-                SW.Close()
-
-                SRbuffer = Nothing
-                afterBuffer = Nothing
-
-            Catch ex As Exception
-                TextSwap = "Error"
-                MessageBox.Show("【数値：" + afterValue.ToString + "】へ変更できません。" + vbCrLf + "管理者権限で再試行下さい", "数値変更エラー")
-                Exit Function
-            End Try
-
-            TextSwap = "Success"
-        Else
-            TextSwap = "File not Found"
         End If
+
+        If afterBuffer.Length < 10 Then
+            TextSwap = "Not Found String"
+            Exit Function
+        End If
+
+        Try
+            Dim SW As New StreamWriter(IDFile, False, enc)
+            SW.Write(afterBuffer)
+            SW.Close()
+
+            SRbuffer = Nothing
+            afterBuffer = Nothing
+
+        Catch ex As Exception
+            TextSwap = "Error"
+            MessageBox.Show("【数値：" + afterValue.ToString + "】へ変更できません。" + vbCrLf + "管理者権限で再試行下さい", "数値変更エラー")
+            Exit Function
+        End Try
+
+        TextSwap = "Success"
 
     End Function
 
@@ -1241,7 +1409,7 @@ Public Class PubFlugLinkage
             (MainHTML_OFF, MainHTML_ON)
         }
 
-    '================属性変更　公開機能の使用/不使用に連動しWebコントーロール取得値を調整する（main.service.js[ mainSVCjs_path ])================
+    '================属性変更 公開機能の使用/不使用に連動しWebコントーロール取得値を調整する（main.service.js[ mainSVCjs_path ])================
     Public Shared ReadOnly PublishDateDisplayON As String = <![CDATA[else if ($('#kokaiTime').attr('class').split(" ").indexOf('ng-invalid') != -1) {
 				// 時間入力エリア内で invalid が発生している場合、書式エラー
 				detailAreaData.kokaiTimestampError = CommonService.getMessage($scope, "W00013", ["timestampFormatHhMm"]);
@@ -1481,7 +1649,7 @@ Public Class PubFlugLinkage
 
             ' DB更新の実行（どちらの接続文字列も指定がない場合はファイル書き出しのみ）
             If Not String.IsNullOrEmpty(connStr) Then
-                Using conn As New NpgsqlConnection(connStr)
+                Using conn As New NpgsqlConnection(connStr & ";Pooling=False;")
                     conn.Open()
                     Using transaction As NpgsqlTransaction = conn.BeginTransaction()
                         Try
@@ -1592,7 +1760,7 @@ End Class
 
 Public Class BugFixes
     'classファイルの差し替えで完遂できるバグフィクスの定義リスト
-    ' 　　　　(リソース内のファイル名, 出力先のパス, 摘要後のバージョンWEB,API,DBの順)で列記する
+    '     (リソース内のファイル名, 出力先のパス, 摘要後のバージョンWEB,API,DBの順)で列記する
     Public Shared ReadOnly FixList As New List(Of (FileName As String, DestPath As String, DeployVersionWEB As String, DeployVersionAPI As String, DeployVersionDB As String, MainVersion As String)) From {
         ("ZUNO_TECA-370_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.3", "1.15.0.3", "1.15.0.2", "1.15.0.3"),
         ("ZUNO_TECA-372_PrintPreviewServiceImpl.class", TECA_sets.NDMSroot & "\service\file\PrintPreviewServiceImpl.class", "1.15.0.4", "1.15.0.4", "1.15.0.2", "1.15.0.4"),
@@ -1643,8 +1811,8 @@ Public Class BugFixes
             ' バージョンの更新も実施
             PubFlugLinkage.UpdateVersionAll(item.DeployVersionWEB, TECA_sets.webVerPath)
             PubFlugLinkage.UpdateVersionAll(item.DeployVersionAPI,, TECA_sets.APIVerPath)
-            PubFlugLinkage.UpdateVersionAll(item.DeployVersionDB,,, TECA_sets.connStrdb1)
-            PubFlugLinkage.UpdateVersionAll(item.MainVersion,,,, TECA_sets.connStrdb1)
+            PubFlugLinkage.UpdateVersionAll(item.DeployVersionDB,,, TECA_sets.DynamicConnStrDB1)
+            PubFlugLinkage.UpdateVersionAll(item.MainVersion,,,, TECA_sets.DynamicConnStrDB1)
 
             If Not isSuccess Then
                 allSuccess = False
@@ -1789,9 +1957,7 @@ Public Class BugFixes
         Try
             Dim targetWebVerPath As String = If(String.IsNullOrEmpty(argWebVerPath), TECA_sets.webVerPath, argWebVerPath)
             Dim targetAPIVerPath As String = If(String.IsNullOrEmpty(argAPIVerPath), TECA_sets.APIVerPath, argAPIVerPath)
-            Dim connectDBstr As String = If(String.IsNullOrEmpty(connectionStringDB), DefaultConst.ConnString_db2, connectionStringDB)
-            connectDBstr = connectDBstr.Replace("db2", "db1")
-
+            Dim connectDBstr As String = If(String.IsNullOrEmpty(connectionStringDB), TECA_sets.DynamicConnStrDB1, connectionStringDB)
             Dim connectPRODUCTstr As String = If(String.IsNullOrEmpty(connectionStringPRODUCT), connectDBstr, connectionStringPRODUCT)
 
             ' 1. 検査対象バージョンのパース
@@ -1827,7 +1993,7 @@ Public Class BugFixes
 
             ' C. DB (connectionStringDB) から検出
             If Not String.IsNullOrEmpty(connectDBstr) Then
-                Using conn As New NpgsqlConnection(connectDBstr)
+                Using conn As New NpgsqlConnection(connectDBstr & ";Pooling=False;")
                     conn.Open()
                     Dim sqlDb As String = "SELECT info_val FROM t_system_info_kyotsu WHERE info_key = 'DB_VERSION';"
                     Using cmd As New NpgsqlCommand(sqlDb, conn)
@@ -1844,7 +2010,7 @@ Public Class BugFixes
 
             ' D. DB (connectionStringPRODUCT) から検出
             If Not String.IsNullOrEmpty(connectPRODUCTstr) Then
-                Using conn As New NpgsqlConnection(connectPRODUCTstr)
+                Using conn As New NpgsqlConnection(connectPRODUCTstr & ";Pooling=False;")
                     conn.Open()
                     Dim sqlProduct As String = "SELECT info_val FROM t_system_info_kyotsu WHERE info_key = 'PRODUCT_VERSION';"
                     Using cmd As New NpgsqlCommand(sqlProduct, conn)
@@ -1859,8 +2025,10 @@ Public Class BugFixes
                 End Using
             End If
 
-            DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log",
-                                 $"バージョン情報:{detectedVersions(3)}（WEB:{detectedVersions(0)} / API:{detectedVersions(1)} / DB:{detectedVersions(2)}）")
+            If detectedVersions.Count >= 4 Then
+                DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log",
+                                     $"バージョン情報:{detectedVersions(3)}（WEB:{detectedVersions(0)} / API:{detectedVersions(1)} / DB:{detectedVersions(2)}）")
+            End If
 
             ' 3. 取得したバージョンリストの最小値と、検査バージョンを比較
             If detectedVersions.Count > 0 Then
@@ -1875,4 +2043,127 @@ Public Class BugFixes
             Return False
         End Try
     End Function
+End Class
+
+''' <summary>
+''' tecacmd -reboot db と同一ロジックでTeCAのサービス停止・DB再起動・サービス起動を行う制御クラス
+''' </summary>
+Public Class TeCAServiceCtrl
+    Private Shared ReadOnly LogFilePath As String = $"{TECA_sets.defaultLOGDIR}\TeCAsettings.log"
+
+    ''' <summary>
+    ''' 戻り値文字列からエラー行を抽出し、yacexsvc 以外の重要サービスに異常があるか判定する
+    ''' </summary>
+    Private Shared Function HasCriticalServiceError(resMsg As String, actionLabel As String) As Boolean
+        If String.IsNullOrEmpty(resMsg) Then Return False
+
+        Dim lines As String() = resMsg.Split({vbCrLf, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+        Dim hasCritical As Boolean = False
+
+        For Each line As String In lines
+            Dim isErrorLine As Boolean = line.Contains("不良") OrElse line.Contains("[ERROR]") OrElse line.Contains("失敗") OrElse line.Contains("中断")
+            If Not isErrorLine Then Continue For
+
+            If line.IndexOf("yacexsvc", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                ' yacexsvc は重要度が低いため、ログ記録のみで処理を続行する
+                DeployUtils.WriteLog(LogFilePath, $"[警告] yacexsvc の{actionLabel}時に異常が検出されましたが、処理を続行します: {line.Trim()}")
+            Else
+                hasCritical = True
+            End If
+        Next
+
+        Return hasCritical
+    End Function
+
+    ''' <summary>
+    ''' 4サービス（Apache2.4, Tomcat, teca, yacexsvc）を停止する
+    ''' </summary>
+    Public Shared Function StopTeCAServices(Optional progressBar As ProgressBar = Nothing, Optional progressGroup As GroupBox = Nothing) As Boolean
+        If progressGroup IsNot Nothing AndAlso progressBar IsNot Nothing Then
+            progressGroup.Text = "STOP : サービス停止中..."
+            progressBar.Value = 15
+            progressGroup.Update()
+        End If
+
+        DeployUtils.WriteLog(LogFilePath, "TeCAを停止します。")
+        Dim stopRes As String = TeCA.SvcCtrls("STOP",,, True)
+        DeployUtils.WriteLog(LogFilePath, stopRes)
+
+        If HasCriticalServiceError(stopRes, "停止") Then
+            MessageBox.Show($"TeCAサービスの停止に失敗したため処理を中断します。{vbCrLf}{stopRes}", "サービス停止エラー", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End If
+
+        If progressGroup IsNot Nothing AndAlso progressBar IsNot Nothing Then
+            progressBar.Value = 30
+            progressGroup.Update()
+        End If
+
+        Return True
+    End Function
+
+    ''' <summary>
+    ''' DB再起動（PG_REBOOT）および4サービス起動（START）を行う
+    ''' </summary>
+    Public Shared Function RebootPGAndStartTeCA(rebuildRoonga As Boolean, Optional progressBar As ProgressBar = Nothing, Optional progressGroup As GroupBox = Nothing) As Boolean
+        If progressGroup IsNot Nothing AndAlso progressBar IsNot Nothing Then
+            progressGroup.Text = If(rebuildRoonga, "DB REBOOT : データベース再起動・INDEX再構築中...", "DB REBOOT : データベース再起動中...")
+            progressBar.Value = 65
+            progressGroup.Update()
+        End If
+
+        Dim pgRes As String = TeCA.SvcCtrls("PG_REBOOT", rebuildRoonga, TECA_sets.DynamicConnStrDB2, True)
+        DeployUtils.WriteLog(LogFilePath, pgRes)
+
+        If pgRes.Contains("[ERROR]") OrElse pgRes.Contains("中断") OrElse pgRes.Contains("不良") OrElse pgRes.Contains("失敗") Then
+            MessageBox.Show($"データベース再起動処理でエラーが発生したため、TeCAの起動を中断しました。{vbCrLf}{pgRes}", "データベース再起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End If
+
+        Return StartTeCAServices(progressBar, progressGroup)
+    End Function
+
+    ''' <summary>
+    ''' 4サービス（Apache2.4, Tomcat, teca, yacexsvc）を起動する
+    ''' </summary>
+    Public Shared Function StartTeCAServices(Optional progressBar As ProgressBar = Nothing, Optional progressGroup As GroupBox = Nothing) As Boolean
+        If progressGroup IsNot Nothing AndAlso progressBar IsNot Nothing Then
+            progressGroup.Text = "START : TeCAサービス起動中..."
+            progressBar.Value = 85
+            progressGroup.Update()
+        End If
+
+        Dim startRes As String = TeCA.SvcCtrls("START",,, True)
+        DeployUtils.WriteLog(LogFilePath, startRes)
+
+        If HasCriticalServiceError(startRes, "起動") Then
+            MessageBox.Show($"TeCAサービスの起動に失敗しました。{vbCrLf}{startRes}", "サービス起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End If
+
+        If progressGroup IsNot Nothing AndAlso progressBar IsNot Nothing Then
+            progressBar.Value = 100
+            progressGroup.Update()
+        End If
+
+        Return True
+    End Function
+End Class
+
+Public Class MyBase64str
+
+    Private ReadOnly enc As Encoding
+
+    Public Sub New(ByVal encStr As String)
+        enc = Encoding.GetEncoding(encStr)
+    End Sub
+
+    Public Function Encode(ByVal str As String) As String
+        Return Convert.ToBase64String(enc.GetBytes(str))
+    End Function
+
+    Public Function Decode(ByVal str As String) As String
+        Return enc.GetString(Convert.FromBase64String(str))
+    End Function
+
 End Class
