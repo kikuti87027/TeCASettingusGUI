@@ -115,6 +115,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="angular-pdf.js.viewer\After_ZUNO_TECA-380_A.txt" />
+    <None Remove="angular-pdf.js.viewer\After_ZUNO_TECA-380_B.txt" />
+    <None Remove="angular-pdf.js.viewer\Before_ZUNO_TECA-380_A.txt" />
+    <None Remove="angular-pdf.js.viewer\Before_ZUNO_TECA-380_B.txt" />
     <None Remove="API_Patches\ReleaseNotes.pdf" />
     <None Remove="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
     <None Remove="API_Patches\ZUNO_TECA-372B_PdfEditServiceImpl.class" />
@@ -162,6 +166,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="angular-pdf.js.viewer\After_ZUNO_TECA-380_A.txt" />
+    <EmbeddedResource Include="angular-pdf.js.viewer\After_ZUNO_TECA-380_B.txt" />
+    <EmbeddedResource Include="angular-pdf.js.viewer\Before_ZUNO_TECA-380_A.txt" />
+    <EmbeddedResource Include="angular-pdf.js.viewer\Before_ZUNO_TECA-380_B.txt" />
     <EmbeddedResource Include="API_Patches\ReleaseNotes.pdf" />
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-370_PrintPreviewServiceImpl.class" />
     <EmbeddedResource Include="API_Patches\ZUNO_TECA-372B_PdfEditServiceImpl.class" />

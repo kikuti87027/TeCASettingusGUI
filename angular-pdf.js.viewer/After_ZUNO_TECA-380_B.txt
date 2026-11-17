@@ -1,0 +1,12 @@
+﻿//  if (glyph.isInFont || font.missingFile) {
+     if (simpleFillText && !accent) {
+      ctx.fillText(character, scaledX, scaledY);
+     } else {
+      this.paintChar(character, scaledX, scaledY);
+      if (accent) {
+       scaledAccentX = scaledX + accent.offset.x / fontSizeScale;
+       scaledAccentY = scaledY - accent.offset.y / fontSizeScale;
+       this.paintChar(accent.fontChar, scaledAccentX, scaledAccentY);
+      }
+     }
+//  }

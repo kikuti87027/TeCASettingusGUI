@@ -657,6 +657,18 @@ Public Class Form_TeCASettings
                     Exit Sub
                 End If
 
+                '【ZUNO_TECA-380,381】WEB-CLIENT/angular-pdf.js.viewer/pdf.jsの修正
+                '　　380 -  - 巨大ラスタの白抜け対策
+                '　　381 -  - フォントなしPDF文字の非表示を解除(実装の都合上380-Bとした）
+                If BugFixes.ApplyBugFixes(preViewJS, "380") Then
+                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.5")
+                Else
+                    MessageBox.Show("ZUNO_TECA-380,381の修正ができませんでした。TeCACMDログをご覧ください")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.4")
+                    GroupBox_Progress.Visible = False
+                    Exit Sub
+                End If
+
                 '【PipeMan実行とTeCAサービス再起動】（tecacmd -reboot db と同一ロジック）
                 Dim doReindex As Boolean = (CheckBox_Pipeman.Checked AndAlso CheckBox_Pipeman.Enabled)
                 If Not TeCAServiceCtrl.RebootPGAndStartTeCA(doReindex, ProgressBar, GroupBox_Progress) Then

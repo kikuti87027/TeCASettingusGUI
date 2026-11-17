@@ -1,5 +1,5 @@
-// 2026-7-1 クライアント印刷ドライバ対応
-// ファイルごと差し替えで対応すること
+// 2026-11-17 クライアント印刷ドライバ対応（全ページ実寸解析によるサイズ混在判定対応版）
+// ファイルごと差し替えで対応すること【ZUNO_TECA-382】
 //
 'use strict';
 
@@ -698,6 +698,69 @@ app.factory('PrintPreviewService', function($q, $http, $location, $translate, $s
 		}
 	};
 
+	// PDFバイナリ（ArrayBuffer）の全ページ寸法をPDF.jsで直接解析し、サイズ・向き混在の有無を判定する
+	var checkPdfBinaryMixedSize = function(arrayBuffer) {
+		var deferred = $q.defer();
+
+		if (!window.PDFJS) {
+			deferred.resolve(false);
+			return deferred.promise;
+		}
+
+		// PDF.js へ渡すためデータを複製（ArrayBuffer の detach 防止）
+		var uint8Array = new Uint8Array(arrayBuffer.slice(0));
+
+		PDFJS.getDocument({ data: uint8Array }).then(function(pdfDoc) {
+			var numPages = pdfDoc.numPages;
+			if (numPages <= 1) {
+				if (pdfDoc.destroy) {
+					pdfDoc.destroy();
+				}
+				deferred.resolve(false);
+				return;
+			}
+
+			var pagePromises = [];
+			for (var p = 1; p <= numPages; p++) {
+				pagePromises.push(pdfDoc.getPage(p));
+			}
+
+			$q.all(pagePromises).then(function(pages) {
+				var baseVp = pages[0].getViewport(1.0);
+				var baseW = Math.round(baseVp.width);
+				var baseH = Math.round(baseVp.height);
+				var isMixed = false;
+
+				for (var i = 1; i < pages.length; i++) {
+					var vp = pages[i].getViewport(1.0);
+					var w = Math.round(vp.width);
+					var h = Math.round(vp.height);
+
+					// 2pt（約0.7mm）以上の幅・高さ、または縦横の向き違いがあれば混在と判定
+					if (Math.abs(w - baseW) > 2 || Math.abs(h - baseH) > 2) {
+						isMixed = true;
+						break;
+					}
+				}
+
+				if (pdfDoc.destroy) {
+					pdfDoc.destroy();
+				}
+				deferred.resolve(isMixed);
+			}, function() {
+				if (pdfDoc.destroy) {
+					pdfDoc.destroy();
+				}
+				deferred.resolve(false);
+			});
+		}, function() {
+			// パスワード保護等で解析できない場合は安全側（単一サイズ扱い）へ倒す
+			deferred.resolve(false);
+		});
+
+		return deferred.promise;
+	};
+
 	// 印刷
 	var print = function($scope) {
 		// エラー情報を初期化
@@ -712,7 +775,7 @@ app.factory('PrintPreviewService', function($q, $http, $location, $translate, $s
 		};
 		var dtlInfo = {
 			hanKanriId: [],
-				oinIchiId: $scope.paramOinId
+			oinIchiId: $scope.paramOinId
 		};
 		for (var idx in data) {
 			dtlInfo.hanKanriId.push(data[idx].hanKanriId);
@@ -764,37 +827,77 @@ app.factory('PrintPreviewService', function($q, $http, $location, $translate, $s
 						return;
 					}
 
-					// パターン③: Windows/PC環境（PDFビューアのフリーズとプリンタ切り替え時の強制終了を完全対策）
+					// =========================================================================
+					// パターン③: Windows/PC環境（生成された印刷用PDFバイナリの全ページ実寸を解析して分岐）
+					// =========================================================================
 					$http.get(pdfUrl, { responseType: 'arraybuffer' }).then(function(response) {
-						var blob = new Blob([response.data], { type: 'application/pdf' });
-						var blobUrl = URL.createObjectURL(blob);
+						checkPdfBinaryMixedSize(response.data).then(function(isMixedSize) {
+							var blob = new Blob([response.data], { type: 'application/pdf' });
+							var blobUrl = URL.createObjectURL(blob);
 
-						var iframe = document.createElement('iframe');
-						// 画面外に置くとChromeがPDFの描画を凍結（サスペンド）して真っ白になるため、
-						// 画面内（右下隅）に透明かつ極小で配置し、レンダリングプロセスを強制的にフル稼働させます。
-						iframe.style.position = 'fixed';
-						iframe.style.right = '0';
-						iframe.style.bottom = '0';
-						iframe.style.width = '1px';
-						iframe.style.height = '1px';
-						iframe.style.opacity = '0';
-						iframe.style.pointerEvents = 'none';
-						iframe.style.border = 'none';
-						iframe.src = blobUrl;
-						
-						iframe.onload = function() {
-							// iframe自体のロード完了後、内蔵PDFビューアが起動してパースを完了するまで300ms待つ（真っ白タイムアウト対策）
-							setTimeout(function() {
-								try {
-									iframe.contentWindow.focus();
-									iframe.contentWindow.print(); // 印刷ダイアログの起動
-								} catch (e) {
-									console.error("印刷ダイアログの起動に失敗しました", e);
+							if (isMixedSize) {
+								// -------------------------------------------------------------
+								// 【分岐B：サイズ混在】印刷用PDFダウンロード ＋ 案内ダイアログ表示
+								// -------------------------------------------------------------
+								var downloadFileName = ($rootScope.session && $rootScope.session.systemInfo && $rootScope.session.systemInfo.PRINT_PDF_FILE_NAME)
+									? $rootScope.session.systemInfo.PRINT_PDF_FILE_NAME + "_" + CommonService.formatDate.format(new Date(), "yyyyMMddhhmmss") + ".pdf"
+									: (resolveData.fileName || 'print.pdf');
+
+								var a = document.createElement('a');
+								a.href = blobUrl;
+								a.download = downloadFileName;
+								document.body.appendChild(a);
+								a.click();
+								document.body.removeChild(a);
+
+								setTimeout(function() {
+									URL.revokeObjectURL(blobUrl);
+								}, 1000);
+
+								var msgPromise = CommonService.dispMessage(
+									$scope,
+									"I00001",
+									null,
+									"異なる用紙サイズ（または縦横向き）が混在しているため、印刷用PDFをダウンロードしました。\nAdobe Reader等で開き、「PDFのページサイズに合わせて用紙を選択」にチェックを入れて印刷してください。"
+								);
+								if (msgPromise && msgPromise.then) {
+									msgPromise.then(function() {
+										$scope.cancel();
+									});
 								}
-								// ※プリンタ切り替え時の再描画に必要なため、自動での画面遷移(cancel)やオブジェクト解放は行いません。
-							}, 300);
-						};
-						document.body.appendChild(iframe);
+
+							} else {
+								// -------------------------------------------------------------
+								// 【分岐A：サイズ統一】従来のブラウザダイレクト印刷
+								// -------------------------------------------------------------
+								var iframe = document.createElement('iframe');
+								// 画面外に置くとChromeがPDFの描画を凍結（サスペンド）して真っ白になるため、
+								// 画面内（右下隅）に透明かつ極小で配置し、レンダリングプロセスを強制的にフル稼働させます。
+								iframe.style.position = 'fixed';
+								iframe.style.right = '0';
+								iframe.style.bottom = '0';
+								iframe.style.width = '1px';
+								iframe.style.height = '1px';
+								iframe.style.opacity = '0';
+								iframe.style.pointerEvents = 'none';
+								iframe.style.border = 'none';
+								iframe.src = blobUrl;
+								
+								iframe.onload = function() {
+									// iframe自体のロード完了後、内蔵PDFビューアが起動してパースを完了するまで300ms待つ（真っ白タイムアウト対策）
+									setTimeout(function() {
+										try {
+											iframe.contentWindow.focus();
+											iframe.contentWindow.print(); // 印刷ダイアログの起動
+										} catch (e) {
+											console.error("印刷ダイアログの起動に失敗しました", e);
+										}
+										// ※プリンタ切り替え時の再描画に必要なため、自動での画面遷移(cancel)やオブジェクト解放は行いません。
+									}, 300);
+								};
+								document.body.appendChild(iframe);
+							}
+						});
 					}, function(reject) {
 						console.error("PDFバイナリの取得に失敗しました", reject);
 					});
