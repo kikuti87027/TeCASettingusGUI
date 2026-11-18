@@ -1,12 +1,14 @@
 Imports System.IO
+Imports System.Linq
 Imports System.Reflection
+Imports System.Security.Principal
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports BCrypt.Net
+Imports kikuchi
+Imports Microsoft.Win32
 Imports NpgsqlTypes
 Imports NuGet.Versioning
-Imports System.Linq
-Imports kikuchi
 
 Public Class TECA_sets
 
@@ -1677,6 +1679,7 @@ Public Class PubFlugLinkage
                             If updatedMf IsNot Nothing Then File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
 
                             transaction.Commit()
+                            UpdateIndexFooterCopyright()
                             Return True
 
                         Catch ex As Exception
@@ -1690,6 +1693,7 @@ Public Class PubFlugLinkage
                 Dim utf8NoBom As New UTF8Encoding(False)
                 If updatedJs IsNot Nothing Then File.WriteAllText(webVerPath, updatedJs, utf8NoBom)
                 If updatedMf IsNot Nothing Then File.WriteAllText(APIVerPath, updatedMf, utf8NoBom)
+                UpdateIndexFooterCopyright()
                 Return True
             End If
 
@@ -1697,6 +1701,35 @@ Public Class PubFlugLinkage
             Return False
         End Try
     End Function
+
+    ''' <summary>
+    ''' index.html 内のフッター著作権表記を「2016-20XX PHOTRON LIMITED.」（20XXは実行時の西暦年）に更新する
+    ''' </summary>
+    Private Shared Sub UpdateIndexFooterCopyright()
+        Try
+            Dim indexHtmlPath As String = Path.Combine(TECA_sets.ClientWebPath, "index.html")
+            If Not File.Exists(indexHtmlPath) Then Exit Sub
+
+            Dim utf8NoBom As New UTF8Encoding(False)
+            Dim htmlContent As String = File.ReadAllText(indexHtmlPath, utf8NoBom)
+            Dim currentYear As String = DateTime.Now.Year.ToString()
+
+            ' オリジナル「2016 PHOTRON LIMITED.」および更新済み「2016-20XX PHOTRON LIMITED.」の両方にマッチ
+            Dim pattern As String = "(2016)(?:-\d{4})?(\s+Photron Limited\.?)"
+            Dim updatedHtml As String = Regex.Replace(
+                htmlContent,
+                pattern,
+                $"$1-{currentYear}$2",
+                RegexOptions.IgnoreCase
+            )
+
+            If updatedHtml <> htmlContent Then
+                File.WriteAllText(indexHtmlPath, updatedHtml, utf8NoBom)
+            End If
+        Catch ex As Exception
+            DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", $"index.html フッター年号更新エラー: {ex.Message}")
+        End Try
+    End Sub
 
 
     ''' <summary>
@@ -2164,6 +2197,77 @@ Public Class MyBase64str
 
     Public Function Decode(ByVal str As String) As String
         Return enc.GetString(Convert.FromBase64String(str))
+    End Function
+
+End Class
+
+Public Class PHPfixes
+
+    ''' <summary>
+    ''' 現在のプロセスが管理者権限で実行されているか確認します。
+    ''' </summary>
+    ''' <returns>管理者権限の場合は True</returns>
+    Public Shared Function IsAdministrator() As Boolean
+        Using identity As WindowsIdentity = WindowsIdentity.GetCurrent()
+            Dim principal As New WindowsPrincipal(identity)
+            Return principal.IsInRole(WindowsBuiltInRole.Administrator)
+        End Using
+    End Function
+
+    ''' <summary>
+    ''' レジストリから hMailServer のインストール先フォルダパスを取得します。
+    ''' </summary>
+    ''' <returns>インストール先パス（見つからない場合は空文字）</returns>
+    Public Shared Function GetHMailServerInstallPath() As String
+        Dim installPath As String = String.Empty
+
+        ' 64bitおよび32bitのレジストリキーパス
+        Dim regKeys As String() = {
+            "SOFTWARE\WOW6432Node\hMailServer",
+            "SOFTWARE\hMailServer"
+        }
+
+        ' HKEY_LOCAL_MACHINE を検索
+        For Each keyPath In regKeys
+            Using key As RegistryKey = Registry.LocalMachine.OpenSubKey(keyPath)
+                If key IsNot Nothing Then
+                    Dim value = key.GetValue("InstallLocation")
+                    If value IsNot Nothing Then
+                        installPath = value.ToString()
+                        Exit For
+                    End If
+                End If
+            End Using
+        Next
+
+        Return installPath
+    End Function
+
+    ''' <summary>
+    ''' 指定されたディレクトリが存在するかチェックします。
+    ''' </summary>
+    ''' <param name="path">チェックするパス</param>
+    ''' <returns>存在する場合は True</returns>
+    Public Shared Function DirectoryExists(path As String) As Boolean
+        If String.IsNullOrWhiteSpace(path) Then Return False
+        Return Directory.Exists(path)
+    End Function
+
+    ''' <summary>
+    ''' 指定されたディレクトリを配下のファイル・サブフォルダ含めて削除します。
+    ''' </summary>
+    ''' <param name="path">削除対象のフォルダパス</param>
+    ''' <returns>成功した場合は True</returns>
+    Public Shared Function DeleteDirectory(path As String) As Boolean
+        Try
+            If Directory.Exists(path) Then
+                ' 第2引数を True に指定することで、中身ごと全削除（抹消）します
+                Directory.Delete(path, True)
+            End If
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
 End Class

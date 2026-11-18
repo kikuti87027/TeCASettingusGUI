@@ -1,13 +1,14 @@
 Imports System.IO
 Imports System.Reflection
+Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports System.ServiceProcess
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports kikuchi
 Imports NuGet.Versioning
 Imports TeCASettings.TECA_sets
 Imports TeCASettings.TRIGGERS
 Imports Windows.Devices.Geolocation
-Imports kikuchi
 
 Public Class Form_TeCASettings
     Dim CurrentPassword As String  '旧パスワード保管用
@@ -187,7 +188,7 @@ Public Class Form_TeCASettings
                 End If
 
                 '【app.js】スクロールパラメータの更新
-                For Each targetKeyword As String In vScrollArray
+                For Each targetKeyword As String In VScrollArray
                     If (TXTFunc.TextSwap(Scrollpath.ToString, targetKeyword, ComboBox_vScroll.SelectedItem.ToString, QUOTA.ColonToCamma)) = "Error" Then
                         Label_notice.Text = "スクロールパラメータ更新エラー"
                         GroupBox_Progress.Visible = False
@@ -268,16 +269,16 @@ Public Class Form_TeCASettings
 
                 '【PDF_Convert.properties】の更新 
                 Dim exchangeFtypes As Integer
-                For Each FType In pdfConvFtypeArray
+                For Each FType In PdfConvFtypeArray
                     exchangeFtypes += Misc.ExchangeString(PdfconvpropPath, FType, FType & DIC.RasConv(ComboBox_RasterConvert.SelectedItem.ToString), True)
                 Next
-                If exchangeFtypes <> pdfConvFtypeArray.Length Then
+                If exchangeFtypes <> PdfConvFtypeArray.Length Then
                     MessageBox.Show("PDFConverter変換： 拡張子種類（bmp,png,gif,tif,tiff,jpg,jpeg)のいずれかが未定義です")
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
-                If Not Misc.ConvertBOMFileToNoBOM(pdfconvpropPath) Then
+                If Not Misc.ConvertBOMFileToNoBOM(PdfconvpropPath) Then
                     MessageBox.Show("PDF変換情報からBOMを排除できませんでした。", "PDF変換モード")
                 End If
 
@@ -649,24 +650,49 @@ Public Class Form_TeCASettings
 
                 '【ZUNO_TECA-374：  WEB-CLIENT/main.service.jsの修正】
                 If BugFixes.ApplyBugFixes(Path.Combine(TECA_sets.ClientWebPath, "app\main\main.service.js"), "374") Then
-                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.5")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.5", webVerPath:=TECA_sets.webVerPath, connectionStringPRODUCT:=TECA_sets.DynamicConnStrDB1)
                 Else
                     MessageBox.Show("ZUNO_TECA-374の修正ができませんでした。TeCACMDログをご覧ください")
-                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.4")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.4", webVerPath:=TECA_sets.webVerPath, connectionStringPRODUCT:=TECA_sets.DynamicConnStrDB1)
                     GroupBox_Progress.Visible = False
                     Exit Sub
                 End If
 
                 '【ZUNO_TECA-380,381】WEB-CLIENT/angular-pdf.js.viewer/pdf.jsの修正
-                '　　380 -  - 巨大ラスタの白抜け対策
-                '　　381 -  - フォントなしPDF文字の非表示を解除(実装の都合上380-Bとした）
+                '  380 -  - 巨大ラスタの白抜け対策
+                '  381 -  - フォントなしPDF文字の非表示を解除(実装の都合上380-Bとした）
                 If BugFixes.ApplyBugFixes(preViewJS, "380") Then
-                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.5")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.5", webVerPath:=TECA_sets.webVerPath, connectionStringPRODUCT:=TECA_sets.DynamicConnStrDB1)
                 Else
                     MessageBox.Show("ZUNO_TECA-380,381の修正ができませんでした。TeCACMDログをご覧ください")
-                    PubFlugLinkage.UpdateVersionAll("1.15.0", "1.15.0.4")
+                    PubFlugLinkage.UpdateVersionAll("1.15.0.4", webVerPath:=TECA_sets.webVerPath, connectionStringPRODUCT:=TECA_sets.DynamicConnStrDB1)
                     GroupBox_Progress.Visible = False
                     Exit Sub
+                End If
+
+                '【ZUNO_TECA-379】PHP問題の修正（hMailServerの該当ファイル削除）
+                '
+                'hMailServerのインストールパスを取得
+                Dim installPath As String = PHPfixes.GetHMailServerInstallPath()
+                ' phpwebadmin フォルダのパスを生成
+                Dim phpWebAdminPath As String = ""
+                If Not String.IsNullOrEmpty(installPath) Then
+                    phpWebAdminPath = Path.Combine(installPath, "PHPWebAdmin")
+                End If
+                ' phpwebadmin フォルダが存在するか確認
+                If PHPfixes.DirectoryExists(phpWebAdminPath) Then
+                    ' 存在する場合：フォルダごと削除
+                    Dim success As Boolean = PHPfixes.DeleteDirectory(phpWebAdminPath)
+
+                    If success Then
+                        DeployUtils.WriteLog($"{TECA_sets.defaultLOGDIR}\TeCAsettings.log", "PHP脆弱性の対処を行いました。")
+                    Else
+                        MessageBox.Show("PHP脆弱性ファイルの対処に失敗しました。",
+                                        "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return
+                    End If
+                Else
+                    ' 見つからない場合はなにもしない
                 End If
 
                 '【PipeMan実行とTeCAサービス再起動】（tecacmd -reboot db と同一ロジック）
@@ -1227,7 +1253,7 @@ Public Class Form_TeCASettings
         End If
 
         '▼▼▼pdfconverter.propertiesの画像データ設定をコンボへ
-        If Misc.FindString(pdfconvpropPath, "png=pdfAutoConverterEx") Then
+        If Misc.FindString(PdfconvpropPath, "png=pdfAutoConverterEx") Then
             ComboBox_RasterConvert.SelectedItem = "EX"
         Else
             ComboBox_RasterConvert.SelectedItem = "CAD"
@@ -1498,7 +1524,7 @@ Public Class Form_TeCASettings
         '--------------------------------------
         '【mail.properties】のキー検索結果を該当するControlに格納
         '--------------------------------------
-        For Each MailCTRL As String In mailPropArray
+        For Each MailCTRL As String In MailPropArray
 
             Dim mailTX As Control() = Me.Controls.Find("TextBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
             Dim mailCB As Control() = Me.Controls.Find("ComboBox_" + Misc.ReplacePlural(MailCTRL, ".", "_"), True)
